@@ -1,0 +1,3 @@
+[submodule "lapesd-thesis"]
+	path = lapesd-thesis
+	url = https://github.com/lapesd/lapesd-thesis.git

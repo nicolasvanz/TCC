@@ -1,0 +1,69 @@
+\documentclass[]{lapesd-thesis}
+
+% Outros \usepackage{}
+\usepackage[acronym,nowarn]{glossaries}
+\usepackage{todonotes}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% Configurações da classe (dados do trabalho)                  %%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% Informações para capa e folha de rosto/certificacao
+\titulo{Virtualização e Migração de Processos em um Sistema Operacional Distribuído para Lightweight Manycores}
+\autor{Nicolas Vanz}
+\data{\today} % ou \today
+%\tese % ou \dissertacao
+\titulode{Bacharel em Ciência da Computação}
+\orientador{Prof. Márcio Bastos Castro, Dr.}
+\coorientador{Prof. João Vicente Souto, Dr.}
+
+%%% Atenção! No caso de TCC, além de usar \tcc, outros comandos devem ser 
+%%% fornecidos:
+\tcc
+\departamento{Departamento de Informática e Estatística}
+\curso{Ciência da Computação}
+\titulode{Bacharel em Ciência da Computação}
+% %% Para TCCs, orientadores e coorientadores podem ser externos, logo a
+% %% BU exige que sua afiliação seja explicitada. Por padrão, assume-se
+% %% UFSC. Você pode alterar a afiliação com os comandos abaixo:
+% \afiliacaoorientador{Universidade Federal de Santa Catarina}
+% \afiliacaocoorientador{Universidade Federal da Terra de Ninguém}
+
+% Membros da banca e coordenador
+% As regras da BU agora exigem que Dr. apareça depois do nome
+% Dica: para gerar Profᵃ. use Prof\textsuperscript{a}.
+% Dica 2: para feminino use \orientadora e \coorientadora
+%\membrobanca{Prof. Valerie Béranger, Dr.}{Universidade Federal de Santa Catarina}
+%\membrobanca{Prof. Mordecai Malignatus, Dr.}{Universidade Federal de Santa Catarina}
+%\membrobanca{Prof. Huifen Chan, Dr.}{Universidade Federal de Santa Catarina}
+\coordenador{Prof. Renato Cislaghi, Dr.}
+
+
+% Ativa indíce remissivo. Precisa estar aqui, não funciona no .cls nem no
+% \BeforeBeginDocument{}
+\makeindex
+% Carrega definições dos acrônimos e do glossário. Isso precisa ser feito antes
+% do \begin{document}
+\input{acronyms.tex}
+
+\addtocontents{toc}{\protect\setcounter{tocdepth}{2}}
+
+\begin{document}
+
+    \pretextual%
+    \input{content/pre-textual}
+    
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    %%% Corpo do texto                                               %%%
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    \textual%
+    \input{content/textual}
+    
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    %%% Elementos pós-textuais                                       %%%
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    
+    \postextual
+    \input{content/pos-textual}
+    
+\end{document}

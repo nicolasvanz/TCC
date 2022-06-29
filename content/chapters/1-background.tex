@@ -1,0 +1,39 @@
+\chapter{Referencial Teórico}
+\label{chap.background}
+
+\section{Multiprocessadores}
+\label{sec.multiprocessadores}
+
+\section{Multicomputadores}
+\label{sec.multicomputadores}
+
+\todo{incluir base multiprocessadores/multicomputadores nesta seção}
+\section{\Lws}
+\label{sec.lw}
+
+\section{\nanvix}
+\todo{overview/threads/comunicação}
+O \nanvix\footnote{Disponível em https://github.com/nanvix} é um \os distribuído e de propósito geral que busca equilibrar desempenho, portabilidade e programabilidade para \lws  \cite{penna:sbesc19}. \nanvix é estruturado em 3 camadas de \kernel. São elas:
+\begin{enumerate}[label=(\roman*)]
+    \item \nanvix \hal: é a camada mais baixa que abstrai os recursos de \hardware sobre uma visão comum;
+    
+    \item \nanvix \microkernel: é a camada intermediária que provê gerenciamento de recursos e os serviços mínimos de um \os em um \cluster;
+    
+    \item \nanvix \multikernel: é a camada superior que provê os serviços de um \os. Os serviços atendem as requisições vindas dos processos de usuário através de um modelo cliente-servidor;
+\end{enumerate}
+    
+Em sua abordagem original, os processos no \nanvix são estáticos, \ie cada \cluster possui apenas um processo. Desse modo, uma vez que o processo inicia sua execução em um \cluster, este finalizará a execução no mesmo \cluster. 
+Isso torna o processo dependente do \cluster que o executa \eg a comunicação entre processos está atrelada aos \clusters nos quais os processos são executados e não aos processos em si. A falta de mobilidade dos processos nesse modelo pode trazer sobrecargas ao processador e afeta o suporte a multi-aplicação. Por exemplo, a comunicação entre \clusters próximos é mais rápida e resulta em menor consumo energético do processador. Sendo assim, melhorar a mobilidade e a disposição dos processos no processador \ie viabilizar a migração de processos entre \clusters, possibilitaria melhorar o gerenciamento dos recursos do mesmo.
+
+\todo{trocar por entrada no glossário}
+\section{\nanvix \textit{Hardware Abstraction Layer} (HAL)}
+\label{sec.nanvixhal}
+
+\subsection{\nanvix \microkernel}
+\label{sec.nanvixmicrokernel}
+
+\subsection{\nanvix \multikernel}
+\label{sec.nanvixmultikernel}
+
+\section{Virtualização e Conteinerização}
+\label{sec.virtualização}

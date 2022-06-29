@@ -38,3 +38,5 @@
 auto
 .emacs.*
 _minted-*
+!main.pdf
+.vscode/

@@ -1,8 +1,10 @@
 \documentclass[]{lapesd-thesis}
 
 % Outros \usepackage{}
-\usepackage[acronym,nowarn]{glossaries}
+\usepackage[acronym,nowarn,symbols]{glossaries}
 \usepackage{todonotes}
+\usepackage[inline]{enumitem}
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% Configurações da classe (dados do trabalho)                  %%%
@@ -45,7 +47,7 @@
 % Carrega definições dos acrônimos e do glossário. Isso precisa ser feito antes
 % do \begin{document}
 \input{acronyms.tex}
-
+\input{utilities.tex}
 \addtocontents{toc}{\protect\setcounter{tocdepth}{2}}
 
 \begin{document}

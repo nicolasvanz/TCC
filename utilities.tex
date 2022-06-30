@@ -6,6 +6,10 @@
     \newcommand{\mytodo}[1]{}
 \fi
 
+\iftrue % grayscale
+  \PassOptionsToPackage{monochrome}{xcolor}
+\fi
+
 \setlist[enumerate,1]{%
   label=\arabic*.,
 }

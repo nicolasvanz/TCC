@@ -3,30 +3,83 @@
 \label{chap.background}
 
 \mytodo{incluir base multiprocessadores/multicomputadores nesta seção}
-\section{\Lws}
+\section{Dos \singlecores aos \Lws}
 \label{sec.lw}
 
+Durante anos o aumento do desempenho dos processadores se manteve uma necessidade constante para o avanço da ciência em vários setores: astrologia, biologia, engenharia, etc. Até tempos atrás esse objetivo era alcançado através do aumento da frequência interna de \singlecores, do avanço na tecnologia dos semicondutores e do acréscimo do número de transistores em um \chip. Atualmente, estamos chegando a um limite físico que impede a aplicação dessas técnicas. Além da dificuldade de garantir o controle da dissipação de calor à medida que a frequência aumenta, o número de transistores que conseguimos colocar em um \chip está se estabilizando, haja vista o aparente impedimento na diminuição significativa do tamanho de um transistor.
+
+Como alternativa para a continuidade nos avanços de poder computacional, foram exploradas novas técnicas. Em especial, foram desenvolvidas as arquiteturas paralelas, que exploram o poder de processamento paralelo, o qual é atingido pela execução de múltiplos \cores simultaneamtne. Essas novas arquiteturas são classificadas de acordo com a maneira com que conseguem manipular os dados. São elas:
+\begin{inlinelist}
+    \item \sisd;
+    \item \simd;
+    \item \misd;
+    \item \mimd.
+\end{inlinelist}
+Neste trabalho, as mais relevantes são as arquiteturas que suportam cargas de trabalho \mimd, as quais ainda podem ser divididas em multiprocessadores ou multicomputadores, como mostrado na Figura \ref{fig.mimd} \cite{tanenbaum:4ed}. 
+
+No presente trabalho, destaca-se a classe de processadores \lw, que pode ser classificada como \mpsoc. \Lws tem como objetivo atrelar o alto poder de processamento paralelo com eficiência energética. Para isso sua arquitetura segue as seguintes características:
+\begin{enumerate}[label=(\roman*)]
+    \item Integrar centenas ou milhares de núcleos de processamento operando a baixas frequências em um único chip;
+    \item Operar sobre \mimd;
+    \item Organizar os núcleos em conjuntos, denominados \clusters, para compartilhamento de recursos locais;
+    \item Utilizar \nocs para transferência de dados entre núcleos ou \clusters;
+    \item Possuir sistemas de memória distribuídos e restritivos, com pequenas memórias locais;
+    \item Apresentar componentes heterogêneos (\cclusters e \ioclusters).
+\end{enumerate}
 
 
-\section{\nanvix}
+\begin{figure}[bt]
+    \centering
+    \includesvg[width=0.9\linewidth]{content/images/mimd.svg}
+    \caption{(a) um multiprocessador de memória compartilhada. (b) um multicomputator com troca de mensagens. (c) um sistema distribuído de grande escala.\cite{tanenbaum:4ed}}\label{fig.mimd}
+\end{figure}
+
+Alguns exemplos comerciais bem sucedidos de \lws são o \mppa \cite{dinechin:2013}, PULP \cite{pulp} e \taihulight \cite{fu2016sunway}. Uma visão conceitual da arquitetura de um \lw é ilustrada pela Figura \ref{fig.lw-overview}.
+
+Mais detalhadamente, para o desenvolvimento deste trabalho será utilizado o processador \mppa. A Figura \ref{fig.arch-mppa} apresenta uma visão geral do processador e suas peculiaridades, tais como:
+
+\begin{enumerate}[label=(\roman*)]
+    \item integrar 288 núcleos de baixa frequência em um único chip;
+    \item organizar os núcleos em 20 conjuntos (\clusters) para compartilhamento de recursos locais;
+    \item utilizar 2 \nocs para transferência de dados entre \clusters;
+    \item possuir um sistema de memória distribuída composto por pequenas memórias locais, \eg  \sram de 2 MB;
+    \item não dispor de coerência de \cache;
+    \item apresentar componentes heterogêneos, \eg \clusters destinados à computação ou comunicação com periféricos (\cclusters e \ioclusters, respectivamente).
+\end{enumerate}
+
+\begin{figure}[bt]
+    \centering
+    \includegraphics[width=0.9\linewidth]{content/images/arch-mppa.png}
+    \caption{Visão arquitetural do processador \mppa \cite{penna:sbesc19}}\label{fig.arch-mppa}
+\end{figure}
+
+\section{\nanvixos}
 \mytodo{overview/threads/comunicação}
-O \nanvix\footnote{Disponível em https://github.com/nanvix} é um \os distribuído e de propósito geral que busca equilibrar desempenho, portabilidade e programabilidade para \lws \cite{penna:sbesc19}. \nanvix é estruturado em 3 camadas de \kernel. São elas:
-\mytodo{adicionar figura da hal, microkernel e multikernel do nanvix}
+O \nanvix\footnote{Disponível em https://github.com/nanvix} é um \os distribuído e de propósito geral que busca equilibrar desempenho, portabilidade e programabilidade para \lws \cite{penna:sbesc19}. O \nanvix é estruturado em 3 camadas de \kernel. São elas:
 \begin{description}
     \item [\nanvix \hal]
-         é a camada mais baixa que abstrai e provê o gerenciamento dos recursos de \hardware sobre uma visão comum \cite{penna:hal}. Entre eles estão: \cores, \tlbs, \cache, \mmu, \noc, interrupções, memória virtual, recursos de \io. De maneira geral, esta camada provê visões a nivel de \core, \cluster e comunicação/sincronização entre \clusters \cite{penna:thesis}
-    
+         é a camada mais baixa que abstrai e provê o gerenciamento dos recursos de \hardware sobre uma visão comum \cite{penna:hal}. Entre esses recursos estão: \cores, \tlbs, \cache, \mmu, \noc, interrupções, memória virtual, recursos de \io. De maneira geral, esta camada provê visões a nivel de \core, \cluster e comunicação/sincronização entre \clusters \cite{penna:thesis}. A Figura \ref{fig.hal-overview} ilustra a estrutura interna da \hal do \nanvix.
     \item [\nanvix \Assymetric \Microkernel]
-        é a camada intermediária que provê gerenciamento de recursos e os serviços mínimos de um \os em um \cluster. Entre esses serviços se encontram a comunição intercluster, gerenciamento de \threads e memória, controle de acesso à memória e interface para chamadas de sistema. As chamadas de sistema podem ser executadas localmente, caso acessem dados \rdo ou alterem estruturas internas do \core, ou remotamente pelo \mcore que atende à requisição e libera o \score requisitante ao seu término \cite{penna:thesis}. Essa característica adjetiva o \microkernel como assimétrico.
-    
+        é a camada intermediária que provê gerenciamento de recursos e os serviços mínimos de um \os em um \cluster. Entre esses serviços se encontram a comunição intercluster, gerenciamento de \threads e memória, controle de acesso à memória e interface para chamadas de sistema. As chamadas de sistema podem ser executadas localmente, caso acessem dados \rdo ou alterem estruturas internas do \core, ou remotamente pelo \mcore, que atende à requisição e libera o \score requisitante ao seu término \cite{penna:thesis}. Essa característica adjetiva o \microkernel como assimétrico. A Figura \ref{fig.microkernel-overview} ilustra a estrutura interna do \microkernel do \nanvix.    
     \item [\nanvix \Multikernel]
-        é a camada superior que provê os serviços de um \os e dispõe uma visão a nível do processador em si. Os serviços são hospedados em \clusters \ie isolados das aplicações de usuário e atendem as requisições vindas dos processos de usuário através de um modelo cliente-servidor. As requisições e respostas são enviadas/recebidas através de passagem de mensagem via \noc. Os serviços dessa camada podem ser entendidos como fontes de informação que mantém a execução dos processos consistentes no processador. Neles estão presentes mecanismos de \spawn de processos e obtenção de nomes lógicos dos processos (a fim de localizá-los para comunicação), por exemplo.
+        é a camada superior que provê os serviços de um \os e dispõe uma visão a nível do processador em si. Os serviços são hospedados em \clusters \ie isolados das aplicações de usuário e atendem as requisições vindas dos processos de usuário através de um modelo cliente-servidor. As requisições e respostas são enviadas/recebidas através de passagem de mensagem via \noc. Os serviços dessa camada podem ser entendidos como fontes de informação que mantém a execução dos processos consistentes no processador, tendo em vista a natureza distribuída da memória nessas arquiteturas. Nesses serviços estão incluídos mecanismos de \spawn de processos e obtenção de nomes lógicos dos processos (a fim de localizá-los para comunicação), por exemplo.
 \end{description}
 
+\begin{figure}[bt]
+    \centering
+    \includesvg[width=0.9\linewidth]{content/images/hal.svg}
+    \caption{Estrutura interna da \hal do \nanvix \cite{penna:thesis}}\label{fig.hal-overview}
+\end{figure}
+
+\begin{figure}[bt]
+    \centering
+    \includesvg[width=0.9\linewidth]{content/images/microkernel.svg}
+    \caption{Estrutura interna do \microkernel do \nanvix \cite{penna:thesis}}\label{fig.microkernel-overview}
+\end{figure}
 \mytodo{continuar daqui}
 
 Em sua abordagem original, os processos no \nanvix são estáticos, \ie cada \cluster possui apenas um processo. Desse modo, uma vez que o processo inicia sua execução em um \cluster, este finalizará a execução no mesmo \cluster. 
-Isso torna o processo dependente do \cluster que o executa \eg a comunicação entre processos está atrelada aos \clusters nos quais os processos são executados e não aos processos em si. A falta de mobilidade dos processos nesse modelo pode trazer sobrecargas ao processador e afeta o suporte a multi-aplicação. Por exemplo, a comunicação entre \clusters próximos é mais rápida e resulta em menor consumo energético do processador. Sendo assim, melhorar a mobilidade e a disposição dos processos no processador \ie viabilizar a migração de processos entre \clusters, possibilitaria melhorar o gerenciamento dos recursos do mesmo.
+Isso torna o processo dependente do \cluster que o executa \eg a comunicação entre processos está atrelada aos \clusters nos quais os processos são executados e não aos processos em si. A falta de mobilidade dos processos nesse modelo pode trazer sobrecargas ao processador e afeta o suporte a multi-aplicação. Por exemplo, a comunicação entre \clusters próximos é mais rápida e resulta em menor consumo energético do processador. Sendo assim, melhorar a mobilidade e a disposição dos processos no processador \ie viabilizar a migração de processos entre \clusters, possibilitaria melhorar o gerenciamento dos recursos do mesmo. Desse modo, este trabalho explora justamente essa dissassociação do \hardware com a execução do processo. Isso com o objetivo de desvincular o processo do \cluster que o executa, o que, por fim, aumentaria a mobilidade dos processos \ie a migração deles entre os \clusters.
 
 \section{Virtualização e Conteinerização}
-\label{sec.virtualização}
+\label{sec.virtualizacao}

@@ -1,39 +1,32 @@
+\glsresetall
 \chapter{Referencial Teórico}
 \label{chap.background}
 
-\section{Multiprocessadores}
-\label{sec.multiprocessadores}
-
-\section{Multicomputadores}
-\label{sec.multicomputadores}
-
-\todo{incluir base multiprocessadores/multicomputadores nesta seção}
+\mytodo{incluir base multiprocessadores/multicomputadores nesta seção}
 \section{\Lws}
 \label{sec.lw}
 
+
+
 \section{\nanvix}
-\todo{overview/threads/comunicação}
-O \nanvix\footnote{Disponível em https://github.com/nanvix} é um \os distribuído e de propósito geral que busca equilibrar desempenho, portabilidade e programabilidade para \lws  \cite{penna:sbesc19}. \nanvix é estruturado em 3 camadas de \kernel. São elas:
-\begin{enumerate}[label=(\roman*)]
-    \item \nanvix \hal: é a camada mais baixa que abstrai os recursos de \hardware sobre uma visão comum;
+\mytodo{overview/threads/comunicação}
+O \nanvix\footnote{Disponível em https://github.com/nanvix} é um \os distribuído e de propósito geral que busca equilibrar desempenho, portabilidade e programabilidade para \lws \cite{penna:sbesc19}. \nanvix é estruturado em 3 camadas de \kernel. São elas:
+\mytodo{adicionar figura da hal, microkernel e multikernel do nanvix}
+\begin{description}
+    \item [\nanvix \hal]
+         é a camada mais baixa que abstrai e provê o gerenciamento dos recursos de \hardware sobre uma visão comum \cite{penna:hal}. Entre eles estão: \cores, \tlbs, \cache, \mmu, \noc, interrupções, memória virtual, recursos de \io. De maneira geral, esta camada provê visões a nivel de \core, \cluster e comunicação/sincronização entre \clusters \cite{penna:thesis}
     
-    \item \nanvix \microkernel: é a camada intermediária que provê gerenciamento de recursos e os serviços mínimos de um \os em um \cluster;
+    \item [\nanvix \Assymetric \Microkernel]
+        é a camada intermediária que provê gerenciamento de recursos e os serviços mínimos de um \os em um \cluster. Entre esses serviços se encontram a comunição intercluster, gerenciamento de \threads e memória, controle de acesso à memória e interface para chamadas de sistema. As chamadas de sistema podem ser executadas localmente, caso acessem dados \rdo ou alterem estruturas internas do \core, ou remotamente pelo \mcore que atende à requisição e libera o \score requisitante ao seu término \cite{penna:thesis}. Essa característica adjetiva o \microkernel como assimétrico.
     
-    \item \nanvix \multikernel: é a camada superior que provê os serviços de um \os. Os serviços atendem as requisições vindas dos processos de usuário através de um modelo cliente-servidor;
-\end{enumerate}
-    
+    \item [\nanvix \Multikernel]
+        é a camada superior que provê os serviços de um \os e dispõe uma visão a nível do processador em si. Os serviços são hospedados em \clusters \ie isolados das aplicações de usuário e atendem as requisições vindas dos processos de usuário através de um modelo cliente-servidor. As requisições e respostas são enviadas/recebidas através de passagem de mensagem via \noc. Os serviços dessa camada podem ser entendidos como fontes de informação que mantém a execução dos processos consistentes no processador. Neles estão presentes mecanismos de \spawn de processos e obtenção de nomes lógicos dos processos (a fim de localizá-los para comunicação), por exemplo.
+\end{description}
+
+\mytodo{continuar daqui}
+
 Em sua abordagem original, os processos no \nanvix são estáticos, \ie cada \cluster possui apenas um processo. Desse modo, uma vez que o processo inicia sua execução em um \cluster, este finalizará a execução no mesmo \cluster. 
 Isso torna o processo dependente do \cluster que o executa \eg a comunicação entre processos está atrelada aos \clusters nos quais os processos são executados e não aos processos em si. A falta de mobilidade dos processos nesse modelo pode trazer sobrecargas ao processador e afeta o suporte a multi-aplicação. Por exemplo, a comunicação entre \clusters próximos é mais rápida e resulta em menor consumo energético do processador. Sendo assim, melhorar a mobilidade e a disposição dos processos no processador \ie viabilizar a migração de processos entre \clusters, possibilitaria melhorar o gerenciamento dos recursos do mesmo.
-
-\todo{trocar por entrada no glossário}
-\section{\nanvix \textit{Hardware Abstraction Layer} (HAL)}
-\label{sec.nanvixhal}
-
-\subsection{\nanvix \microkernel}
-\label{sec.nanvixmicrokernel}
-
-\subsection{\nanvix \multikernel}
-\label{sec.nanvixmultikernel}
 
 \section{Virtualização e Conteinerização}
 \label{sec.virtualização}

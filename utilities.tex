@@ -1,0 +1,16 @@
+\newcommand{\showtodos}{1}
+
+\if\showtodos1
+    \newcommand{\mytodo}[1]{\todo[inline,color=red!30]{#1}}
+\else
+    \newcommand{\mytodo}[1]{}
+\fi
+
+\setlist[enumerate,1]{%
+  label=\arabic*.,
+}
+
+\newlist{inlinelist}{enumerate*}{1}
+\setlist*[inlinelist,1]{%
+  label=(\roman*),
+}

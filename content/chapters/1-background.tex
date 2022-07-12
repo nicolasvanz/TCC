@@ -2,7 +2,8 @@
 \chapter{Referencial Teórico}
 \label{chap.background}
 
-\mytodo{incluir base multiprocessadores/multicomputadores nesta seção}
+Neste capítulo serão apresentados alguns conceitos importantes para o entendimento do trabalho. Na Seção \ref{sec.lw} será apresentada uma visão geral de como os processadores evoluíram de \singlecores aos \lws. Na Seção \ref{sec.nanvixos} será apresentado o \so que será utilizado no desenvolvimento deste trabalho, o \nanvix. Na Seção \ref{sec.virtualizacao} será explicado um pouco sobre a virtualização e migração de processos, que é o tema principal do trabalho.
+
 \section{Dos \singlecores aos \Lws}
 \label{sec.lw}
 
@@ -53,7 +54,8 @@ Mais detalhadamente, para o desenvolvimento deste trabalho será utilizado o pro
     \caption{Visão arquitetural do processador \mppa \cite{penna:sbesc19}}\label{fig.arch-mppa}
 \end{figure}
 
-\section{\nanvixos}
+\section{\nanvixos}\label{sec.nanvixos}
+
 \mytodo{overview/threads/comunicação}
 O \nanvix\footnote{Disponível em https://github.com/nanvix} é um \os distribuído e de propósito geral que busca equilibrar desempenho, portabilidade e programabilidade para \lws \cite{penna:sbesc19}. O \nanvix é estruturado em 3 camadas de \kernel. São elas:
 \begin{description}
@@ -81,5 +83,5 @@ O \nanvix\footnote{Disponível em https://github.com/nanvix} é um \os distribu�
 Em sua abordagem original, os processos no \nanvix são estáticos, \ie cada \cluster possui apenas um processo. Desse modo, uma vez que o processo inicia sua execução em um \cluster, este finalizará a execução no mesmo \cluster. 
 Isso torna o processo dependente do \cluster que o executa \eg a comunicação entre processos está atrelada aos \clusters nos quais os processos são executados e não aos processos em si. A falta de mobilidade dos processos nesse modelo pode trazer sobrecargas ao processador e afeta o suporte a multi-aplicação. Por exemplo, a comunicação entre \clusters próximos é mais rápida e resulta em menor consumo energético do processador. Sendo assim, melhorar a mobilidade e a disposição dos processos no processador \ie viabilizar a migração de processos entre \clusters, possibilitaria melhorar o gerenciamento dos recursos do mesmo. Desse modo, este trabalho explora justamente essa dissassociação do \hardware com a execução do processo. Isso com o objetivo de desvincular o processo do \cluster que o executa, o que, por fim, aumentaria a mobilidade dos processos \ie a migração deles entre os \clusters.
 
-\section{Virtualização e Conteinerização}
+\section{Virtualização e Migração de Processos}
 \label{sec.virtualizacao}

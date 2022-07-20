@@ -1,20 +1,21 @@
 \glsresetall
 \chapter{Trabalhos Relacionados}\label{chap.related-work}
 
-Neste capítulo serão mostrados técnicas e pesquisas que estão sendo desenvolvidas no que diz respeito à virtualização e migração de processos. Serão apresentados alguns trabalhos relacionados, bem como serão evidenciadas as semelhanças e diferenças que o presente trabalho tem em relação àqueles evidenciados.
+Neste capítulo serão mostradas técnicas e pesquisas que estão sendo desenvolvidas no que diz respeito à virtualização e migração de processos. Serão apresentados alguns trabalhos relacionados, bem como serão evidenciadas as semelhanças e diferenças que o presente trabalho tem em relação àqueles evidenciados.
 
-Grande parte das pesquisas relacionadas a migração estão inseridas em ambientes \cloud. Nesses casos os esforços estão voltados na exploração de várias vantagens que a migração de processos oferece nesses espaços \cite{live-vm-migration-techniques}. Entre elas podem-se citar:
+Grande parte das pesquisas relacionadas a migração estão inseridas em ambientes \cloud. Nesses casos, os esforços estão voltados para redução do tempo total de migração, diminuição do \downtime \cite{migration-linux-conteiners,clark2005live} e exploração de várias vantagens que a migração de processos oferece nesses ambientes computacionais. Entre elas podem-se citar:
 \begin{enumerate}[label=(\roman*)]
-    \item Balanceamento de carga;
-    \item Tolerência a falhas;
-    \item Gerenciamento do consumo de energia;
+    \item Balanceamento de carga \cite{live-vm-migration-techniques,ada-things};
+    \item Tolerência a falhas \cite{fernando2019live};
+    \item Gerenciamento do consumo de energia \cite{aldossary2018performance};
     \item Compartilhamento de recursos;
-    \item Manutenção de sistemas sem interrupções;
+    \item Manutenção de sistemas sem interrupções \cite{live-vm-migration-techniques,ada-things};
 \end{enumerate}
 
-Os autores costumam aliar uma ou mais das características citadas acima para desenvolverem suas pesquisas. Por exemplo:
+Os autores costumam também aliar uma ou mais das características citadas acima para desenvolverem suas pesquisas. Por exemplo:
 % \begin{enumerate}[label=(\roman*)]
     % \item 
-    Aliando-se a transparência de localidade de execução de aplicações com a manutenção destas sem sua suspenção é possível explorar algorítmos ou modelos para melhor posicionar as aplicações na rede com o objetivo de atender a maior quantidade de usuários e de maneira mais eficiente \cite{live-migration-sdn}. Ademais, esses modelos podem ser especializados para tipos específicos de aplicações, como \iot \cite{ada-things};
+    Aliando-se a transparência de localidade de execução de aplicações com a manutenção destas sem sua suspenção é possível explorar algorítmos ou modelos para melhor posicionar as aplicações na rede com o objetivo de atender a maior quantidade de usuários e de maneira mais eficiente e sem que o sistema precise ser desligado \cite{live-migration-sdn}. Ademais, esses modelos podem ser especializados para tipos específicos de aplicações, como \iot \cite{ada-things};
 % \end{enumerate}
-\mytodo{linux conteiners, virtualizacao}
+
+Em contraste com os trabalhos apresentados, o presente trabalho não está inserido em ambientes \cloud. Seu foco está na migração de aplicações entre \clusters em um mesmo \chip, em um sistema computacional restritivo que restringe as técnicas possíveis de serem utilizadas. Este trabalho difere da maioria dos descritos acima em questões de objetivo também. Enquanto os trabalhos citados anteriormente exploram melhorar a eficiência da \livemigration, o principal objetivo deste, é analisar uma nova aplicação desta, que no caso é inserí-la no contexto dos \lws.

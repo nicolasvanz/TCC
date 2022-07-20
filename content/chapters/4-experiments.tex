@@ -1,0 +1,28 @@
+\glsresetall
+\chapter{Resultados Parciais}
+\label{chap.results}
+
+\begin{figure}[tb]
+    \centering%
+    \subfloat[Tempo de criação de \threads.\label{fig.fork-join}]{%
+        \includegraphics[width=.55\textwidth]{content/images/fork-join-kernel-time-bars.pdf}%
+    }%
+    \quad%
+    \subfloat[Métricas do \kernel.\label{fig.kernel-counters}]{%
+        \includegraphics[width=.35\textwidth]{content/images/fork-join-kernel-counters.pdf}%
+    }%
+    %\subfloat[Migração.\label{fig.migration}]{%
+    %	\includegraphics[width=.13\textwidth]{images/migration.pdf}%
+    %}%
+    \caption{Impactos da virtualização sobre a manipulação de \threads.\label{fig.threads}}%
+\end{figure}
+
+A solução foi avaliada em etapas anteriores ao desenvolvimento atual do trabalho e os resultados seguintes englobam apenas o susbsistema de \threads do \nanvix. 
+
+Para avaliar o impacto das mudanças feitas para a virtualização, foram desenvolvidos experimentos sobre a manipulação de \threads e suporte à migração de processos no \nanvix. Todos os experimentos foram executados no processador \mppa e os resultados mostrados são médias de 100 replicações de cada experimento para garantir 95\% de confiança estatística, resultando em um desvio padrão máximo inferior a 1\%.
+
+O experimento de manipulação de \threads mensura os impactos na criação e junção através de diferentes perspectivas. Especificamente, coletamos o tempo de execução, desvios e faltas ocorridas na \cache de dados e de instrução (Figura~\ref{fig.threads}).
+Os resultados apresentam um aumento no desempenho das operações de manipulação quando utilizamos a \uarea porque exploramos melhor a localidade espacial dos dados, o que, consequentemente, diminui o número de faltas na \cache.
+
+O experimento de migração avaliou o tempo de transferência de um processo entre \clusters.
+A aplicação de usuário migrada contém 352,8~KB. Detalhadamente, foram transferidos instruções e dados (342,8~KB), a \uarea (2~KB) e uma pilha de execução (8~KB). O \downtime médio da aplicação \ie o tempo que a aplicação demorou para restaurar a execução no \cluster destinatário após a migração, foi de 226~ms. A média de tempo para o \cluster remetente enviar todos os dados foi de 218~ms.

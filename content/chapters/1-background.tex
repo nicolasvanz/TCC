@@ -50,13 +50,12 @@ Mais detalhadamente, para o desenvolvimento deste trabalho será utilizado o pro
 
 \begin{figure}[bt]
     \centering
-    \includegraphics[width=0.9\linewidth]{content/images/arch-mppa.png}
+    \includegraphics[width=0.9\linewidth]{content/images/arch-mppa-gs.png}
     \caption{Visão arquitetural do processador \mppa \cite{penna:sbesc19}}\label{fig.arch-mppa}
 \end{figure}
 
 \section{\nanvixos}\label{sec.nanvixos}
 
-\mytodo{overview/threads/comunicação}
 O \nanvix\footnote{Disponível em https://github.com/nanvix} é um \os distribuído e de propósito geral que busca equilibrar desempenho, portabilidade e programabilidade para \lws \cite{penna:sbesc19}. O \nanvix é estruturado em 3 camadas de \kernel. São elas:
 \begin{description}
     \item [\nanvix \hal]
@@ -78,10 +77,57 @@ O \nanvix\footnote{Disponível em https://github.com/nanvix} é um \os distribu�
     \includesvg[width=0.9\linewidth]{content/images/microkernel.svg}
     \caption{Estrutura interna do \microkernel do \nanvix \cite{penna:thesis}}\label{fig.microkernel-overview}
 \end{figure}
-\mytodo{continuar daqui}
 
 Em sua abordagem original, os processos no \nanvix são estáticos, \ie cada \cluster possui apenas um processo. Desse modo, uma vez que o processo inicia sua execução em um \cluster, este finalizará a execução no mesmo \cluster. 
 Isso torna o processo dependente do \cluster que o executa \eg a comunicação entre processos está atrelada aos \clusters nos quais os processos são executados e não aos processos em si. A falta de mobilidade dos processos nesse modelo pode trazer sobrecargas ao processador e afeta o suporte a multi-aplicação. Por exemplo, a comunicação entre \clusters próximos é mais rápida e resulta em menor consumo energético do processador. Sendo assim, melhorar a mobilidade e a disposição dos processos no processador \ie viabilizar a migração de processos entre \clusters, possibilitaria melhorar o gerenciamento dos recursos do mesmo. Desse modo, este trabalho explora justamente essa dissassociação do \hardware com a execução do processo. Isso com o objetivo de desvincular o processo do \cluster que o executa, o que, por fim, aumentaria a mobilidade dos processos \ie a migração deles entre os \clusters.
 
+\subsection{Abstrações de Comunicação do \nanvix}
+O \nanvix dispõe de três abstrações de comunicações para transferência de dados e sincronização entre \clusters \cite{penna:thesis}. Nas próximas Seções serão detalhadas as três abstrações.
+
+\begin{figure}[tb]
+    \centering%
+    \subfloat[modo $1:N$.\label{fig.sync1n}]{%
+        \includesvg[width=.48\textwidth]{content/images/sync-1-n.svg}%
+    }%
+    \quad%
+    \subfloat[modo $N:1$.\label{fig.syncn1}]{%
+        \includesvg[width=.48\textwidth]{content/images/sync-n-1.svg}%
+    }%
+    %\subfloat[Migração.\label{fig.migration}]{%
+    %	\includegraphics[width=.13\textwidth]{images/migration.pdf}%
+    %}%
+    \caption{Fluxo de execução da abstração \sync \cite{penna:thesis}.\label{fig.sync}}%
+\end{figure}
+
+\subsubsection{\sync}
+Esta abstração é a que da o suporte a sincronização inter-kernel. Através dela um processo pode esperar um sinal, que pode ser disparado por outro processo remotamente através das interfaces \noc. Essa abstração é muito utilizada na inicialização do sistema para garantia de sincronização entre os subsistemas \cite{penna:thesis}.
+
+O \sync pode ser operado duas maneiras distintas: o modo $1:N$ e $N:1$. No modo $1:N$ (Figura \ref{fig.sync1n}) um nó envia uma notificação a múltiplos nós, que estão esperando pelo sinal. Em contraste, no moso $N:1$ (Figura \ref{fig.syncn1}), múltiplos nós enviam uma notificação a um único nó \cite{penna:thesis}.
+
+\begin{figure}[bt]
+    \centering
+    \includesvg[width=0.6\linewidth]{content/images/mailbox.svg}
+    \caption{Fluxo de execução da abstração \mailbox \cite{penna:thesis}}\label{fig.mailbox}
+\end{figure}
+
+\subsubsection{\mailbox}
+Esta abstração é responsável pelo suporte à troca de mensagens de controle. Isso através de troca assíncrona de pequenas mensagens de tamanho fixo. A abstração segue a semântica $N:1$ e o funcionamento é o seguinte: um nó (destinatário da mensagem) possuí um \mailbox, do qual lê mensagens, e múltiplos nós (remetentes da mensagem) podem escrever nesse \mailbox \cite{penna:thesis}. A Figura \ref{fig.mailbox} ilustra o fluxo de execução da \mailbox.
+
+\begin{figure}[b]
+    \centering
+    \includesvg[width=0.6\linewidth]{content/images/portal.svg}
+    \caption{Fluxo de execução da abstração \portal \cite{penna:thesis}}\label{fig.portal}
+\end{figure}
+
+\subsubsection{\portal}
+Esta abstração é reponsável pela troca de largas mensagens e segue a semântica $1:1$. A abstração pode ter uso em diversos cenários que exigem grandes transferências de dados entre \clusters \cite{penna:thesis}. A Figura \ref{fig.portal} ilustra o fluxo de execução da abstração \portal.
+    
+
 \section{Virtualização e Migração de Processos}
 \label{sec.virtualizacao}
+
+A virtualização pode ser entendida como a desvinculação da execução de uma aplicação (ou até um \so) dos recursos físicos responsáveis pelo seu funcionamento. O desacoplamento entre aplicação e \hardware, quando há virtualização, pode permitir, dependendo da camada em que esta é aplicada, a existência simultânea e isolada de múltiplas instâncias de usuários ou \oss (\vms), que compartilham e concorrem pelos mesmos recursos de \hardware reais. Reaproveitamento de recursos, portabilidade e segurança são algumas vantagens proporcionadas pela virtualização.
+
+Em ambientes \cloud é muito comum a utilização de \vms para execução de tarefas nos servidores. Com o auxílio da virtualização, um único servidor pode alocar diversas \vms, possivelmente com \sos distintos. 
+
+Neste trabalho, o foco é a virtualização de processos. Isto é, o objetivo é desacoplar a execução de uma aplicação do \cluster do \lw que a executa. Na abordagem original do \nanvix, o processo é dependente do local em que é alocado, o que afeta o suporte a migração e diminui a eficiência computacional, como detalhado na Seção \ref{sec.nanvixos}. Nesse contexto, a virtualização é útil justamente para aumentar a mobilidade dos processos, o que possibilitaria o gerenciamento da distribuição dos processos no processador. Particularmente, este trabalho trabalho explora um modelo mais leve de virtualização para \lw baseada em contêineres. Contêineres são executados pelo \os como aplicações virtuais e não incluem um \os convidado, resultando em um menor impacto no sistema de memória e requerendo menor complexidade do \hardware \cite{thalheim2018cntr, sharma2016containers}.

@@ -9,22 +9,21 @@ Neste contexto, o presente trabalho explora um modelo de virtualização baseado
 
 
 \begin{figure}[t]
-    \centering%
+	\centering
+	
+	\subcaptionminipage[fig.nanvix.without-uarea]%
+                   {.4\textwidth}
+                   {\os sem isolamento.}
+                   {\includegraphics[width=\textwidth]{content/images/nanvix-without-uarea-uk.pdf}}
+	\qquad
+	\subcaptionminipage[fig.nanvix.with-uarea]
+                   {.4\textwidth}
+                   {\os com isolamento.}
+                   {\includegraphics[width=\textwidth]{content/images/nanvix-with-uarea-uk.pdf}}
 
-    \includegraphics[width=.3\linewidth]{content/images/legenda.pdf}%
-
-    \vspace{-2mm}%
-
-    \subfloat[\os sem isolamento.\label{fig.nanvix.without-uarea}]{%
-        \includegraphics[width=.35\textwidth]{content/images/nanvix-without-uarea-uk.pdf}%
-    }%
-    \quad\quad%
-    \subfloat[\os com isolamento.\label{fig.nanvix.with-uarea}]{%
-        \includegraphics[width=.35\textwidth]{content/images/nanvix-with-uarea-uk.pdf}%
-    }%
-    % \vspace{-2mm}
-    \caption{Diferença da estrutura do \nanvix com e sem a \textit{User Area}.}%
-    % \vspace{-0.5cm}
+	\includegraphics[width=.33\linewidth]{content/images/legenda.pdf}
+	
+	\caption{Diferença da estrutura do \nanvix com e sem a \textit{User Area}.}%
 \end{figure}
 
 \section{Separação Kernel-Usuário}

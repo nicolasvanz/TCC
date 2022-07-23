@@ -3,18 +3,17 @@
 \label{chap.results}
 
 \begin{figure}[tb]
-    \centering%
-    \subfloat[Tempo de criação de \threads.\label{fig.fork-join}]{%
-        \includegraphics[width=.55\textwidth]{content/images/fork-join-kernel-time-bars.pdf}%
-    }%
-    \quad%
-    \subfloat[Métricas do \kernel.\label{fig.kernel-counters}]{%
-        \includegraphics[width=.35\textwidth]{content/images/fork-join-kernel-counters.pdf}%
-    }%
-    %\subfloat[Migração.\label{fig.migration}]{%
-    %	\includegraphics[width=.13\textwidth]{images/migration.pdf}%
-    %}%
-    \caption{Impactos da virtualização sobre a manipulação de \threads.\label{fig.threads}}%
+	\centering
+	\subcaptionminipage[fig.fork-join]%
+                   {.5\textwidth}
+                   {Tempo de criação de \threads.}
+                   {\includegraphics[width=\textwidth]{content/images/fork-join-kernel-time-bars.pdf}}
+	\qquad
+	\subcaptionminipage[fig.kernel-counters]
+                   {.4\textwidth}
+                   {Métricas do \kernel.}
+                   {\includegraphics[width=\textwidth]{content/images/fork-join-kernel-counters.pdf}}
+	\caption{Impactos da virtualização sobre a manipulação de \threads.\label{fig.threads}}%
 \end{figure}
 
 A solução foi avaliada em etapas anteriores ao desenvolvimento atual do trabalho e os resultados seguintes englobam apenas o susbsistema de \threads do \nanvix. 

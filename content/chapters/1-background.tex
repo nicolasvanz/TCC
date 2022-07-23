@@ -50,7 +50,7 @@ Mais detalhadamente, para o desenvolvimento deste trabalho será utilizado o pro
 
 \begin{figure}[bt]
     \centering
-    \includegraphics[width=0.9\linewidth]{content/images/arch-mppa-gs.png}
+    \includegraphics[width=0.6\linewidth]{content/images/arch-mppa-gs.png}
     \caption{Visão arquitetural do processador \mppa \cite{penna:sbesc19}}\label{fig.arch-mppa}
 \end{figure}
 
@@ -68,13 +68,13 @@ O \nanvix\footnote{Disponível em https://github.com/nanvix} é um \os distribu�
 
 \begin{figure}[bt]
     \centering
-    \includesvg[width=0.9\linewidth]{content/images/hal.svg}
+    \includesvg[width=0.8\linewidth]{content/images/hal.svg}
     \caption{Estrutura interna da \hal do \nanvix \cite{penna:thesis}}\label{fig.hal-overview}
 \end{figure}
 
 \begin{figure}[bt]
     \centering
-    \includesvg[width=0.9\linewidth]{content/images/microkernel.svg}
+    \includesvg[width=0.8\linewidth]{content/images/microkernel.svg}
     \caption{Estrutura interna do \microkernel do \nanvix \cite{penna:thesis}}\label{fig.microkernel-overview}
 \end{figure}
 
@@ -85,18 +85,17 @@ Isso torna o processo dependente do \cluster que o executa \eg a comunicação e
 O \nanvix dispõe de três abstrações de comunicações para transferência de dados e sincronização entre \clusters \cite{penna:thesis}. Nas próximas Seções serão detalhadas as três abstrações.
 
 \begin{figure}[tb]
-    \centering%
-    \subfloat[modo $1:N$.\label{fig.sync1n}]{%
-        \includesvg[width=.48\textwidth]{content/images/sync-1-n.svg}%
-    }%
-    \quad%
-    \subfloat[modo $N:1$.\label{fig.syncn1}]{%
-        \includesvg[width=.48\textwidth]{content/images/sync-n-1.svg}%
-    }%
-    %\subfloat[Migração.\label{fig.migration}]{%
-    %	\includegraphics[width=.13\textwidth]{images/migration.pdf}%
-    %}%
-    \caption{Fluxo de execução da abstração \sync \cite{penna:thesis}.\label{fig.sync}}%
+	\centering
+	\subcaptionminipage[fig.sync1n]%
+                   {.44\textwidth}
+                   {Modo $1:N$.}
+                   {\includesvg[width=\textwidth]{content/images/sync-1-n.svg}}
+	\qquad
+	\subcaptionminipage[fig.syncn1]
+                   {.44\textwidth}
+                   {Modo $N:1$.}
+                   {\includesvg[width=\textwidth]{content/images/sync-n-1.svg}}
+	\caption{Fluxo de execução da abstração \sync \cite{penna:thesis}.\label{fig.sync}}
 \end{figure}
 
 \subsubsection{\sync}
@@ -106,7 +105,7 @@ O \sync pode ser operado duas maneiras distintas: o modo $1:N$ e $N:1$. No modo 
 
 \begin{figure}[bt]
     \centering
-    \includesvg[width=0.6\linewidth]{content/images/mailbox.svg}
+    \includesvg[width=0.5\linewidth]{content/images/mailbox.svg}
     \caption{Fluxo de execução da abstração \mailbox \cite{penna:thesis}}\label{fig.mailbox}
 \end{figure}
 
@@ -115,7 +114,7 @@ Esta abstração é responsável pelo suporte à troca de mensagens de controle.
 
 \begin{figure}[b]
     \centering
-    \includesvg[width=0.6\linewidth]{content/images/portal.svg}
+    \includesvg[width=0.5\linewidth]{content/images/portal.svg}
     \caption{Fluxo de execução da abstração \portal \cite{penna:thesis}}\label{fig.portal}
 \end{figure}
 

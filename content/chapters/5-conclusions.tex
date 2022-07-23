@@ -2,9 +2,10 @@
 \chapter{Conclusões}
 \label{chap.conclusions}
 
-Neste trabalho foi explorado um modelo de virtualização leve baseada em contêineres que considera as restrições arquiteturais dos \lws, se adaptando as suas restrições, principalmente relacionadas à memória, visando de melhorar a mobilidade de processos em um \os distribuído. Isso com o objetivo de aumentar a eficiência dos processadores \lws e acentuar ainda mais suas principais características: alto poder de processamento e economia de energia.
+Neste trabalho foi explorado um modelo de virtualização leve baseada em contêineres que considera as restrições arquiteturais dos \lws, adaptando-se as suas restrições, principalmente relacionadas à memória. A virtualização proposta visa melhorar a mobilidade e gerenciamento de processos para \lws no contexto de em um \os distribuído.
+%
+Os resultados mostraram que o isolamento das dependências de um processo aumentaram o desempenho de operações do \kernel e suportaram de fato a migração de processos de forma eficiente. Como trabalhos futuros, pretende-se:
 
-Os resultados mostraram que o isolamento das dependências de um processo aumentaram o desempenho de operações do \kernel e suportaram de fato a migração de processos de forma eficiente. Como trabalhos futuros, pretende-se 
 \begin{enumerate}[label=(\roman*)]
     \item Ampliar a virtualização, englobando outros subsistemas do \nanvix;
     \item Habilitar a execução simultânea de múltiplas aplicações no processador e sua proteção.

@@ -1,88 +1,93 @@
-\glsresetall
 \chapter{Referencial Teórico}
 \label{chap.background}
 
-Neste capítulo serão apresentados alguns conceitos importantes para o entendimento do trabalho. Na Seção \ref{sec.lw} será apresentada uma visão geral de como os processadores evoluíram de \singlecores aos \lws. Na Seção \ref{sec.nanvixos} será apresentado o \so que será utilizado no desenvolvimento deste trabalho, o \nanvix. Na Seção \ref{sec.virtualizacao} será explicado um pouco sobre a virtualização e migração de processos, que é o tema principal do trabalho.
+Neste capítulo serão apresentados conceitos fundamentais para o entendimento do trabalho. A \autoref{sec.lw} apresenta uma visão geral da evolução dos processadores à partir dos \singlecores aos \lws. A \autoref{sec.nanvixos} expõe o \nanvix, \so que será utilizado no desenvolvimento deste trabalho. A \autoref{sec.virtualizacao} detalha a virtualização e migração de processos.
 
 \section{Dos \singlecores aos \Lws}
 \label{sec.lw}
 
-Durante anos o aumento do desempenho dos processadores se manteve uma necessidade constante para o avanço da ciência em vários setores: astrologia, biologia, engenharia, etc. Até tempos atrás esse objetivo era alcançado através do aumento da frequência interna de \singlecores, do avanço na tecnologia dos semicondutores e do acréscimo do número de transistores em um \chip. Atualmente, estamos chegando a um limite físico que impede a aplicação dessas técnicas. Além da dificuldade de garantir o controle da dissipação de calor à medida que a frequência aumenta, o número de transistores que conseguimos colocar em um \chip está se estabilizando, haja vista o aparente impedimento na diminuição significativa do tamanho de um transistor.
+O aumento de desempenho dos sistemas computacionais manteve-se como uma necessidade constante para o avanço da ciência em vários setores: astrologia, biologia, engenharia, etc. Até tempos atrás esse objetivo era alcançado através do aumento da frequência interna de \singlecores, do avanço na tecnologia dos semicondutores e do acréscimo do número de transistores em um \chip. Atualmente, nós estamos chegando ao limite físico que impede a aplicação de parte dessas técnicas. Além da dificuldade de garantir a dissipação de calor à medida que a frequência aumenta, o número de transistores que conseguimos colocar em uma mesma área de um \chip está chegando ao seu limite físico, \ie o tamanho dos transitores alcançou a escala atômica.
 
-Como alternativa para a continuidade nos avanços de poder computacional, foram exploradas novas técnicas. Em especial, foram desenvolvidas as arquiteturas paralelas, que exploram o poder de processamento paralelo, o qual é atingido pela execução de múltiplos \cores simultaneamtne. Essas novas arquiteturas são classificadas de acordo com a maneira com que conseguem manipular os dados. São elas:
+Como alternativa para a continuidade nos avanços de poder computacional, foram exploradas novas técnicas. Em especial, foram desenvolvidas arquiteturas paralelas, que exploram o poder de processamento paralelo, o qual é atingido pela execução de múltiplos \cores simultaneamente. Essas novas arquiteturas são classificadas de acordo com a maneira com que conseguem manipular os dados. São elas:
 \begin{inlinelist}
     \item \sisd;
     \item \simd;
     \item \misd;
     \item \mimd.
 \end{inlinelist}
-Neste trabalho, as mais relevantes são as arquiteturas que suportam cargas de trabalho \mimd, as quais ainda podem ser divididas em multiprocessadores ou multicomputadores, como mostrado na Figura \ref{fig.mimd} \cite{tanenbaum:4ed}. 
+Neste trabalho, estamos interessados nas arquiteturas que suportam cargas de trabalho \mimd, as quais ainda podem ser divididas em multiprocessadores ou multicomputadores, como mostrado na \autoref{fig.mimd}~\cite{tanenbaum:4ed}.
+\todo{Sobre a fig mimd, não precisa ser agora mas: mudar o texto nas imagens para pt-br}
 
-No presente trabalho, destaca-se a classe de processadores \lw, que pode ser classificada como \mpsoc. \Lws tem como objetivo atrelar o alto poder de processamento paralelo com eficiência energética. Para isso sua arquitetura segue as seguintes características:
+Neste contexto, a classe de processadores \lws destacam-se por atrelas alto poder de processamento paralelo com eficiência energética. Os \lws são classificados como \mpsoc e suas arquiteturas apresentam as seguintes características:
 \begin{enumerate}[label=(\roman*)]
-    \item Integrar centenas ou milhares de núcleos de processamento operando a baixas frequências em um único chip;
-    \item Operar sobre \mimd;
+    \item Integrar de centenas à milhares de núcleos de processamento operando a baixas frequências em um único \chip;
+    \item Processar cargas de trabalho \mimd;
     \item Organizar os núcleos em conjuntos, denominados \clusters, para compartilhamento de recursos locais;
     \item Utilizar \nocs para transferência de dados entre núcleos ou \clusters;
-    \item Possuir sistemas de memória distribuídos e restritivos, com pequenas memórias locais;
+    \item Possuir sistemas memória distribuída restritivos, compostos por pequenas memórias locais; e
     \item Apresentar componentes heterogêneos (\cclusters e \ioclusters).
 \end{enumerate}
 
-
-\begin{figure}[bt]
+\begin{figure}[t]
     \centering
     \includesvg[width=0.9\linewidth]{content/images/mimd.svg}
-    \caption{(a) um multiprocessador de memória compartilhada. (b) um multicomputator com troca de mensagens. (c) um sistema distribuído de grande escala.\cite{tanenbaum:4ed}}\label{fig.mimd}
+    \caption{(a) um multiprocessador de memória compartilhada. (b) um multicomputator com troca de mensagens. (c) um sistema distribuído de grande escala~\cite{tanenbaum:4ed}.}
+    \label{fig.mimd}
 \end{figure}
 
-Alguns exemplos comerciais bem sucedidos de \lws são o \mppa \cite{dinechin:2013}, PULP \cite{pulp} e \taihulight \cite{fu2016sunway}. Uma visão conceitual da arquitetura de um \lw é ilustrada pela Figura \ref{fig.lw-overview}.
+Alguns exemplos comerciais bem sucedidos de \lws são o \mppa~\cite{dinechin:2013}, PULP~\cite{pulp} e \taihulight~\cite{fu2016sunway}.
 
-Mais detalhadamente, para o desenvolvimento deste trabalho será utilizado o processador \mppa. A Figura \ref{fig.arch-mppa} apresenta uma visão geral do processador e suas peculiaridades, tais como:
+Especificamente, para o desenvolvimento deste trabalho será utilizado o processador \mppa. A \autoref{fig.arch-mppa} apresenta uma visão geral do processador e suas peculiaridades, tais como:
 
 \begin{enumerate}[label=(\roman*)]
     \item integrar 288 núcleos de baixa frequência em um único chip;
-    \item organizar os núcleos em 20 conjuntos (\clusters) para compartilhamento de recursos locais;
-    \item utilizar 2 \nocs para transferência de dados entre \clusters;
-    \item possuir um sistema de memória distribuída composto por pequenas memórias locais, \eg  \sram de 2 MB;
+    \item organizar os núcleos em 20 \clusters;
+    \item utilizar 2 \nocs para transferência de dados entre \clusters, uma para controle e outra para dados;
+    \item possuir um sistema de memória distribuída composto por pequenas memórias locais, \eg \sram de 2 MB;
     \item não dispor de coerência de \cache;
-    \item apresentar componentes heterogêneos, \eg \clusters destinados à computação ou comunicação com periféricos (\cclusters e \ioclusters, respectivamente).
+    \item apresentar componentes heterogêneos, \eg \clusters destinados à computação (\cclusters) ou comunicação com periféricos (\ioclusters).
 \end{enumerate}
 
-\begin{figure}[bt]
+\begin{figure}[t]
     \centering
     \includegraphics[width=0.6\linewidth]{content/images/arch-mppa-gs.png}
-    \caption{Visão arquitetural do processador \mppa \cite{penna:sbesc19}}\label{fig.arch-mppa}
+    \caption{Visão arquitetural do processador \mppa~\cite{penna:sbesc19}.}
+    \label{fig.arch-mppa}
 \end{figure}
 
-\section{\nanvixos}\label{sec.nanvixos}
+\section{\nanvixos}
+\label{sec.nanvixos}
 
-O \nanvix\footnote{Disponível em https://github.com/nanvix} é um \os distribuído e de propósito geral que busca equilibrar desempenho, portabilidade e programabilidade para \lws \cite{penna:sbesc19}. O \nanvix é estruturado em 3 camadas de \kernel. São elas:
+O \nanvix~\footnote{Disponível em https://github.com/nanvix} é um \os distribuído e de propósito geral que busca equilibrar desempenho, portabilidade e programabilidade para \lws~\cite{penna:sbesc19}. O \nanvix é estruturado em três camadas de \kernel. São elas:
 \begin{description}
     \item [\nanvix \hal]
-         é a camada mais baixa que abstrai e provê o gerenciamento dos recursos de \hardware sobre uma visão comum \cite{penna:hal}. Entre esses recursos estão: \cores, \tlbs, \cache, \mmu, \noc, interrupções, memória virtual, recursos de \io. De maneira geral, esta camada provê visões a nivel de \core, \cluster e comunicação/sincronização entre \clusters \cite{penna:thesis}. A Figura \ref{fig.hal-overview} ilustra a estrutura interna da \hal do \nanvix.
-    \item [\nanvix \Assymetric \Microkernel]
-        é a camada intermediária que provê gerenciamento de recursos e os serviços mínimos de um \os em um \cluster. Entre esses serviços se encontram a comunição intercluster, gerenciamento de \threads e memória, controle de acesso à memória e interface para chamadas de sistema. As chamadas de sistema podem ser executadas localmente, caso acessem dados \rdo ou alterem estruturas internas do \core, ou remotamente pelo \mcore, que atende à requisição e libera o \score requisitante ao seu término \cite{penna:thesis}. Essa característica adjetiva o \microkernel como assimétrico. A Figura \ref{fig.microkernel-overview} ilustra a estrutura interna do \microkernel do \nanvix.    
+         é a camada mais baixa que abstrai e provê o gerenciamento dos recursos de \hardware sobre uma visão comum~\cite{penna:hal}. Entre esses recursos estão: \cores, \tlbs, \cache, \mmu, \noc, interrupções, memória virtual e recursos de \io. De maneira geral, esta camada provê abstrações ao nivel do \core, \cluster e comunicação/sincronização entre \clusters~\cite{penna:thesis}. A Figura \ref{fig.hal-overview} ilustra a estrutura interna da \hal do \nanvix.
+    \item [\nanvix \Microkernel]
+        é a camada intermediária que provê gerenciamento de recursos e os serviços mínimos de um \os em um \cluster. Entre esses serviços se encontram a comunição entre processos, gerenciamento de \threads e memória, controle de acesso à memória e interface para chamadas de sistema. As chamadas de sistema podem ser executadas localmente, caso acessem dados \rdo ou alterem estruturas internas do \core, ou remotamente pelo \mcore, que atende à requisição e libera o \score requisitante ao término da chamada~\cite{penna:thesis}. Essa característica adjetiva o \microkernel como assimétrico. A Figura \ref{fig.microkernel-overview} ilustra a estrutura interna do \microkernel do \nanvix.
     \item [\nanvix \Multikernel]
-        é a camada superior que provê os serviços de um \os e dispõe uma visão a nível do processador em si. Os serviços são hospedados em \clusters \ie isolados das aplicações de usuário e atendem as requisições vindas dos processos de usuário através de um modelo cliente-servidor. As requisições e respostas são enviadas/recebidas através de passagem de mensagem via \noc. Os serviços dessa camada podem ser entendidos como fontes de informação que mantém a execução dos processos consistentes no processador, tendo em vista a natureza distribuída da memória nessas arquiteturas. Nesses serviços estão incluídos mecanismos de \spawn de processos e obtenção de nomes lógicos dos processos (a fim de localizá-los para comunicação), por exemplo.
+        é a camada superior que provê os serviços mais complexos de um \os e dispõe uma visão a nível do processador em si. Os serviços são hospedados em \clusters, \ie isolados das aplicações de usuário. Os serviços atendem as requisições vindas dos processos de usuário através de um modelo cliente-servidor. As requisições e respostas são enviadas/recebidas através de passagem de mensagem via \noc. Os serviços dessa camada podem ser entendidos como fontes de informação que mantém a execução dos processos consistentes no processador, tendo em vista a natureza distribuída da memória nessas arquiteturas. Alguns serviços incluídos no \nanvix são mecanismos de \spawn de processos e gerenciamento de nomes lógicos dos processos à fim a localização dos processos no processador.
 \end{description}
 
-\begin{figure}[bt]
+\begin{figure}[t]
     \centering
     \includesvg[width=0.8\linewidth]{content/images/hal.svg}
-    \caption{Estrutura interna da \hal do \nanvix \cite{penna:thesis}}\label{fig.hal-overview}
+    \caption{Estrutura interna da \hal do \nanvix~\cite{penna:thesis}.}
+    \label{fig.hal-overview}
 \end{figure}
 
-\begin{figure}[bt]
+\begin{figure}[t]
     \centering
     \includesvg[width=0.8\linewidth]{content/images/microkernel.svg}
-    \caption{Estrutura interna do \microkernel do \nanvix \cite{penna:thesis}}\label{fig.microkernel-overview}
+    \caption{Estrutura interna do \microkernel do \nanvix~\cite{penna:thesis}.}
+    \label{fig.microkernel-overview}
 \end{figure}
 
 Em sua abordagem original, os processos no \nanvix são estáticos, \ie cada \cluster possui apenas um processo. Desse modo, uma vez que o processo inicia sua execução em um \cluster, este finalizará a execução no mesmo \cluster. 
-Isso torna o processo dependente do \cluster que o executa \eg a comunicação entre processos está atrelada aos \clusters nos quais os processos são executados e não aos processos em si. A falta de mobilidade dos processos nesse modelo pode trazer sobrecargas ao processador e afeta o suporte a multi-aplicação. Por exemplo, a comunicação entre \clusters próximos é mais rápida e resulta em menor consumo energético do processador. Sendo assim, melhorar a mobilidade e a disposição dos processos no processador \ie viabilizar a migração de processos entre \clusters, possibilitaria melhorar o gerenciamento dos recursos do mesmo. Desse modo, este trabalho explora justamente essa dissassociação do \hardware com a execução do processo. Isso com o objetivo de desvincular o processo do \cluster que o executa, o que, por fim, aumentaria a mobilidade dos processos \ie a migração deles entre os \clusters.
+Isso torna o processo dependente do \cluster que o executa \eg a comunicação entre processos está atrelada aos \clusters nos quais os processos são executados e não aos processos em si. A falta de mobilidade dos processos nesse modelo pode trazer sobrecargas ao processador e afeta diretamente o suporte à multi-aplicação. Por exemplo, a comunicação entre \clusters próximos é mais rápida e resulta em menor consumo energético do processador. Sendo assim, melhorar a mobilidade e a disposição dos processos no processador possibilitaria melhorar o gerenciamento dos recursos do mesmo. Um exemplo de mobilidade é viabilizar a migração de processos entre \clusters. Neste contexto, este trabalho explora essa dissassociação entre o processo e o \cluster que o executa. Deste movo, nós aumentamos a mobilidade dos processos, podendo permitir a migração de processos entre os \clusters do processador.
 
 \subsection{Abstrações de Comunicação do \nanvix}
-O \nanvix dispõe de três abstrações de comunicações para transferência de dados e sincronização entre \clusters \cite{penna:thesis}. Nas próximas Seções serão detalhadas as três abstrações.
+
+O \nanvix dispõe de três abstrações de comunicações para transferência de dados e sincronização entre \clusters~\cite{penna:thesis}. Nas próximas Seções serão detalhadas as três abstrações.
 
 \begin{figure}[tb]
 	\centering
@@ -99,34 +104,37 @@ O \nanvix dispõe de três abstrações de comunicações para transferência de
 \end{figure}
 
 \subsubsection{\sync}
-Esta abstração é a que da o suporte a sincronização inter-kernel. Através dela um processo pode esperar um sinal, que pode ser disparado por outro processo remotamente através das interfaces \noc. Essa abstração é muito utilizada na inicialização do sistema para garantia de sincronização entre os subsistemas \cite{penna:thesis}.
 
-O \sync pode ser operado duas maneiras distintas: o modo $1:N$ e $N:1$. No modo $1:N$ (Figura \ref{fig.sync1n}) um nó envia uma notificação a múltiplos nós, que estão esperando pelo sinal. Em contraste, no moso $N:1$ (Figura \ref{fig.syncn1}), múltiplos nós enviam uma notificação a um único nó \cite{penna:thesis}.
+A abstração \sync suporta a sincronização entre kernels. Através dela um processo pode esperar um sinal, que pode ser disparado por outro processo remotamente através das interfaces \noc. Essa abstração é muito utilizada na inicialização do sistema para garantir um estado inicial consistente dos subsistemas do \os~\cite{penna:thesis}.
 
-\begin{figure}[bt]
+O \sync pode ser operado duas maneiras distintas: o modo $1:N$ e $N:1$. No modo $1:N$ (\autoref{fig.sync1n}) um nó envia uma notificação a múltiplos nós, que estão esperando pelo sinal. Em contraste, no modo $N:1$ (\autoref{fig.syncn1}), múltiplos nós enviam uma notificação a um único nó~\cite{penna:thesis}.
+
+\begin{figure}[t]
     \centering
     \includesvg[width=0.5\linewidth]{content/images/mailbox.svg}
-    \caption{Fluxo de execução da abstração \mailbox \cite{penna:thesis}}\label{fig.mailbox}
+    \caption{Fluxo de execução da abstração \mailbox~\cite{penna:thesis}}
+    \label{fig.mailbox}
 \end{figure}
 
 \subsubsection{\mailbox}
-Esta abstração é responsável pelo suporte à troca de mensagens de controle. Isso através de troca assíncrona de pequenas mensagens de tamanho fixo. A abstração segue a semântica $N:1$ e o funcionamento é o seguinte: um nó (destinatário da mensagem) possuí um \mailbox, do qual lê mensagens, e múltiplos nós (remetentes da mensagem) podem escrever nesse \mailbox \cite{penna:thesis}. A Figura \ref{fig.mailbox} ilustra o fluxo de execução da \mailbox.
 
-\begin{figure}[b]
+A abstração \mailbox é responsável pelo suporte ao envio de mensagens de controle através da troca de pequenas mensagens de tamanho fixo. A abstração segue a semântica $N:1$ e funciona da seguinte forma: um nó (destinatário da mensagem) possuí uma \mailbox, da qual lê mensagens, e múltiplos nós (remetentes da mensagem) podem escrever nessa \mailbox~\cite{penna:thesis}. A \autoref{fig.mailbox} ilustra o fluxo de execução da \mailbox.
+
+\begin{figure}[t]
     \centering
     \includesvg[width=0.5\linewidth]{content/images/portal.svg}
     \caption{Fluxo de execução da abstração \portal \cite{penna:thesis}}\label{fig.portal}
 \end{figure}
 
 \subsubsection{\portal}
-Esta abstração é reponsável pela troca de largas mensagens e segue a semântica $1:1$. A abstração pode ter uso em diversos cenários que exigem grandes transferências de dados entre \clusters \cite{penna:thesis}. A Figura \ref{fig.portal} ilustra o fluxo de execução da abstração \portal.
-    
+
+A abstração portal suporta a troca de mensagens grandes e segue a semântica $1:1$. A abstração pode ter uso em diversos cenários que exigem grandes transferências de dados entre \clusters~\cite{penna:thesis}. A \autoref{fig.portal} ilustra o fluxo de execução da abstração \portal.
 
 \section{Virtualização e Migração de Processos}
 \label{sec.virtualizacao}
 
-A virtualização pode ser entendida como a desvinculação da execução de uma aplicação (ou até um \so) dos recursos físicos responsáveis pelo seu funcionamento. O desacoplamento entre aplicação e \hardware, quando há virtualização, pode permitir, dependendo da camada em que esta é aplicada, a existência simultânea e isolada de múltiplas instâncias de usuários ou \oss (\vms), que compartilham e concorrem pelos mesmos recursos de \hardware reais. Reaproveitamento de recursos, portabilidade e segurança são algumas vantagens proporcionadas pela virtualização.
+A virtualização é a desvinculação da execução de uma aplicação (ou até um \so) dos recursos físicos responsáveis pelo seu funcionamento. O desacoplamento entre aplicação e \hardware, quanto há virtualização, pode permitir, dependendo da camada em que esta é aplicada, a existência simultânea e isolada de múltiplas instâncias de usuários ou \oss (\vms), que compartilham e concorrem pelos mesmos recursos de \hardware reais. Reaproveitamento de recursos, portabilidade e segurança são algumas vantagens proporcionadas pela virtualização.
 
-Em ambientes \cloud é muito comum a utilização de \vms para execução de tarefas nos servidores. Com o auxílio da virtualização, um único servidor pode alocar diversas \vms, possivelmente com \sos distintos. 
+Em ambientes \cloud é muito comum a utilização de \vms para execução de tarefas nos servidores. Com o auxílio da virtualização, um único servidor pode alocar diversas \vms, possivelmente com \oss distintos. 
 
-Neste trabalho, o foco é a virtualização de processos. Isto é, o objetivo é desacoplar a execução de uma aplicação do \cluster do \lw que a executa. Na abordagem original do \nanvix, o processo é dependente do local em que é alocado, o que afeta o suporte a migração e diminui a eficiência computacional, como detalhado na Seção \ref{sec.nanvixos}. Nesse contexto, a virtualização é útil justamente para aumentar a mobilidade dos processos, o que possibilitaria o gerenciamento da distribuição dos processos no processador. Particularmente, este trabalho trabalho explora um modelo mais leve de virtualização para \lw baseada em contêineres. Contêineres são executados pelo \os como aplicações virtuais e não incluem um \os convidado, resultando em um menor impacto no sistema de memória e requerendo menor complexidade do \hardware \cite{thalheim2018cntr, sharma2016containers}.
+O foco deste trabalho é a virtualização de processos. Isto é, o objetivo é desacoplar a execução de uma aplicação do \cluster do \lw que a executa. Na abordagem original do \nanvix, o processo é dependente do \cluster em que é alocado, o que afeta o suporte a migração e diminui a eficiência computacional, como detalhado na \autoref{sec.nanvixos}. Nesse contexto, a virtualização é útil por aumentar a mobilidade dos processos, o que possibilitaria o gerenciamento da distribuição dos processos no processador. Especificamente, este trabalho explora um modelo mais leve de virtualização para \lws baseada em contêineres. Contêineres são executados pelo \os como aplicações virtuais e não incluem um \os convidado, resultando em um menor impacto no sistema de memória e requisitando menor complexidade do \hardware~\cite{thalheim2018cntr, sharma2016containers}.

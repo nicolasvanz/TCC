@@ -3,11 +3,11 @@
 \chapter{Introdução}
 \label{chap.intro}
 
-Durante anos o aumento do desempenho de sistemas computacionais esteve intrinsecamente associada ao aumento da frequência interna dos processadores e avanços na tecnologia dos semicondutores. Essas técnicas se mantiveram eficientes até o momento em que a dissipação de calor interna dos \chips necessária para viabilizar o aumento da frequência atingiu um limite físico. Este fato associado com o fim iminente da lei de Moore \cite{moore:1965}, a exploração de novas maneiras de aumentar o poder computacional do sistemas se tornou uma prioridade.
+Durante muitos anos, o aumento do desempenho de sistemas computacionais esteve intrinsecamente associado ao aumento da frequência de relógio dos processadores e avanços na tecnologia dos semicondutores. Essas técnicas se mantiveram eficientes até o momento em que a dissipação de calor interna dos \chips necessária para viabilizar o aumento da frequência atingiu um limite físico. Este fato associado com o fim iminente da lei de Moore \cite{moore:1965}, fez com que a exploração de novas maneiras de aumentar o poder computacional do sistemas se tornasse uma prioridade.
 
-Como alternativa a limitação ao aumento da frequência, foram desenvolvidos processadores com vários núcleos de processamento, os \multicores. O desempenho dos processadores \multicores não dempendem mais apenas das altas frequências de relógia, recorrendo ao paralelismo como principal vantagem aos processadores \singlecore. Deste modo, mesmo com a estagnação da frequência nos processadores, esse aumento na quantidade de \cores em conjunto com outras melhorias no \hardware, como o aumento no número de transistores nos \chips, aperfeiçoamento dos preditores de desvio e adaptações na hierarquia de memória, o desempenho dos sistemas computacionais continuaram a aumentar.
+Como alternativa à limitação do aumento da frequência de relógio, foram desenvolvidos processadores com vários núcleos de processamento, os \multicores. O desempenho dos processadores \multicore não dependem mais apenas das altas frequências de relógio, recorrendo ao paralelismo como principal vantagem aos processadores \singlecore. Deste modo, mesmo com a estagnação da frequência de relógio nos processadores, esse aumento na quantidade de \cores em conjunto com outras melhorias no \hardware, como o aumento no número de transistores nos \chips, aperfeiçoamento dos preditores de desvio e adaptações na hierarquia de memória, o desempenho dos sistemas computacionais continuaram a aumentar.
 
-Contudo, nos últimos anos, a eficiência energética dos sistemas computacionais revela-se tão importante quanto seu desempenho. Segundo o \darpa, a potência recomendada para um supercomputador atingir o \exascale ($10^{18}$ \flops), é de 20 MW, o que é inviável para a realidade dos sistemas computacionais modernos~\cite{darpa:exascale}. Nesse cenário surge a classe dos processadores \lws. Esses processadores são classificados como \mpsocs e tem como objetivo atrelar alto desempenho à eficiência energética~\cite{francesquini2015}. Para atingir esse objetivo, a arquitetura dos \lws é caracterizada por:
+Contudo, a eficiência energética dos sistemas computacionais revelou-se tão importante quanto seu desempenho. Segundo o \darpa~\cite{darpa:exascale}, a potência recomendada para um supercomputador atingir o \exascale ($10^{18}$ \flops), é de 20 MW, o que é inviável para a realidade dos sistemas computacionais modernos. Nesse cenário, observou-se o surgimento de uma nova classe dos processadores denominada \lws. Esses processadores são classificados como \mpsocs e tem como objetivo atrelar alto desempenho à eficiência energética~\cite{francesquini2015}. Para atingir esse objetivo, a arquitetura dos \lws é caracterizada por:
 \begin{enumerate}[label=(\roman*)]
     \item Integrar de centenas à milhares de núcleos de processamento operando a baixas frequências em um único \chip;
     \item Processar cargas de trabalho \mimd;
@@ -25,21 +25,21 @@ A \autoref{fig.lw-overview} ilustra uma visão conceitual da arquitetura de um \
     \label{fig.lw-overview}
 \end{figure}
 
-Apesar dos processadores \lws serem uma alternativa às abordagens tradicionais no que se refere ao aumento de desempenho, as características arquiteturais introduzem severos problemas de programabilidade ao desenvolvimento de \software de aplicações paralelas~\cite{Castro-PARCO:2016}. Entre eles, podemos citar:
+Apesar dos processadores \lw serem uma alternativa às abordagens tradicionais no que se refere ao aumento de desempenho, as características arquiteturais introduzem severos problemas de programabilidade ao desenvolvimento de \software de aplicações paralelas~\cite{Castro-PARCO:2016}. Entre eles, podemos citar:
 
 \begin{enumerate}[label= (\roman*)]
     \item Necessidade do uso de um modelo de programação híbrida que força troca de informação entre os \clusters exclusivamente por troca de mensagens via \noc enquanto a comunicação interna em um \cluster ocorre sobre memória compartilhada~\cite{kelly2013};
-    \item Presença de um sistema de memória distribuída restritivo, formado por multiplos espaços de endereçamento, exige o particionamento do conjunto de dados em blocos pequenos para manipulação nas pequenas memórias locais. A manipulação deve ocorrer um bloco de cada vez, necessitando a troca explicita de blocos com uma memória remota~\cite{Castro-PARCO:2016};
+    \item Presença de um sistema de memória distribuída restritivo, formado por múltiplos espaços de endereçamento, exige o particionamento do conjunto de dados em blocos pequenos para manipulação nas pequenas memórias locais. A manipulação deve ocorrer um bloco de cada vez, necessitando a troca explicita de blocos com uma memória remota~\cite{Castro-PARCO:2016};
     \item Maiores latências e gargalos de comunicação através da \noc comparado com comunicação em memória compartilhada;
-    \item Falta de suporte de coerência de cache em \hardware para economia de energia, exiging do programador a gerência da cache via \software;
-    \item Configuração heterogênea do \hardware, como \clusters destinados a funcionalidades específicas (computação útil e I/O), dificulta o desenvolvimento de aplicações;
+    \item Falta de suporte de coerência de cache em \hardware para economia de energia, exiging do programador a gerência da cache via \software; e
+    \item Configuração heterogênea do \hardware, como \clusters destinados a funcionalidades específicas (computação útil e I/O), dificulta o desenvolvimento de aplicações.
 \end{enumerate}
 
 Atualmente, estudos exploram soluções para amenizar o impacto das arquiteturais sobre o desenvolvimento de \software. \oss distribuídos sobresaem-se por proverem um ambiente de programação mais robusto e rico~\cite{asmussen_m3:_2016, kluge_operating_2014, penna:sbesc19}. Dentre essas soluções, o modelo de um \os distribuído baseado em uma abordagem \multikernel descata-se por aderir a natureza distribuída e restritiva dos \lws~\cite{penna2017-1,penna2017-2,penna2019}.
 
 Nesse cenário, a virtualização dos recursos do processador é importante para o suporte a multi-aplicação e melhor uso do \hardware disponível~\cite{vanz2022virtualizaccao}. Contudo, as características arquiteturais dos \lws, especialmente relacionadas à memória, inviabilizam um suporte complexo para virtualização. Por exemplo, máquinas virtuais utilizadas em ambientes \cloud possuem à disposição centenas de GBs de memória para isolar duplicatas inteiras do \os com a ajuda de virtualização a nível de instrução~\cite{sharma2016containers}. Nos \lws, as pequenas memórias locais e a simplificação do \hardware para reduzir o consumo energético restringem os tipos de virtualização suportados.
 
-Neste contexto, este trabalho explora um modelo mais leve de virtualização para \lws baseada em contêineres. Contêineres são executados pelo \os como aplicações virtuais e não incluem um \os convidado, resultando em um menor impacto no sistema de memória e requisitando menor complexidade do \hardware~\cite{thalheim2018cntr, sharma2016containers}.
+Neste contexto, este trabalho explora um modelo mais leve de virtualização para \lws baseado no conceito de contêineres. Contêineres são executados pelo \os como aplicações virtuais e não incluem um \os convidado, resultando em um menor impacto no sistema de memória e requisitando menor complexidade do \hardware~\cite{thalheim2018cntr, sharma2016containers}.
 
 \section{Objetivos}
 \label{sec.goals}
@@ -58,10 +58,10 @@ O objetivo principal deste trabalho é virtualizar os recursos internos de um \c
     \item Propor um modelo de virtualização adaptado às necessidades e restrições dos \lws;
     \item Implementar o modelo proposto no \nanvix, um \so distribuído para \lws;
     \item Analisar a corretude da solução através do desenvolvimento de \benchmarks que avaliem a migração de processos;
-    \item Analisar o impacto do modelo de virtualização nos diversos níveis de abstração do \nanvix;
+    \item Analisar o impacto do modelo de virtualização nos diversos níveis de abstração do \nanvix.
 \end{enumerate}
 
 \section{Organização do Trabalho}
 \label{sec.organization}
 
-Os próximos capítulos do trabalho estão organizadas da seguinte maneira. O \autoref{chap.background} apresenta conceitos fundameitais para o entendimento do trabalho, tais como um detalhamento da arquitetura dos \lws e do \nanvix. O \autoref{chap.related-work} discute os trabalhos relacionados. O \autoref{chap.dev.virtualizacao} expões a proposta e detalhes de desenvolvimento da solução. O \autoref{chap.results} exibe e discute os resultados das avaliações projetadas. Por fim, O \autoref{chap.conclusions} apresenta as conclusões obtidas.
+Os próximos capítulos do trabalho estão organizadas da seguinte maneira. O \autoref{chap.background} apresenta conceitos fundameitais para o entendimento do trabalho, tais como um detalhamento da arquitetura dos \lws e do \nanvix. O \autoref{chap.related-work} discute os trabalhos relacionados. O \autoref{chap.dev.virtualizacao} expõe a proposta deste trabalho de conclusão e os detalhes de desenvolvimento da solução a ser implementada. O \autoref{chap.results} exibe e discute alguns resultados preliminares já obtidos. Por fim, o \autoref{chap.conclusions} apresenta as conclusões deste trabalho e pontua os próximos passos da pesquisa.

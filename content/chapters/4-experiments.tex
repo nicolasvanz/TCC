@@ -2,7 +2,12 @@
 \chapter{Resultados Parciais}
 \label{chap.results}
 
-\begin{figure}[t]
+A solução foi avaliada em etapas anteriores ao desenvolvimento atual do trabalho e os resultados seguintes englobam apenas o susbsistema de \threads do \nanvix. 
+\todo{Seria bom colocar um capítulo de metodologia com perguntas que gostariamos de responder e detalhamento dos experimentos}
+%
+Para avaliar o impacto das mudanças feitas para a virtualização, foram desenvolvidos experimentos sobre a manipulação de \threads e suporte à migração de processos no \nanvix. Todos os experimentos foram executados no processador \mppa e os resultados mostrados são valores médios de 100 replicações de cada experimento para garantir 95\% de confiança estatística, resultando em um desvio padrão inferior a 1\%.
+
+\begin{figure}[b]
 	\centering
 	\subcaptionminipage[fig.fork-join]%
                    {.5\textwidth}
@@ -15,11 +20,6 @@
                    {\includegraphics[width=\textwidth]{content/images/fork-join-kernel-counters.pdf}}
 	\caption{Impactos da virtualização sobre a manipulação de \threads.\label{fig.threads}}%
 \end{figure}
-
-A solução foi avaliada em etapas anteriores ao desenvolvimento atual do trabalho e os resultados seguintes englobam apenas o susbsistema de \threads do \nanvix. 
-\todo{Seria bom colocar um capítulo de metodologia com perguntas que gostariamos de responder e detalhamento dos experimentos}
-
-Para avaliar o impacto das mudanças feitas para a virtualização, foram desenvolvidos experimentos sobre a manipulação de \threads e suporte à migração de processos no \nanvix. Todos os experimentos foram executados no processador \mppa e os resultados mostrados são valores médios de 100 replicações de cada experimento para garantir 95\% de confiança estatística, resultando em um desvio padrão inferior a 1\%.
 
 O experimento de manipulação de \threads mensura os impactos na criação e junção através de diferentes perspectivas. Especificamente, coletamos o tempo de execução, desvios e faltas ocorridas na \cache de dados e de instrução (\autoref{fig.threads}).
 Os resultados apresentam um aumento no desempenho das operações de manipulação quando utilizamos a \uarea porque exploramos melhor a localidade espacial dos dados, o que, consequentemente, diminui o número de faltas na \cache.

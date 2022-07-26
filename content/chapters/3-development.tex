@@ -1,11 +1,10 @@
 \chapter{Proposta de Virtualização e Migração de Processos para \textit{Lightweight Manycores}}
 \label{chap.dev.virtualizacao}
 
-Visando aumentar a independência dos processos no processador, este trabalho tem como objetivo projetar o suporte à virtualização e migração de processos em \lws. As características arquiteturais dos \lws, especialmente relacionadas à memória, inviabilizam um suporte complexo para virtualização. Por exemplo, máquinas virtuais utilizadas em ambientes \cloud possuem à disposição centenas de GBs de memória para isolar duplicatas inteiras de \oss com a ajuda de virtualização no nível de instrução~\cite{sharma2016containers}. Nos \lws, as pequenas memórias locais e a simplificação do \hardware para redução do consumo energético restringem os tipos de virtualização suportados nesses ambientes computacionais.
+Este trabalho de conclusão propõe-se a aumentar a independência dos processos no processador através do projeto e desenvolvimento do suporte à virtualização e migração de processos em \lws. Ambientes \cloud, nos quais o sistema de memória é de alta capacidade, usufruem da utilização de \vms para isolar duplicatas inteiras de \oss com o auxílio da virtualização a nível de instrução~\cite{sharma2016containers}. Em oposição, \lws não dispõem de centenas de GBs de memória, mas sim pequenas memórias locais. Isso associado a outras simplificações de \hardware faz com que algumas técnicas de virtualização sejam impraticáveis nesses ambientes computacionais.
 
-Neste contexto, o presente trabalho explora um modelo de virtualização baseado em contêineres adaptado para \lws. Contêineres são executados pelo \os como aplicações virtuais e não incluem um \os convidado, resultando em um menor impacto no sistema de memória e requisitando menor complexidade do \hardware~\cite{thalheim2018cntr, sharma2016containers}.
 
-\todo[inline]{Texto acima foi copiado/colado? Reescrever para ficar diferente.}
+Nesse contexto, visando atenuar o impacto da virtualização no sistema de memória, o presente trabalho explora um modelo de virtualização mais leve, baseado em contêineres adaptado para \lws. O \so executa os contêineres como aplicações virtuais. Sendo assim, não há a necessidade de um \os convidado, resultando em um menor impacto no sistema de memória e requisitando menor complexidade do \hardware~\cite{thalheim2018cntr, sharma2016containers}.
 
 \begin{figure}[t]
 	\centering
@@ -35,14 +34,14 @@ Neste contexto, o presente trabalho explora um modelo de virtualização baseado
     A \autoref{fig.nanvix.without-uarea} ilustra como os subsistemas do \nanvix são originalmente estruturados. Não há uma divisão explícita do que são dados para funcionamento interno do \os ou dependências locais do processo.
     Esta abordagem torna algumas das funcionalidades do \os onerosas porque ela dificulta o acesso às informações do processo e impacta partes independentes do sistema, \eg migração e segurança dos processos.
 
-    Além disso, a geração original de um executável do \nanvix compila todos os níveis em bibliotecas estáticas (\hal, \microkernel, \libnanvix, \ulibc e \multikernel) e às junta com a aplicação do usuário de forma a misturar o que é \kernel do que é usuário.
+    Além disso, a geração original de um executável do \nanvix compila todos os níveis em bibliotecas estáticas (\hal, \microkernel, \libnanvix, \ulibc e \multikernel) e as junta com a aplicação do usuário de forma a misturar o que é \kernel do que é usuário.
     %
     Visando a separação das informações entre usuário e \kernel, nós adaptamos o \script de ligação original do \nanvix. Na nova versão, as seções .text, .data, .bss e .rodata dos arquivos binários compilados são renomeados, especificando qual camada de abstração tal arquivo pertence. Desta forma, é possível identificar dados e instruções de cada camada do \nanvix, assim como as informações do usuário. Sendo assim, são geradas seções .text, .data, .rodata e .bss específicas para o \kernel e usuário. Portanto, todas as informações de \kernel, alocadas nos endereços mais baixos da memória, são isoladas das informações de aplicação, alocadas nos endereços mais altos da memória. Neste processo, são exportadas algumas constantes que apontam onde começam e terminam as partes do binário que são relacionadas ao \kernel e à aplicação. Essas constantes permitem a manipulação e gerenciamento mais precisos dos segmentos de memória do \kernel e da aplicação.
     
-    Através dessa estratégia, todos os \clusters passam a ter a mesma organização interna de \kernel, facilitando a migração. Ou seja, a migração pode ser feita através do \textit{salvamento} dos dados e instruções da aplicação de um \cluster e \textit{restauração} dos mesmos nas respectivas posições em outro \cluster. Essas posições são identificados pelas constantes exportadas no processo de compilação. Com isso, evita-se manipulações mais complexas do processo como a busca em várias regiões de memória para montar o estado interno do processo.
+    Através dessa estratégia, todos os \clusters passam a ter a mesma organização interna de \kernel, facilitando a migração. Ou seja, a migração pode ser feita através do \textit{salvamento} dos dados e instruções da aplicação de um \cluster e \textit{restauração} dos mesmos nas respectivas posições em outro \cluster. Essas posições são identificadas pelas constantes exportadas no processo de compilação. Com isso, evita-se manipulações mais complexas do processo como a busca em várias regiões de memória para montar o estado interno do processo.
 
-    \mytodo{colocar alguma parte do linker?}
-    \mytodo{Souto: ngm vai entender o código do linker mas seria legal colocar e discutir melhor sobre as constantes.}
+    % \mytodo{colocar alguma parte do linker?}
+    % \mytodo{Souto: ngm vai entender o código do linker mas seria legal colocar e discutir melhor sobre as constantes.}
     
 \section{\textit{User Area}}
 \label{sec.uarea}

@@ -35,7 +35,7 @@ Apesar dos processadores \lw serem uma alternativa às abordagens tradicionais n
     \item Configuração heterogênea do \hardware, como \clusters destinados a funcionalidades específicas (computação útil e I/O), dificulta o desenvolvimento de aplicações.
 \end{enumerate}
 
-Atualmente, estudos exploram soluções para amenizar o impacto das arquiteturais sobre o desenvolvimento de \software. \oss distribuídos sobresaem-se por proverem um ambiente de programação mais robusto e rico~\cite{asmussen_m3:_2016, kluge_operating_2014, penna:sbesc19}. Dentre essas soluções, o modelo de um \os distribuído baseado em uma abordagem \multikernel descata-se por aderir a natureza distribuída e restritiva dos \lws~\cite{penna2017-1,penna2017-2,penna2019}.
+Atualmente, estudos exploram soluções para amenizar o impacto das arquiteturais sobre o desenvolvimento de \software. \oss distribuídos sobresaem-se por proverem um ambiente de programação mais robusto e rico~\cite{asmussen_m3:_2016, kluge_operating_2014, penna:sbesc19}. Dentre essas soluções, o modelo de um \os distribuído baseado em uma abordagem \multikernel destaca-se por aderir a natureza distribuída e restritiva dos \lws~\cite{penna2017-1,penna2017-2,penna2019}.
 
 Nesse cenário, a virtualização dos recursos do processador é importante para o suporte a multi-aplicação e melhor uso do \hardware disponível~\cite{vanz2022virtualizaccao}. Contudo, as características arquiteturais dos \lws, especialmente relacionadas à memória, inviabilizam um suporte complexo para virtualização. Por exemplo, máquinas virtuais utilizadas em ambientes \cloud possuem à disposição centenas de GBs de memória para isolar duplicatas inteiras do \os com a ajuda de virtualização a nível de instrução~\cite{sharma2016containers}. Nos \lws, as pequenas memórias locais e a simplificação do \hardware para reduzir o consumo energético restringem os tipos de virtualização suportados.
 
@@ -60,6 +60,9 @@ O objetivo principal deste trabalho é virtualizar os recursos internos de um \c
     \item Analisar a corretude da solução através do desenvolvimento de \benchmarks que avaliem a migração de processos;
     \item Analisar o impacto do modelo de virtualização nos diversos níveis de abstração do \nanvix.
 \end{enumerate}
+
+\section{Contribuições}
+Esse trabalho de conclusão propõe o suporte à virtualização e migração de processos no \nanvix. Parte desse trabalho foi publicado na \erad e recebeu o prêmio Aurora Cera de melhor artigo do Fórum de Iniciação Científica~\cite{vanz2022virtualizaccao}.
 
 \section{Organização do Trabalho}
 \label{sec.organization}

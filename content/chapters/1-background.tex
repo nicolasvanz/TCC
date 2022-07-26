@@ -16,9 +16,9 @@ Como alternativa para a continuidade nos avanços de poder computacional, foram 
     \item \mimd.
 \end{inlinelist}
 Neste trabalho, estamos interessados nas arquiteturas que suportam cargas de trabalho \mimd, as quais ainda podem ser divididas em multiprocessadores ou multicomputadores, como mostrado na \autoref{fig.mimd}~\cite{tanenbaum:4ed}.
-\todo{Sobre a fig mimd, não precisa ser agora mas: mudar o texto nas imagens para pt-br}
+% \todo{Sobre a fig mimd, não precisa ser agora mas: mudar o texto nas imagens para pt-br}
 
-Neste contexto, a classe de processadores \lws destacam-se por atrelas alto poder de processamento paralelo com eficiência energética. Os \lws são classificados como \mpsoc e suas arquiteturas apresentam as seguintes características:
+Neste contexto, a classe de processadores \lws destacam-se por atrelar alto poder de processamento paralelo com eficiência energética. Os \lws são classificados como \mpsoc e suas arquiteturas apresentam as seguintes características:
 \begin{enumerate}[label=(\roman*)]
     \item Integrar de centenas à milhares de núcleos de processamento operando a baixas frequências em um único \chip;
     \item Processar cargas de trabalho \mimd;
@@ -133,7 +133,7 @@ A abstração portal suporta a troca de mensagens grandes e segue a semântica $
 \section{Virtualização e Migração de Processos}
 \label{sec.virtualizacao}
 
-A virtualização é a desvinculação da execução de uma aplicação (ou até um \so) dos recursos físicos responsáveis pelo seu funcionamento. O desacoplamento entre aplicação e \hardware, quanto há virtualização, pode permitir, dependendo da camada em que esta é aplicada, a existência simultânea e isolada de múltiplas instâncias de usuários ou \oss (\vms), que compartilham e concorrem pelos mesmos recursos de \hardware reais. Reaproveitamento de recursos, portabilidade e segurança são algumas vantagens proporcionadas pela virtualização.
+A virtualização é a desvinculação da execução de uma aplicação (ou até um \so) dos recursos físicos responsáveis pelo seu funcionamento. O desacoplamento entre aplicação e \hardware pode permitir, dependendo da camada em que esta é aplicada, a existência simultânea e isolada de múltiplas instâncias de usuários ou \oss (\vms), que compartilham e concorrem pelos mesmos recursos de \hardware reais. Reaproveitamento de recursos, portabilidade e segurança são algumas vantagens proporcionadas pela virtualização.
 %
 Em ambientes \cloud é muito comum a utilização de \vms para execução de tarefas nos servidores. Com o auxílio da virtualização, um único servidor pode alocar diversas \vms, possivelmente com \oss distintos. 
 

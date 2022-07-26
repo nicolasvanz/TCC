@@ -3,7 +3,7 @@
 
 Neste capítulo serão mostradas técnicas e pesquisas que estão sendo desenvolvidas no que diz respeito à virtualização e migração de processos. Serão apresentados trabalhos relacionados, bem como serão evidenciadas as semelhanças e diferenças com o presente trabalho.
 
-Grande parte das pesquisas relacionadas a migração estão inseridas em ambientes \cloud. Nesses casos, os esforços estão voltados para redução do tempo total de migração, diminuição do \downtime~\cite{migration-linux-conteiners,clark2005live} e exploração das vantagens que a migração de processos oferece nesses ambientes computacionais. Entre elas podem-se citar:
+Grande parte das pesquisas relacionadas a migração estão inseridas em ambientes \cloud. Nesses casos, os esforços estão voltados para redução do tempo total de migração, diminuição do \downtime~\cite{migration-linux-conteiners,clark2005live} e exploração/otimização das vantagens que a migração de processos oferece nesses ambientes computacionais. Entre elas podem-se citar:
 \begin{enumerate}[label=(\roman*)]
     \item Balanceamento de carga~\cite{live-vm-migration-techniques,ada-things};
     \item Tolerância a falhas~\cite{fernando2019live};
@@ -12,12 +12,14 @@ Grande parte das pesquisas relacionadas a migração estão inseridas em ambient
     \item Manutenção de sistemas sem interrupções~\cite{live-vm-migration-techniques,ada-things}.
 \end{enumerate}
 
-\todo[inline]{Deveria ter 2--3 frases para detalhar cada um dos trabalhos citados: qual é o problema que o trabalho ataca? qual é a solução proposta para atacar o problema? quais são os principais resultados obtidos?}
+% \todo[inline]{Deveria ter 2--3 frases para detalhar cada um dos trabalhos citados: qual é o problema que o trabalho ataca? qual é a solução proposta para atacar o problema? quais são os principais resultados obtidos?}
 
 Os autores costumam aliar uma ou mais das características citadas acima para desenvolverem suas pesquisas. Por exemplo:
 % \begin{enumerate}[label=(\roman*)]
     % \item 
-    Aliando-se a transparência de localidade de execução de aplicações com a manutenção destas sem sua suspenção é possível explorar algorítmos ou modelos para melhor posicionar as aplicações na rede com o objetivo de atender a maior quantidade de usuários e de maneira mais eficiente e sem que o sistema precise ser desligado~\cite{live-migration-sdn}. Ademais, esses modelos podem ser especializados para tipos específicos de aplicações, como \iot~\cite{ada-things}.
+    Para evitar que muitos usuários tenham que fazer requisições à aplicações hospedadas em servidores distantes ou com muito tráfego, pode-se utilizar a transparência de localidade de execução de aplicações com a manutenção destas sem sua suspenção. Assim, é possível explorar algorítmos ou modelos para melhor posicionar as aplicações na rede com o objetivo de atender a maior quantidade de usuários, de maneira mais eficiente e sem que o sistema precise ser desligado~\cite{live-migration-sdn}. Ademais, esses modelos podem ser especializados para tipos específicos de aplicações, como \iot~\cite{ada-things}.
+
+    Além disso, pesquisas são feitas com o intuito de tornar a migração de \vms entre servidores tolerante a falhas~\cite{fernando2019live}. A migração de \vms por algum motivo pode falhar (devido a problemas de rede, por exemplo). Nesse contexto, alguns autores sugerem o uso de \checkpoints, os quais são estados consistentes da \vm em dado momento. Se a migração falhar, a \vm pode ser restaurada para um \checkpoint. Isso evita que a \vm seja perdida.
 % \end{enumerate}
 
-Em contraste com os trabalhos apresentados, nossa proposta não está inserido em ambientes \cloud. Seu foco está na migração de processos entre \clusters em um mesmo \chip, em um sistema computacional restritivo que restringe as técnicas possíveis a serem utilizadas. Além disso, nosso trabalho se difere dos demais trabalhos por explorar a virtualização e migração de processos inserida no contexto dos \lws e não apenas buscando otimizar algoritmos específicos, \eg \livemigration.
+Em contraste com os trabalhos apresentados, nossa proposta não está inserida em ambientes \cloud. Seu foco está na migração de processos entre \clusters em um mesmo \chip, em um sistema computacional restritivo que restringe as técnicas possíveis a serem utilizadas. Além disso, nosso trabalho se difere dos demais trabalhos por explorar a virtualização e migração de processos inserida no contexto dos \lws e não apenas buscando otimizar algoritmos específicos, \eg \livemigration.

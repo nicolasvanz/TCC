@@ -136,6 +136,22 @@ A abstração portal suporta a troca de mensagens grandes e segue a semântica $
 \label{sec.virtualizacao}
 \mytodo{descrição basica e história}
 
+A virtualização pode ser entendida como uma técnica de abstração de \hardware ou \software que permite a criação de uma versão virtual de um ambiente, como computadores, \sos, sistemas de armazenamento, redes, aplicações, etc. Nesse cenário, muitas vezes é possível a criação de múltiplas instâncias desse ambiente virtual, as quais competem pelos recursos físicos/reais. Nas próximas seções serão apresentados alguns tipos de virtualização e suas peculiaridades.
+
+\subsection{Virtualização de Servidor}
+Neste tipo de virtualização, múltiplos servidores (virtuais) compartilham único servidor físico, no qual são executados. Neste contexto cada instância de servidor apresenta um \so próprio. A virtualização de servidor é uma das formas mais comuns de virtualização, sendo utilizada em ambientes \cloud para a criação de \vms. Há três tipos de virtualização de servidores:
+\begin{enumerate}[label=(\roman*)]
+    \item Virtualização total: cada instância executa isoladamente e independentemente uma das outras. Neste tipo de virtualização, é utilizado o \hypervisor tipo 1: um \software que roda no nível mais privilegiado e atua como um intermediário entre o \hardware e os múltiplos \sos. O \hypervisor é o único programa do sistema que possui o acesso ao \hardware físico, \eg \cpu, memória e armazenamento, sendo responsável por gerenciar esses recursos de \hardware para cada instância de servidor.
+    \item Para-virtualização: uma única instância de servidor executa um \so, chamado de \so hospedeiro, que detém o acesso ao \hardware. Enquanto as demais instâncias executam seus respectivos \sos, chamados de \sos convidados, sob o intermédio de um \hypervisor tipo 2, que pode ser entendido como um processo regular do \so hospedeiro. Sendo assim, o \hypervisor tipo 2 atua como um intermediário entre o \so convidado e o \so hospedeiro. O \so hospedeiro reconhece as requisições do \so convidado e, gerencia os recursos de \hardware deste.
+    \item Virtualização a nível de \so: uma única instância de servidor executa um \so, o qual é utilizado para criar múltiplos ambientes. Cada ambiente tem seu conjunto de recursos e aplicações, que geralmente são isoladas umas das outras. Neste cenário, cada aplicação tem sua perspectiva do sistema.
+\end{enumerate}
+
+\subsection{Virtualização de Desktop}
+
+\subsection{Virtualização de Aplicações}
+
+
+
 A virtualização é a desvinculação da execução de uma aplicação (ou até um \so) dos recursos físicos responsáveis pelo seu funcionamento. O desacoplamento entre aplicação e \hardware pode permitir, dependendo da camada em que esta é aplicada, a existência simultânea e isolada de múltiplas instâncias de usuários ou \oss (\vms), que compartilham e concorrem pelos mesmos recursos de \hardware reais. Reaproveitamento de recursos, portabilidade e segurança são algumas vantagens proporcionadas pela virtualização.
 %
 Em ambientes \cloud é muito comum a utilização de \vms para execução de tarefas nos servidores. Com o auxílio da virtualização, um único servidor pode alocar diversas \vms, possivelmente com \oss distintos. 

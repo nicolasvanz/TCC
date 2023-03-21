@@ -1,3 +1,5 @@
+\glsresetall
+
 \chapter{Referencial Teórico}
 \label{chap.background}
 
@@ -37,15 +39,15 @@ Neste contexto, a classe de processadores \lws destacam-se por atrelar alto pode
 
 Alguns exemplos comerciais bem sucedidos de \lws são o \mppa~\cite{dinechin:2013}, PULP~\cite{pulp} e \taihulight~\cite{fu2016sunway}.
 %
-Especificamente, para o desenvolvimento deste trabalho será utilizado o processador \mppa. A \autoref{fig.arch-mppa} apresenta uma visão geral do processador e suas peculiaridades, tais como:
+Especificamente, para o desenvolvimento deste trabalho foi utilizado o processador \mppa. A \autoref{fig.arch-mppa} apresenta uma visão geral do processador e suas peculiaridades, tais como:
 
 \begin{enumerate}[label=(\roman*)]
-    \item 288 núcleos de baixa frequência em um único \textit{chip};
-    \item núcleos organizados em 20 \clusters;
-    \item 2 \nocs para transferência de dados entre \clusters, uma para controle e outra para dados;
-    \item um sistema de memória distribuída composto por pequenas memórias locais, \eg \sram de 2 MB;
-    \item ausência de coerência de \cache;
-    \item heterogeneidade: \clusters destinados à computação (\cclusters) e \clusters destinados à comunicação com periféricos (\ioclusters).
+    \item Integrar 288 núcleos de baixa frequência em um único \textit{chip};
+    \item Possuir núcleos organizados em 20 \clusters;
+    \item Dispor de 2 \nocs para transferência de dados entre \clusters, uma para controle e outra para dados;
+    \item Possuir um sistema de memória distribuída composto por pequenas memórias locais, \eg \sram de 2 MB;
+    \item Não dispor de coerência de \cache;
+    \item Apresentar heterogeneidade: \clusters destinados à computação (\cclusters) e \clusters destinados à comunicação com periféricos (\ioclusters).
 \end{enumerate}
 
 \begin{figure}[t]
@@ -65,7 +67,7 @@ O \nanvix\footnote{Disponível em https://github.com/nanvix} é um \os distribu�
     \item [\nanvix \Microkernel]
         é a camada intermediária que provê gerenciamento de recursos e os serviços mínimos de um \os em um \cluster. Entre esses serviços se encontram a comunição entre processos, gerenciamento de \threads e memória, controle de acesso à memória e interface para chamadas de sistema. As chamadas de sistema podem ser executadas localmente, caso acessem dados \rdo ou alterem estruturas internas do \core, ou remotamente pelo \mcore, que atende à requisição e libera o \score requisitante ao término da chamada~\cite{penna:thesis}. Essa característica adjetiva o \microkernel como assimétrico. A Figura \ref{fig.microkernel-overview} ilustra a estrutura interna do \microkernel do \nanvix.
     \item [\nanvix \Multikernel]
-        é a camada superior que provê os serviços mais complexos de um \os e dispõe uma visão a nível do processador em si. Os serviços são hospedados em \clusters, \ie isolados das aplicações de usuário. Os serviços atendem as requisições vindas dos processos de usuário através de um modelo cliente-servidor. As requisições e respostas são enviadas/recebidas através de passagem de mensagem via \noc. Os serviços dessa camada podem ser entendidos como fontes de informação que mantém a execução dos processos consistentes no processador, tendo em vista a natureza distribuída da memória nessas arquiteturas. Alguns serviços incluídos no \nanvix são mecanismos de \spawn de processos e gerenciamento de nomes lógicos dos processos à fim a localização dos processos no processador.
+        é a camada superior que provê os serviços mais complexos de um \os e dispõe uma visão a nível do processador em si. Os serviços são hospedados em \ioclusters, \ie isolados das aplicações de usuário. Os serviços atendem as requisições vindas dos processos de usuário através de um modelo cliente-servidor. As requisições e respostas são enviadas/recebidas através de passagem de mensagem via \noc. Os serviços dessa camada podem ser entendidos como fontes de informação que mantém a execução dos processos consistentes no processador, tendo em vista a natureza distribuída da memória nessas arquiteturas. Alguns serviços incluídos no \nanvix são mecanismos de \spawn de processos e gerenciamento de nomes lógicos dos processos à fim a localização dos processos no processador.
 \end{description}
 
 \begin{figure}[t]
@@ -83,7 +85,7 @@ O \nanvix\footnote{Disponível em https://github.com/nanvix} é um \os distribu�
 \end{figure}
 
 Em sua abordagem original, os processos no \nanvix são estáticos, \ie cada \cluster possui apenas um processo. Desse modo, uma vez que o processo inicia sua execução em um \cluster, este finalizará a execução no mesmo \cluster. 
-Isso torna o processo dependente do \cluster que o executa, fazendo com que a comunicação entre processos esteja atrelada aos \clusters nos quais os processos são executados (e não aos processos em si). A falta de mobilidade dos processos nesse modelo pode trazer sobrecargas ao processador, afetando diretamente o o desempenho do sistema quando múltiplas aplicações estão em execução simultânea no processador. No caso de aplicações paralelas, compostas por múltiplos processos (ou \textit{threads}) que se comunicam, a disposição dos processos (ou \textit{threads}) nos \clusters se torna importante, pois a comunicação entre \clusters próximos é mais rápida e resulta em menor consumo energético do processador. Sendo assim, melhorar a mobilidade e a disposição dos processos no processador possibilitaria melhorar o gerenciamento dos recursos do mesmo. Um exemplo de mobilidade é viabilizar a migração de processos entre \clusters. Neste contexto, este trabalho explora essa desassociação entre o processo e o \cluster que o executa. Deste modo, nós aumentamos a mobilidade dos processos, podendo permitir a migração de processos entre os \clusters do processador.
+Isso torna o processo dependente do \cluster que o executa, fazendo com que a comunicação entre processos esteja atrelada aos \clusters nos quais os processos são executados (e não aos processos em si). A falta de mobilidade dos processos nesse modelo pode trazer sobrecargas ao processador, afetando diretamente o o desempenho do sistema quando múltiplas aplicações estão em execução simultânea no processador. No caso de aplicações paralelas, compostas por múltiplos processos (ou \textit{threads}) que se comunicam, a disposição dos processos (ou \textit{threads}) nos \clusters se torna importante, pois a comunicação entre \clusters próximos é mais rápida e resulta em menor consumo energético do processador. Sendo assim, melhorar a mobilidade e a disposição dos processos no processador possibilitaria melhorar o gerenciamento dos recursos do mesmo. Um exemplo de mobilidade é viabilizar a migração de processos entre \clusters. Neste contexto, este trabalho explora essa desassociação entre o processo e o \cluster que o executa. Deste modo, nós aumentamos a mobilidade dos processos, permitindo a migração de processos entre os \clusters do processador.
 
 \subsection{Abstrações de Comunicação do \nanvix}
 
@@ -107,7 +109,7 @@ O \nanvix dispõe de três abstrações de comunicações para transferência de
 
 A abstração \sync suporta a sincronização entre \textit{kernels}. Através dela um processo pode esperar um sinal, que pode ser disparado por outro processo remotamente através das interfaces \noc. Essa abstração é muito utilizada na inicialização do sistema para garantir um estado inicial consistente dos subsistemas do \os~\cite{penna:thesis}.
 
-O \sync pode ser operado duas maneiras distintas: o modo $1:N$ e $N:1$. No modo $1:N$ (\autoref{fig.sync1n}) um nó envia uma notificação a múltiplos nós, que estão esperando pelo sinal. Em contraste, no modo $N:1$ (\autoref{fig.syncn1}), múltiplos nós enviam uma notificação a um único nó~\cite{penna:thesis}.
+O \sync pode ser operado duas maneiras distintas: o modo $1:N$ e $N:1$. No modo $1:N$ (\autoref{fig.sync1n}) um nó envia uma notificação a múltiplos nós, que estão esperando pelo sinal e são liberados após o recebimento do sinal. Em contraste, no modo $N:1$ (\autoref{fig.syncn1}), múltiplos nós enviam uma notificação a um único nó, que é liberado após o recebimento do sinal de todos os outros nós envolvidos~\cite{penna:thesis}.
 
 \begin{figure}[t]
     \centering
@@ -132,9 +134,32 @@ A abstração portal suporta a troca de mensagens grandes e segue a semântica $
 
 \section{Virtualização e Migração de Processos}
 \label{sec.virtualizacao}
+\mytodo{descrição basica e história}
 
 A virtualização é a desvinculação da execução de uma aplicação (ou até um \so) dos recursos físicos responsáveis pelo seu funcionamento. O desacoplamento entre aplicação e \hardware pode permitir, dependendo da camada em que esta é aplicada, a existência simultânea e isolada de múltiplas instâncias de usuários ou \oss (\vms), que compartilham e concorrem pelos mesmos recursos de \hardware reais. Reaproveitamento de recursos, portabilidade e segurança são algumas vantagens proporcionadas pela virtualização.
 %
 Em ambientes \cloud é muito comum a utilização de \vms para execução de tarefas nos servidores. Com o auxílio da virtualização, um único servidor pode alocar diversas \vms, possivelmente com \oss distintos. 
 
 O foco deste trabalho é a virtualização de processos. Isto é, o objetivo é desacoplar a execução de uma aplicação do \cluster do \lw que a executa. Na abordagem original do \nanvix, o processo é dependente do \cluster em que é alocado, o que afeta o suporte a migração e diminui a eficiência computacional, como detalhado na \autoref{sec.nanvixos}. Nesse contexto, a virtualização torna-se útil por aumentar a mobilidade dos processos, o que possibilitaria o gerenciamento da distribuição dos processos no processador. Especificamente, este trabalho explora um modelo mais leve de virtualização para \lws baseada em contêineres. Contêineres são executados pelo \os como aplicações virtuais e não incluem um \os convidado, resultando em um menor impacto no sistema de memória e requisitando menor complexidade do \hardware~\cite{thalheim2018cntr, sharma2016containers}.
+
+
+\subsection{Tipos de virtualização}
+\mytodo{descrição basica dos tipos}
+
+
+\subsubsection{virtualização a nivel de sistema}
+\mytodo{hypervisor tipos 1 e 2}
+
+
+\subsubsection{virtualização a nivel de processo}
+\mytodo{conteinerização}
+
+
+\section{virtualização no nanvix}
+\mytodo{problemas dos lws, pq a virtualização é dificultada?, ideia geral do microkernel e outros sistemas que vao ser virtuzalizados}
+
+
+\section{migração}
+\mytodo{pre-copy, post-copy, live migration}
+
+

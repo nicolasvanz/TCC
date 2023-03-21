@@ -7,7 +7,7 @@ Durante muitos anos, o aumento do desempenho de sistemas computacionais esteve i
 
 Como alternativa à limitação do aumento da frequência de relógio, foram desenvolvidos processadores com vários núcleos de processamento, os \multicores. O desempenho dos processadores \multicore não dependem mais apenas das altas frequências de relógio, recorrendo ao paralelismo como principal vantagem aos processadores \singlecore. Deste modo, mesmo com a estagnação da frequência de relógio nos processadores, esse aumento na quantidade de \cores em conjunto com outras melhorias no \hardware, como o aumento no número de transistores nos \chips, aperfeiçoamento dos preditores de desvio e adaptações na hierarquia de memória, o desempenho dos sistemas computacionais continuaram a aumentar.
 
-Contudo, a eficiência energética dos sistemas computacionais revelou-se tão importante quanto seu desempenho. Segundo o \darpa~\cite{darpa:exascale}, a potência recomendada para um supercomputador atingir o \exascale ($10^{18}$ \flops), é de 20 MW, o que é inviável para a realidade dos sistemas computacionais modernos. Nesse cenário, observou-se o surgimento de uma nova classe dos processadores denominada \lws. Esses processadores são classificados como \mpsocs e tem como objetivo atrelar alto desempenho à eficiência energética~\cite{francesquini2015}. Para atingir esse objetivo, a arquitetura dos \lws é caracterizada por:
+Atualmente, a eficiência energética dos sistemas computacionais revela-se tão importante quanto seu desempenho. Segundo o \darpa~\cite{darpa:exascale}, a potência recomendada para um supercomputador atingir o \exascale ($10^{18}$ \flops), é de 20 MW, o que é inviável para a realidade dos sistemas computacionais modernos. Nesse cenário, observou-se o surgimento de uma nova classe dos processadores chamada \lw. Esses processadores são classificados como \mpsocs e têm como objetivo atrelar alto desempenho à eficiência energética~\cite{francesquini2015}. Para atingir esse objetivo, a arquitetura dos \lws é caracterizada por:
 \begin{enumerate}[label=(\roman*)]
     \item Integrar de centenas à milhares de núcleos de processamento operando a baixas frequências em um único \chip;
     \item Processar cargas de trabalho \mimd;
@@ -25,19 +25,19 @@ A \autoref{fig.lw-overview} ilustra uma visão conceitual da arquitetura de um \
     \label{fig.lw-overview}
 \end{figure}
 
-Apesar dos processadores \lw serem uma alternativa às abordagens tradicionais no que se refere ao aumento de desempenho, as características arquiteturais introduzem severos problemas de programabilidade ao desenvolvimento de \software de aplicações paralelas~\cite{Castro-PARCO:2016}. Entre eles, podemos citar:
+Apesar dos processadores \lws serem uma alternativa às abordagens tradicionais no que se refere ao aumento de desempenho, as características arquiteturais introduzem severos problemas de programabilidade ao desenvolvimento de \software de aplicações paralelas~\cite{Castro-PARCO:2016}. Entre eles, podemos citar:
 
 \begin{enumerate}[label= (\roman*)]
     \item Necessidade do uso de um modelo de programação híbrida que força troca de informação entre os \clusters exclusivamente por troca de mensagens via \noc enquanto a comunicação interna em um \cluster ocorre sobre memória compartilhada~\cite{kelly2013};
-    \item Presença de um sistema de memória distribuída restritivo, formado por múltiplos espaços de endereçamento, exige o particionamento do conjunto de dados em blocos pequenos para manipulação nas pequenas memórias locais. A manipulação deve ocorrer um bloco de cada vez, necessitando a troca explicita de blocos com uma memória remota~\cite{Castro-PARCO:2016};
+    \item Presença de um sistema de memória distribuída restritivo, formado por múltiplos espaços de endereçamento, o que exige o particionamento do conjunto de dados em blocos pequenos para manipulação nas pequenas memórias locais. A manipulação deve ocorrer um bloco de cada vez, necessitando a troca explicita de blocos com uma memória remota~\cite{Castro-PARCO:2016};
     \item Maiores latências e gargalos de comunicação através da \noc comparado com comunicação em memória compartilhada;
-    \item Falta de suporte de coerência de cache em \hardware para economia de energia, exiging do programador a gerência da cache via \software; e
-    \item Configuração heterogênea do \hardware, como \clusters destinados a funcionalidades específicas (computação útil e I/O), dificulta o desenvolvimento de aplicações.
+    \item Falta de suporte de coerência de \cache em \hardware visando a economia de energia. Exigindo do programador a gerência da \cache via \software; e
+    \item Configuração heterogênea do \hardware, como \clusters destinados a funcionalidades específicas (computação útil e I/O), o que dificulta o desenvolvimento de aplicações.
 \end{enumerate}
 
 Atualmente, estudos exploram soluções para amenizar o impacto das arquiteturais sobre o desenvolvimento de \software. \oss distribuídos sobresaem-se por proverem um ambiente de programação mais robusto e rico~\cite{asmussen_m3:_2016, kluge_operating_2014, penna:sbesc19}. Dentre essas soluções, o modelo de um \os distribuído baseado em uma abordagem \multikernel destaca-se por aderir a natureza distribuída e restritiva dos \lws~\cite{penna2017-1,penna2017-2,penna2019}.
 
-Nesse cenário, a virtualização dos recursos do processador é importante para o suporte a multi-aplicação e melhor uso do \hardware disponível~\cite{vanz2022virtualizaccao}. Contudo, as características arquiteturais dos \lws, especialmente relacionadas à memória, inviabilizam um suporte complexo para virtualização. Por exemplo, máquinas virtuais utilizadas em ambientes \cloud possuem à disposição centenas de GBs de memória para isolar duplicatas inteiras do \os com a ajuda de virtualização a nível de instrução~\cite{sharma2016containers}. Nos \lws, as pequenas memórias locais e a simplificação do \hardware para reduzir o consumo energético restringem os tipos de virtualização suportados.
+Neste cenário, a virtualização dos recursos do processador é importante para o suporte a multi-aplicação e melhor uso do \hardware disponível~\cite{vanz2022virtualizaccao}. Contudo, as características arquiteturais dos \lws, especialmente relacionadas à memória, inviabilizam um suporte complexo para virtualização. Por exemplo, máquinas virtuais utilizadas em ambientes \cloud possuem à disposição centenas de GBs de memória para isolar duplicatas inteiras do \os com a ajuda de virtualização a nível de instrução~\cite{sharma2016containers}. Nos \lws, as pequenas memórias locais e a simplificação do \hardware para reduzir o consumo energético restringem os tipos de virtualização suportados.
 
 Neste contexto, este trabalho explora um modelo mais leve de virtualização para \lws baseado no conceito de contêineres. Contêineres são executados pelo \os como aplicações virtuais e não incluem um \os convidado, resultando em um menor impacto no sistema de memória e requisitando menor complexidade do \hardware~\cite{thalheim2018cntr, sharma2016containers}.
 
@@ -49,7 +49,7 @@ Com base nas motivações citadas previamente, os objetivos deste trabalho serã
 \subsection{Objetivo Principal}
 \label{sec.goals.primary}
 
-O objetivo principal deste trabalho é virtualizar os recursos internos de um \cluster de um \lw. Ao desvincular os recursos locais utilizados por um processo dentro do \nanvix, um \os para \lws, nós conseguiremos prover maior controle e mobilidade de processos no processador.
+O objetivo principal deste trabalho é virtualizar os recursos internos de um \cluster de um \lw. Ao desvincular os recursos locais utilizados por um processo dentro do \nanvix, um \os para \lws, conseguimos prover maior controle e mobilidade de processos no processador.
 
 \subsection{Objetivos Específicos}
 \label{sec.goals.secondary}
@@ -58,7 +58,8 @@ O objetivo principal deste trabalho é virtualizar os recursos internos de um \c
     \item Propor um modelo de virtualização adaptado às necessidades e restrições dos \lws;
     \item Implementar o modelo proposto no \nanvix, um \so distribuído para \lws;
     \item Analisar a corretude da solução através do desenvolvimento de \benchmarks que avaliem a migração de processos;
-    \item Analisar o impacto do modelo de virtualização nos diversos níveis de abstração do \nanvix.
+    \item Analisar o impacto do modelo de virtualização no \nanvix;
+    \item Propor, implementar e avaliar um modelo de migração de processos para o \nanvix.
 \end{enumerate}
 
 \section{Contribuições}

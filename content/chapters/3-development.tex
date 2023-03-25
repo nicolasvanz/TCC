@@ -38,7 +38,7 @@ Nesse contexto, visando atenuar o impacto da virtualização no sistema de memó
 \subsubsection{Divisão de Dados e Instruções}
 \label{sec.divisao-dados-instrucao}
 
-    Para a virtualização de processos através da conteinerização, é recomendável que as informações relevantes para a manipulação dos processos em execução estejam isoladas das informações internas do próprio \os para que os recursos de \hardware sejam utilizados de maneira eficiente~\cite{choudhary2017critical}.
+    Para a virtualização de processos através da conteinerização, é recomendável que as informações relevantes para a manipulação dos processos em execução estejam isoladas das informações internas do próprio \os para que os recursos de \hardware sejam utilizados de maneira eficiente~\cite{live-vm-migration-techniques}.
     A \autoref{fig.nanvix.without-uarea} ilustra como os subsistemas do \nanvix são originalmente estruturados. Não há uma divisão explícita do que são dados para funcionamento interno do \os ou dependências locais do processo.
     Esta abordagem torna algumas das funcionalidades do \os onerosas porque ela dificulta o acesso às informações do processo e impacta partes independentes do sistema, \eg migração e segurança dos processos.
 

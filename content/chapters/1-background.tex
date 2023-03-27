@@ -172,22 +172,70 @@ O foco deste trabalho é desacoplar a execução de um processo do \cluster em q
 Na abordagem original do \nanvix, o processo é dependente do \cluster em que é alocado, o que afeta o suporte a migração e diminui a eficiência computacional, como detalhado na \autoref{sec.nanvixos}. Nesse contexto, a virtualização torna-se útil por aumentar a mobilidade dos processos, o que possibilitaria o gerenciamento da distribuição dos processos no processador. Especificamente, este trabalho explora um modelo mais leve de virtualização para \lws baseada em contêineres. Contêineres são executados pelo \os como aplicações virtuais e não incluem um \os convidado, não sendo necessária a criação de duplicatas de \sos e resultando em um menor impacto no sistema de memória e requisitando menor complexidade do \hardware~\cite{thalheim2018cntr, sharma2016containers, zhang2018comparative}.
 
 
-\section{migração}
-\mytodo{pre-copy, post-copy, live migration}
+\section{Migração}
+% \mytodo{pre-copy, post-copy, live migration}
+A migração é o processo de transferência de uma aplicação ou \vm de um ambiente a outro. A migração tem sido muito utilizada hoje em dia principalmente em ambientes \cloud~\cite{imran2022live}. Através da migração, os serviços são beneficiados com as suas vantagens, tais como:
+\begin{enumerate}[label=(\roman*)]
+    \item Balanceamento de carga: é uma técnica que permite que a carga de trabalho de servidores sobrecarregasdos seja distribuída entre outras máquinas a fim de evitar falhas de sistema ou aumento de latência na resposta dos serviços. Através dessa técnica, \vms alocadas em servidores sobrecarregados são migrados para servidores menos utilizados, melhorando a utilização dos recursos computacionais.
+    \item Tolerância a falhas: é uma técnica que permite a migração de uma \vm para um servidor em melhor condição de funcionamento quando o servidor em que está alocada apresenta algum tipo de falha.
+    \item Manutenção de sistema: os servidores requerem que periodicamente sejam feitas revisões/manutenções em seus sistemas. Durante esses períodos, as aplicações alocadas nestas máquinas não conseguiriam executar. Graças à migração, estas aplicações/\vms são tranferidas a outro servidor durante esses intervalos de manutenção sem que os serviços sejam afetados.
+    \item Gerenciamento de energia: através da migração, é possível gerenciar a alocação de \vms nos servidores de modo que alguns não tenham carga de trabalho a executar e possam ser desligados, economizando energia. Isso é feito, claro, de uma maneira que não sobrecarregue os servidores que estão em funcionamento.
+\end{enumerate}
 
+Nas próximas seções serão discutidos os principais tipos de migração.
 
-\subsection{\Coldmigration}
-Este é o tipo de migração cujo fluxo de execução segue o seguinte. O sistema a ser migrado (contêiner ou \vm) é desligado, o estado (\checkpoint) do sistema é salvo e enviado ao \so ou \vm destinatário. O sistema é restaurado no destino e o estado do sistema apagado no remetente.
+\subsection{Tipos de Migração}
+A migração pode ser classificada em dois tipos distintos: \coldmigration(\nonlivemigration) e \hotmigration (\livemigration)~\cite{imran2022live}. Esses tipos serão detalhados nas seções \ref{sec.coldmigration} e \ref{sec.hotmigration}, respectivamente.
 
-Este geralmente não é considerado um método eficiente e não é muito utilizado na indústria e mercado. Isso porque implica em um alto \downtime do sistema migrado devido à alta quantidade de dados a serem transferidos~\cite{singh2022predictive}.
+\subsubsection{\Coldmigration}\label{sec.coldmigration}
+Também é conhecido como \nonlivemigration. Neste tipo de migração, o sistema a ser migrado (contêiner ou \vm) precisa ser desligado antes do processo começar. Este é o tipo de migração cujo fluxo de execução segue o seguinte. O sistema é desligado, o estado (\checkpoint) do sistema é salvo e enviado ao \so ou \vm destinatário. O sistema é restaurado no destino e o estado do sistema apagado no remetente.
 
-\subsection{\Precopymigration}
+Este geralmente não é considerado um método eficiente e não é muito utilizado na indústria e mercado. Isso porque implica em um alto \downtime do sistema migrado devido à alta quantidade de dados a serem transferidos, o que não é considerado aveitável atualmente, haja vista a grande quantidade de serviços que não podem parar sua execução~\cite{singh2022predictive, imran2022live}. A \autoref{fig.coldmigration} ilustra o fluxo de execução da \coldmigration.
+
+\begin{figure}[bt]
+    \centering
+    \includegraphics[width=0.8\linewidth]{content/images/cold-migration-flow.pdf}
+    \caption{Fluxo de execução da \coldmigration. Adaptado de~\cite{migrationimages}}
+    \label{fig.coldmigration}
+\end{figure}
+
+\subsubsection{\Hotmigration}\label{sec.hotmigration}
+Em contraste com a \coldmigration, na \hotmigration, também conhecida como \livemigration, o sistema a ser migrado não precisa ser desligado antes do processo começar. Isso com o objetivo de maximizar a performance do sistema durante a migração, melhorar o uso da rede e reduzir o \downtime do sistema~\cite{imran2022live}.
+
+Neste modelo a migração ainda pode ser classificada de acordo com a técnica utilizada para a transferência dos dados. As técnicas são: \precopymigration, \postcopymigration e migração híbrida, as quais serão detahadas, respecitvamente, nas Seções \ref{sec.precopymigration}, \ref{sec.postcopymigration} e \ref{sec.hybridmigration}.
+
+\subsubsubsection{\Precopymigration}\label{sec.precopymigration}
 Neste modelo, ao receber a requisição de migração, o sistema cria uma pré-imagem do seu estado atual e a envia ao destinatário enquanto continua executando normalmente. Nesta estrutura está contida o esquema de paginação atual do sistema e, por vezes, alguns dados de execução. Conforme o sistema modifica o esquema de paginação no remetente, essa estrutura é atualizada e enviada ao destinatário. Depois disso, é salvo o estado atual completo do sistema, que, então, é enviado ao destino. O sistema é restaurado no destino e o estado do sistema apagado no remetente. 
 
-Esse fluxo de migração faz com que o tempo total de migração seja maior que o do \coldmigration, já que há a retransmissão de dados, em especial páginas. Em contrapartida, o \downtime é reduzido, pois o sistema executa normalmente na parte inicial da migração, quando é feita e enviada a pré-imagem ao destinatário~\cite{singh2022predictive}.
+Esse fluxo de migração faz com que o tempo total de migração seja maior que o do \coldmigration, já que há a retransmissão de dados, em especial páginas. Em contrapartida, o \downtime é reduzido, pois o sistema executa normalmente na parte inicial da migração, quando é feita e enviada a pré-imagem ao destinatário~\cite{singh2022predictive, imran2022live}. A \autoref{fig.precopy} ilustra o fluxo de execução da \precopymigration.
 
-\subsection{\Postcopymigration}
-Neste modelo, o remetente cria um estado parcial do sistema em execução e o envia ao destinatário. Nesse estado, está incluso apenas o essencial para a execução inicial do sistema, não abrangendo o esquema de paginação. Quando o sistema é restaurado no destinatário, ocorrerão várias faltas de páginas, as quais resultam em requisições de páginas ao remetente, o qual as envia ao destinatário. Quando todas as páginas são transferidas ao destinatário, o sistema é apagado do remetente~\cite{singh2022predictive}.
+\begin{figure}[bt]
+    \centering
+    \includegraphics[width=0.8\linewidth]{content/images/pre-copy-migration-flow.pdf}
+    \caption{Fluxo de execução da \precopymigration. Adaptado de~\cite{migrationimages}}
+    \label{fig.precopy}
+\end{figure}
 
-\subsection{Migração Híbrida}
-Neste modelo, são utilizadas as técnicas de \precopy e \postcopy em conjunto. Inicialmente, tal como na \precopymigration, é feita uma pré-imagem do sistema, que é enviada ao destinatário, enqunato o sistema executa normalmente. Em contraste com o método \precopy nesta etapa não são reenviadas as páginas modificadas/atualizadas. Depois, o estado completo do sistema é enviado e as páginas modificadas/atualizadas são requisitadas ao remetente tal como na \postcopymigration. Quando todas as páginas são transferidas ao destinatário, o sistema é apagado do remetente~\cite{singh2022predictive}.
+\subsubsubsection{\Postcopymigration}\label{sec.postcopymigration}
+Neste modelo, o remetente cria um estado parcial do sistema em execução e o envia ao destinatário. Nesse estado, está incluso apenas o essencial para a execução inicial do sistema, não abrangendo o esquema de paginação. Quando o sistema é restaurado no destinatário, ocorrerão várias faltas de páginas, as quais resultam em requisições de páginas ao remetente, o qual as envia ao destinatário. Quando todas as páginas são transferidas ao destinatário, o sistema é apagado do remetente~\cite{singh2022predictive, imran2022live}. A \autoref{fig.postcopy} ilustra o fluxo de execução da \postcopymigration.
+
+\begin{figure}[bt]
+    \centering
+    \includegraphics[width=0.8\linewidth]{content/images/post-copy-migration-flow.pdf}
+    \caption{Fluxo de execução da \postcopymigration. Adaptado de~\cite{migrationimages}}
+    \label{fig.postcopy}
+\end{figure}
+
+
+\subsubsubsection{Migração Híbrida}\label{sec.hybridmigration}
+Neste modelo, são utilizadas as técnicas de \precopy e \postcopy em conjunto. Inicialmente, tal como na \precopymigration, é feita uma pré-imagem do sistema, que é enviada ao destinatário, enqunato o sistema executa normalmente. Em contraste com o método \precopy nesta etapa não são reenviadas as páginas modificadas/atualizadas. Depois, o estado completo do sistema é enviado e as páginas modificadas/atualizadas são requisitadas ao remetente tal como na \postcopymigration. Quando todas as páginas são transferidas ao destinatário, o sistema é apagado do remetente~\cite{singh2022predictive, imran2022live}. A \autoref{fig.hybridmigration} ilustra o fluxo de execução da migração híbrida.
+
+\begin{figure}[bt]
+    \centering
+    \includegraphics[width=0.8\linewidth]{content/images/hybrid-migration-flow.pdf}
+    \caption{Fluxo de execução da migração híbrida. Adaptado de~\cite{migrationimages}}
+    \label{fig.hybridmigration}
+\end{figure}
+
+
+\mytodo{adicinar seção detalhando o sistema de tasks no background?}

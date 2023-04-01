@@ -140,7 +140,7 @@ O conceito de virtualização pode ser traçado desde a década de 50, durante a
 
 O retorno das pesquisas sobre virtualização ocorreu mais recentemente, na década de 90. Essa foi a época em que o número de serviços e servidores cresceu bruscamente. Naturalmente, com o aumento do número de servidores e aplicações hospedadas nesses servidores, a necessidade de gerenciamento desses recursos também aumentou. Nesse cenário, a virtualização se mostrou uma solução viável por permitir que em um único servidor executassem diversas \vms rodando diferentes serviços, mantendo ainda assim a independência de execução entre eles. Isso significa que a interrupção ou quebra de um serviço não afeta os demais. Sendo assim, a virtualização garante uma maior flexibilidade e escalabilidade, além de reduzir os custos de manutenção e operação, afinal, dessa forma os recursos de \hardware são utilizados de maneira mais eficiente e há a redução na quantidade de máquinas físicas para gerenciar. 
 
-Nos dias de hoje, a tendência de uso de \vms em servidores continua cresente. Hoje, a virtualização de servidor é uma das formas mais comuns de virtualização, sendo utilizada em ambientes \cloud para garantir o suporte à execução de múltiplas aplicações, possivelmente em \oss distintos sob o mesmo \hardware~\cite{manohar2013survey}.
+Nos dias de hoje, a tendência de uso de \vms em servidores continua cresente. Hoje, a virtualização de servidor é uma das formas mais comuns de virtualização, sendo utilizada em ambientes \cloud para garantir o suporte à execução de múltiplas aplicações, possivelmente em \oss distintos sobre o mesmo \hardware~\cite{manohar2013survey}.
 
 Nas próximas seções serão apresentados alguns tipos de virtualização e suas peculiaridades.
 
@@ -190,7 +190,7 @@ A migração pode ser classificada em dois tipos distintos: \coldmigration(\nonl
 \subsubsection{\Coldmigration}\label{sec.coldmigration}
 Também é conhecido como \nonlivemigration. Neste tipo de migração, o sistema a ser migrado (contêiner ou \vm) precisa ser desligado antes do processo começar. Este é o tipo de migração cujo fluxo de execução segue o seguinte. O sistema é desligado, o estado (\checkpoint) do sistema é salvo e enviado ao \so ou \vm destinatário. O sistema é restaurado no destino e o estado do sistema apagado no remetente.
 
-Este geralmente não é considerado um método eficiente e não é muito utilizado na indústria e mercado. Isso porque implica em um alto \downtime do sistema migrado devido à alta quantidade de dados a serem transferidos, o que não é considerado aveitável atualmente, haja vista a grande quantidade de serviços que não podem parar sua execução~\cite{singh2022predictive, imran2022live}. A \autoref{fig.coldmigration} ilustra o fluxo de execução da \coldmigration.
+Este geralmente não é considerado um método eficiente e não é muito utilizado na indústria e mercado. Isso porque implica em um alto \downtime do sistema migrado devido à alta quantidade de dados a serem transferidos e pelo tempo extra para desligar e ligar o sistema novamente. Isso não é considerado aveitável atualmente, haja vista a grande quantidade de serviços que não podem parar sua execução~\cite{singh2022predictive, imran2022live}. A \autoref{fig.coldmigration} ilustra o fluxo de execução da \coldmigration.
 
 \begin{figure}[bt]
     \centering
@@ -202,12 +202,12 @@ Este geralmente não é considerado um método eficiente e não é muito utiliza
 \subsubsection{\Hotmigration}\label{sec.hotmigration}
 Em contraste com a \coldmigration, na \hotmigration, também conhecida como \livemigration, o sistema a ser migrado não precisa ser desligado antes do processo começar. Isso com o objetivo de maximizar a performance do sistema durante a migração, melhorar o uso da rede e reduzir o \downtime do sistema~\cite{imran2022live}.
 
-Neste modelo a migração ainda pode ser classificada de acordo com a técnica utilizada para a transferência dos dados. As técnicas são: \precopymigration, \postcopymigration e migração híbrida, as quais serão detahadas, respecitvamente, nas Seções \ref{sec.precopymigration}, \ref{sec.postcopymigration} e \ref{sec.hybridmigration}.
+Este modelo a migração ainda pode ser classificado de acordo com a técnica utilizada para a transferência dos dados. As técnicas são: \precopymigration, \postcopymigration e migração híbrida, as quais serão detahadas, respecitvamente, nas Seções \ref{sec.precopymigration}, \ref{sec.postcopymigration} e \ref{sec.hybridmigration}.
 
 \subsubsubsection{\Precopymigration}\label{sec.precopymigration}
-Neste modelo, ao receber a requisição de migração, o sistema cria uma pré-imagem do seu estado atual e a envia ao destinatário enquanto continua executando normalmente. Nesta estrutura está contida o esquema de paginação atual do sistema e, por vezes, alguns dados de execução. Conforme o sistema modifica o esquema de paginação no remetente, essa estrutura é atualizada e enviada ao destinatário. Depois disso, é salvo o estado atual completo do sistema, que, então, é enviado ao destino. O sistema é restaurado no destino e o estado do sistema apagado no remetente. 
+Neste modelo, ao receber a requisição de migração, o sistema cria uma pré-imagem do seu estado atual e a envia ao destinatário enquanto continua executando normalmente. Nesta estrutura está contida o esquema de paginação atual do sistema e, por vezes, alguns dados de execução. Conforme o esquema de paginação é modificado no remetente, essa estrutura é atualizada e enviada ao destinatário. Depois disso, é salvo o estado atual completo do sistema, que, então, é enviado ao destino. O sistema é restaurado no destino e o estado do sistema apagado no remetente. 
 
-Esse fluxo de migração faz com que o tempo total de migração seja maior que o do \coldmigration, já que há a retransmissão de dados, em especial páginas. Em contrapartida, o \downtime é reduzido, pois o sistema executa normalmente na parte inicial da migração, quando é feita e enviada a pré-imagem ao destinatário~\cite{singh2022predictive, imran2022live}. A \autoref{fig.precopy} ilustra o fluxo de execução da \precopymigration.
+Esse fluxo de migração faz com que o tempo total de migração seja maior que o do \coldmigration, já que há a retransmissão de dados, em especial páginas de memória. Em contrapartida, o \downtime é reduzido, pois o sistema executa normalmente na parte inicial da migração, quando é feita e enviada a pré-imagem ao destinatário~\cite{singh2022predictive, imran2022live}. A \autoref{fig.precopy} ilustra o fluxo de execução da \precopymigration.
 
 \begin{figure}[bt]
     \centering

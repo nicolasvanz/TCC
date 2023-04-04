@@ -9,10 +9,18 @@ Nesse contexto, visando atenuar o impacto da virtualização no sistema de memó
 
 
 \section{contexto de um processo}
-\mytodo{threads, memoria, syscall, comunicação, estruturas de sincronização}
-\mytodo{conteinerização no nanvix}
+% \mytodo{conteinerização no nanvix}
 
+Para o desenvolvimento da virtualização, é necessário entender o contexto de um processo no \nanvix e as relações que atrelam o processo ao \cluster e ao \so \ie as dependências que o processo tem com os recursos reais de um \cluster e com a estrutura interna do \so. De maneira geral, os módulos que compõem um processo são: \threads, \syscalls, sistema de memória e comunicação. Todos esses módulos de alguma forma têm dependências no \kernel ou \cluster. Essas dependências são ilustradas genericamente na \autoref{fig.nanvix.without-uarea} e algumas delas estão listadas abaixo:
 
+\begin{enumerate}[label=(\roman*)]
+    \item As estruturas das \threads de usuário estão armazenadas em listas internas de \kernel, assim como variáveis de sincronização (para junção de \threads, por exemplo), estruturas de escalonamento, referências às pilhas de execução e outras variáveis/estrutura de controle. É importante destacar que na abordagem inicial do \nanvix não havia separação explicita nessas estruturas para identificar quais variáveis são relacinadas a \kernel ou usuário.
+    \item As estruturas responsáveis por armazenar as \syscalls, seus parâmetros e retornos requisitadas pelos \scores ao \mcore estão em espaço de \kernel.
+    \item Todo o sistema de memória está armazenado no \kernel. Tabelas de diretórios, tabelas de página, \tlb, etc.
+    \item O sistema de comunicação tem dependências tanto no \kernel quanto a recursos físicos do \cluster. Os identificadores das interfaces \noc \ie de comunicação entre \clusters estão armazenadas em espaço de \kernel e referenciam uma interface física do \cluster em que o processo está executando.
+\end{enumerate}
+
+Sendo assim, o desenvolvimento da virtualização nesse sistema implica no isolamento dessas dependências em um arranjo, que é o contêiner. A ideia principal é garantir que o contêiner contenha tudo o que é necessário para o processo executar. Isso inclui todos os dados e códigos de usuário e todas as dependências do processo com o \kernel e \cluster. Isso deve ser feito de uma maneira que permita com que o \kernel execute qualquer contêiner como uma aplicação virtual \ie deve ser possível que o contêiner se conecte ao \kernel de forma que consiga utilizar os recursos e serviços de \kernel sem que interfira em sua estrutura interna.
 
 \begin{figure}[t]
 	\centering
@@ -32,40 +40,44 @@ Nesse contexto, visando atenuar o impacto da virtualização no sistema de memó
 	\caption{Diferença da estrutura do \nanvix com e sem a \textit{User Area}.}%
 \end{figure}
 
-\subsection{Isolamento do contexto de um processo de usuário}
+\section{Isolamento do contexto de um processo de usuário}
 \label{sec.dev.kernel-usuario}
 
-\subsubsection{Divisão de Dados e Instruções}
+Para a virtualização de processos através da conteinerização, é recomendável que as informações relevantes para a manipulação dos processos em execução estejam isoladas das informações internas do próprio \os para que os recursos de \hardware sejam utilizados de maneira eficiente~\cite{live-vm-migration-techniques}.
+A \autoref{fig.nanvix.without-uarea} ilustra como os subsistemas do \nanvix são originalmente estruturados. Não há uma divisão explícita do que são dados para funcionamento interno do \os ou dependências locais do processo.
+Esta abordagem torna algumas das funcionalidades do \os onerosas porque ela dificulta o acesso às informações do processo e impacta partes independentes do sistema, \eg migração e segurança dos processos.
+
+\subsection{Divisão de Dados e Instruções}
 \label{sec.divisao-dados-instrucao}
 
-    Para a virtualização de processos através da conteinerização, é recomendável que as informações relevantes para a manipulação dos processos em execução estejam isoladas das informações internas do próprio \os para que os recursos de \hardware sejam utilizados de maneira eficiente~\cite{live-vm-migration-techniques}.
-    A \autoref{fig.nanvix.without-uarea} ilustra como os subsistemas do \nanvix são originalmente estruturados. Não há uma divisão explícita do que são dados para funcionamento interno do \os ou dependências locais do processo.
-    Esta abordagem torna algumas das funcionalidades do \os onerosas porque ela dificulta o acesso às informações do processo e impacta partes independentes do sistema, \eg migração e segurança dos processos.
-
-    Além disso, a geração original de um executável do \nanvix compila todos os níveis em bibliotecas estáticas (\hal, \microkernel, \libnanvix, \ulibc e \multikernel) e as junta com a aplicação do usuário de forma a misturar o que é \kernel do que é usuário.
+    A geração original de um executável do \nanvix compila todos os níveis em bibliotecas estáticas (\hal, \microkernel, \libnanvix, \ulibc e \multikernel) e as junta com a aplicação do usuário de forma a misturar o que é \kernel do que é usuário.
     %
-    Visando a separação das informações entre usuário e \kernel, nós adaptamos o \script de ligação original do \nanvix. Na nova versão, as seções .text, .data, .bss e .rodata dos arquivos binários compilados são renomeados, especificando qual camada de abstração tal arquivo pertence. Desta forma, é possível identificar dados e instruções de cada camada do \nanvix, assim como as informações do usuário. Sendo assim, são geradas seções .text, .data, .rodata e .bss específicas para o \kernel e usuário. Portanto, todas as informações de \kernel, alocadas nos endereços mais baixos da memória, são isoladas das informações de aplicação, alocadas nos endereços mais altos da memória. Neste processo, são exportadas algumas constantes que apontam onde começam e terminam as partes do binário que são relacionadas ao \kernel e à aplicação. Essas constantes permitem a manipulação e gerenciamento mais precisos dos segmentos de memória do \kernel e da aplicação.
+    Visando a separação das informações entre usuário e \kernel, nós adaptamos o \script de ligação original do \nanvix. Na nova versão, as seções .text, .data, .bss e .rodata dos arquivos binários compilados são renomeados, especificando qual camada de abstração tal arquivo pertence. Desta forma, é possível identificar dados e instruções de cada camada do \nanvix, assim como as informações do usuário. 
     
-    Através dessa estratégia, todos os \clusters passam a ter a mesma organização interna de \kernel, facilitando a migração. Ou seja, a migração pode ser feita através do salvamento dos dados e instruções da aplicação de um \cluster e restauração destes nas respectivas posições em outro \cluster. Essas posições são identificadas pelas constantes exportadas no processo de compilação. Com isso, evita-se manipulações mais complexas do processo como a busca em várias regiões de memória para montar o estado interno do processo.
+    Sendo assim, são geradas seções .text, .data, .rodata e .bss específicas para o \kernel e usuário. Portanto, todas as informações de \kernel, alocadas nos endereços mais baixos da memória, são isoladas das informações de aplicação, alocadas nos endereços mais altos da memória. Neste processo, são exportadas algumas constantes que apontam onde começam e terminam as partes do binário que são relacionadas ao \kernel e à aplicação. Essas constantes permitem a manipulação e gerenciamento mais precisos dos segmentos de memória do \kernel e da aplicação.
+    
+    Essa estratégia, além de garantir o isolamento do binário de \kernel e usuário, faz com que todos os \clusters passam a ter a mesma organização interna de \kernel, haja vista que a compilação é estática. Nesse cenário, a migração pode ser feita parcialmente através do salvamento dos dados e instruções da aplicação de um \cluster, os quais estão contidos no intervalo identificado pelas constantes, e restauração destes nas respectivas posições \ie no mesmo intervalo em outro \cluster. Com isso, evita-se manipulações mais complexas do processo como a busca em várias regiões de memória para montar o estado interno do processo.
 
     % \mytodo{colocar alguma parte do linker?}
     % \mytodo{Souto: ngm vai entender o código do linker mas seria legal colocar e discutir melhor sobre as constantes.}
     
-\subsubsection{\textit{User Area}}
+\subsection{\textit{User Area}}
 \label{sec.uarea}
 
     Além da separação de dados e instruções entre \kernel e aplicação, é necessário a identificação e separação das estruturas internas do \so que são manipuladas pelo usuário e constituem o estado interno do processo. Nesse contexto, é introduzido o conceito de conteinerização para isolar as dependências que o usuário possui dentro do \cluster. Ou seja, nós isolamos os dados que são gerenciados pelo \kernel mas pertencem ao contexto do processo de usuário. Neste contexto, nós isolamos tais dados em uma região de memória bem definida, denominada de \uarea. 
 
     Detalhadamente, a \uarea mantém informações sobre:
     \begin{enumerate}[label=(\roman*)]
-        \item \Threads ativas, incluindo identificadores e contextos;
-        \item Ponteiros para suas pilhas de execução; 
-        \item Variáveis de controle e filas de escalonamento;
-        \item Estruturas de gerenciamento de chamadas de sistema; e
-        \item Estruturas de gerenciamento de memória (\eg sistema de paginação).
+        \item \Threads ativas, incluindo identificadores, pilhas de execução e contextos;
+        \item Filas de escalonamento de \threads;
+        \item Variáveis de controle interno do sistema de \threads, como quantidade de \threads ativas;
+        \item Tabela de gerenciamento de chamadas de sistema; e
+        \item Estruturas de gerenciamento de memória \eg sistema de paginação
     \end{enumerate}
 
     Essa estrutura genérica foi projetada para englobar as várias arquiteturas suportadas pelo \nanvix. Além disso, a estrutura permite a modificação e expansão, não se limitando ao estado atual do desenvolvimento do \nanvix, para atender os objetivos de outros projetos que usufruam do \nanvix.
+
+\mytodo{read again from here}
 
 \section{Migração de Processos}
 \label{sec.migracao}

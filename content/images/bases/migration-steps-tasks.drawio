@@ -1,0 +1,165 @@
+<mxfile host="app.diagrams.net" modified="2023-04-14T19:50:25.029Z" agent="Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/112.0.0.0 Safari/537.36" etag="8wlYNHNB9CZ9Ufr_Dd_I" version="21.1.8" type="device">
+  <diagram id="q7ni26Vf6jlZWdCBH7AH" name="Page-1">
+    <mxGraphModel dx="1839" dy="537" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="Hp3fMy_vhWRTYFUB1BI7-4" value="Verificação do Estado Atual; Definição dos Limites de Loop; Definição da Estrutura/Array Atual de Dados a Serem Enviados/Recebidos" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="-170" y="660" width="120" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="Hp3fMy_vhWRTYFUB1BI7-6" value="Verificação da&lt;br&gt;Iteração Atual do Loop" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="160" y="665" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="Hp3fMy_vhWRTYFUB1BI7-17" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="Hp3fMy_vhWRTYFUB1BI7-12" target="Hp3fMy_vhWRTYFUB1BI7-6">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Hp3fMy_vhWRTYFUB1BI7-18" value="Não" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="Hp3fMy_vhWRTYFUB1BI7-17">
+          <mxGeometry x="-0.248" relative="1" as="geometry">
+            <mxPoint x="3" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="Hp3fMy_vhWRTYFUB1BI7-66" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="Hp3fMy_vhWRTYFUB1BI7-12" target="Hp3fMy_vhWRTYFUB1BI7-19">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Hp3fMy_vhWRTYFUB1BI7-67" value="Sim" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="Hp3fMy_vhWRTYFUB1BI7-66">
+          <mxGeometry x="-0.2474" y="1" relative="1" as="geometry">
+            <mxPoint x="-1" y="-1" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="Hp3fMy_vhWRTYFUB1BI7-12" value="" style="rhombus;" vertex="1" parent="1">
+          <mxGeometry x="80" y="680" width="30" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="Hp3fMy_vhWRTYFUB1BI7-15" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1.003;exitY=0.304;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;exitPerimeter=0;" edge="1" parent="1" source="Hp3fMy_vhWRTYFUB1BI7-4" target="Hp3fMy_vhWRTYFUB1BI7-12">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Hp3fMy_vhWRTYFUB1BI7-16" value="A Migração Finalizou?" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="Hp3fMy_vhWRTYFUB1BI7-15">
+          <mxGeometry x="-0.6879" relative="1" as="geometry">
+            <mxPoint x="39" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="Hp3fMy_vhWRTYFUB1BI7-19" value="" style="ellipse;html=1;shape=endState;fillColor=strokeColor;" vertex="1" parent="1">
+          <mxGeometry x="80" y="740" width="30" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="Hp3fMy_vhWRTYFUB1BI7-69" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;" edge="1" parent="1" source="Hp3fMy_vhWRTYFUB1BI7-22" target="Hp3fMy_vhWRTYFUB1BI7-28">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Hp3fMy_vhWRTYFUB1BI7-81" value="Não" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="Hp3fMy_vhWRTYFUB1BI7-69">
+          <mxGeometry x="-0.7181" y="2" relative="1" as="geometry">
+            <mxPoint x="1" y="-2" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="Hp3fMy_vhWRTYFUB1BI7-78" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;" edge="1" parent="1" source="Hp3fMy_vhWRTYFUB1BI7-22" target="Hp3fMy_vhWRTYFUB1BI7-4">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Hp3fMy_vhWRTYFUB1BI7-82" value="Sim" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="Hp3fMy_vhWRTYFUB1BI7-78">
+          <mxGeometry x="-0.9644" relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="Hp3fMy_vhWRTYFUB1BI7-22" value="" style="rhombus;" vertex="1" parent="1">
+          <mxGeometry x="490" y="680" width="30" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="Hp3fMy_vhWRTYFUB1BI7-23" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="Hp3fMy_vhWRTYFUB1BI7-6" target="Hp3fMy_vhWRTYFUB1BI7-22">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Hp3fMy_vhWRTYFUB1BI7-24" value="A Estrutura foi Percorrida&lt;br&gt;Completamente?" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="Hp3fMy_vhWRTYFUB1BI7-23">
+          <mxGeometry x="-0.6559" y="2" relative="1" as="geometry">
+            <mxPoint x="69" y="2" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="Hp3fMy_vhWRTYFUB1BI7-71" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="Hp3fMy_vhWRTYFUB1BI7-28" target="Hp3fMy_vhWRTYFUB1BI7-35">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Hp3fMy_vhWRTYFUB1BI7-79" value="É Destinatário" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="Hp3fMy_vhWRTYFUB1BI7-71">
+          <mxGeometry x="0.625" y="-1" relative="1" as="geometry">
+            <mxPoint x="20" y="1" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="Hp3fMy_vhWRTYFUB1BI7-72" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="Hp3fMy_vhWRTYFUB1BI7-28" target="Hp3fMy_vhWRTYFUB1BI7-47">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Hp3fMy_vhWRTYFUB1BI7-80" value="É Remetente" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="Hp3fMy_vhWRTYFUB1BI7-72">
+          <mxGeometry x="0.2963" y="2" relative="1" as="geometry">
+            <mxPoint x="18" y="-2" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="Hp3fMy_vhWRTYFUB1BI7-28" value="" style="rhombus;" vertex="1" parent="1">
+          <mxGeometry x="490" y="555" width="30" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="Hp3fMy_vhWRTYFUB1BI7-84" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="Hp3fMy_vhWRTYFUB1BI7-1" target="Hp3fMy_vhWRTYFUB1BI7-2">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Hp3fMy_vhWRTYFUB1BI7-1" value="Leitura Assíncrona da Requisição de Migração Através&amp;nbsp; da Mailbox Exclusiva do Daemon de Migração" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="-310" y="516" width="120" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="Hp3fMy_vhWRTYFUB1BI7-85" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="Hp3fMy_vhWRTYFUB1BI7-2" target="Hp3fMy_vhWRTYFUB1BI7-3">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Hp3fMy_vhWRTYFUB1BI7-2" value="Espera pelo fim&lt;br&gt;da Leitura" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="-310" y="603" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="Hp3fMy_vhWRTYFUB1BI7-87" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.599;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="1" source="Hp3fMy_vhWRTYFUB1BI7-3" target="Hp3fMy_vhWRTYFUB1BI7-4">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Hp3fMy_vhWRTYFUB1BI7-3" value="Configuração de Controle Interno da Migração; Criação dos Portais para Envio/Recebimento de Dados" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="-310" y="680" width="120" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="Hp3fMy_vhWRTYFUB1BI7-40" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="Hp3fMy_vhWRTYFUB1BI7-35" target="Hp3fMy_vhWRTYFUB1BI7-39">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Hp3fMy_vhWRTYFUB1BI7-35" value="Configuração para&lt;br&gt;Leitura de Dados na Posição Atual da Estrutura" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="280" y="470" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="Hp3fMy_vhWRTYFUB1BI7-44" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="Hp3fMy_vhWRTYFUB1BI7-39" target="Hp3fMy_vhWRTYFUB1BI7-41">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Hp3fMy_vhWRTYFUB1BI7-39" value="Concessão de Permissão para Recebimento de Dados" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="130" y="470" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="Hp3fMy_vhWRTYFUB1BI7-45" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="Hp3fMy_vhWRTYFUB1BI7-41" target="Hp3fMy_vhWRTYFUB1BI7-42">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Hp3fMy_vhWRTYFUB1BI7-41" value="Leitura Assíncrona de Dados Através do Portal Configurado para Migração" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="-20" y="470" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="Hp3fMy_vhWRTYFUB1BI7-77" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="Hp3fMy_vhWRTYFUB1BI7-42" target="Hp3fMy_vhWRTYFUB1BI7-6">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="-110" y="630" />
+              <mxPoint x="220" y="630" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="Hp3fMy_vhWRTYFUB1BI7-42" value="Espera pelo Fim da Leitura de Dados" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="-170" y="470" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="Hp3fMy_vhWRTYFUB1BI7-46" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="Hp3fMy_vhWRTYFUB1BI7-47" target="Hp3fMy_vhWRTYFUB1BI7-49">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Hp3fMy_vhWRTYFUB1BI7-47" value="Configuração para&lt;br&gt;Envio de Dados na Posição Atual da Estrutura" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="280" y="540" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="Hp3fMy_vhWRTYFUB1BI7-48" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="Hp3fMy_vhWRTYFUB1BI7-49" target="Hp3fMy_vhWRTYFUB1BI7-50">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Hp3fMy_vhWRTYFUB1BI7-49" value="Envio Assíncrono de Dados Através do Portal Configurado para Migração" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="130" y="540" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="Hp3fMy_vhWRTYFUB1BI7-76" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;endArrow=none;endFill=0;" edge="1" parent="1" source="Hp3fMy_vhWRTYFUB1BI7-50">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="39.85714285714289" y="629.9999999999999" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="Hp3fMy_vhWRTYFUB1BI7-50" value="Espera pelo Fim do Envio de Dados" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="-20" y="540" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="Hp3fMy_vhWRTYFUB1BI7-83" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="Hp3fMy_vhWRTYFUB1BI7-61" target="Hp3fMy_vhWRTYFUB1BI7-1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Hp3fMy_vhWRTYFUB1BI7-61" value="" style="ellipse;fillColor=strokeColor;html=1;" vertex="1" parent="1">
+          <mxGeometry x="-265" y="470" width="30" height="30" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

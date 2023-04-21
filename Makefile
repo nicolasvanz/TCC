@@ -34,7 +34,7 @@ all: imgs $(basename).pdfa.pdf
 
 imgs: $(pdfs)
 
-.PHONY: all imgs clean
+.PHONY: all imgs clean veryclean
 
 # Avoid deletion by make (chained pattern rules)
 .SECONDARY: $(basename).aux $(basename).blg $(basename).ilg $(basename).pdf
@@ -42,6 +42,8 @@ imgs: $(pdfs)
 clean:
 	rm -fr *.64 main-logo.pdf _minted-* *.aux *.bbl *.blg *.brf *.out *.synctex.gz *.log "$(basename).pdf" "$(basename).pdfa.pdf" *.idx *.ilg *.ind *.lof *.lot *.lol *.loalgorithm *.glsdefs *.xdy *.toc *.acn *.glo *.ist *.prv *.fls *.fdb_latexmk _region*  *~ auto imgs/*.tmp.pdf {imgs,plots}/*-eps-converted-to.pdf;
 
+veryclean: clean
+	rm -fr svg-inkscape
 
 ###################################################
 # SVG -> PDF conversion                           #

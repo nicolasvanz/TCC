@@ -125,7 +125,6 @@ Abaixo estão descritos o funcionamento mais detalhado de cada \task de migraç�
     \item[2.] Esta \task é ativa no momento em que uma mensagem é lida pela \task 1. Portanto, esta é a \task responsável por sinalizar que uma mensagem foi recebida e lida.
     \item[3.] Esta é a \task que interpreta a mensagem recebida. A mensagem é composta por um código de operação que identifica o papel do cluster na migração e por dois inteiros que identificam os \clusters envolvidos na migração. Caso o \cluster seja o destinatário, durante a execução desta \task é invocada a chamada de sistema \freeze para congelar a execução do processo de usuário (neste momento o \cluster remetente já deve ter congelado sua execução também). Essa \task passa um parâmetro indicando o papel do \cluster na migração. Nas etapas posteriores esse parâmetro é decisivo na escolha dos subfluxos que o procedimento deve seguir \eg envio ou recebimento de dados.
     \item[4.] Esta \task é responsável pelo gerenciamento do estado atual do envio/recebimento de dados da migração. No total são 10 estados. Abaixo estão os estados e as estruturas que são manejadas em cada um deles:
-
     \begin{description}[leftmargin=!,labelwidth=\widthof{MSTATE\_FRAMES\_BITMAP \qquad}]
         \item [MSTATE\_SECTIONS] Seções do binário identificadas como partes do usuário. Particularmente, são enviadas as seções \texttt{.user.text}, \texttt{.user.data}, \texttt{.user.bss} e \texttt{.user.rodata}.
         \item [MSTATE\_UAREA] \uarea.
@@ -136,7 +135,7 @@ Abaixo estão descritos o funcionamento mais detalhado de cada \task de migraç�
         \item [MSTATE\_KSTACKSPHYS] Páginas de \kernel que estão sendo usadas.
         \item [MSTATE\_FRAMES\_BITMAP] \Bitmap responsável pela identificação de quais \frames estão sendo usados.
         \item [MSTATE\_FRAMES\_PHYS] \Frames de usuário que estão sendo usados
-        \item [MSTATE\_FINISH] Não manipula estruturas. Apenas reseta o controle interno da migração e invalida as \tlbs e \caches.
+        \item [MSTATE\_FINISH] Não manipula estruturas. Apenas reseta o controle interno da migração e invalida \tlbs e \caches.
     \end{description}
 
 \end{description}

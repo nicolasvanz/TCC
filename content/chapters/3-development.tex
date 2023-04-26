@@ -163,6 +163,7 @@ Abaixo estão descritos o funcionamento mais detalhado de cada \task de migraç�
     \item[10.] Esta \task é responsável pela concessão de permissão para o recebimento de dados. Sem essa permissão os dados não poderiam ser lidos.
     \item[11.] Esta \task é responsável pelo recebimento assíncrono dos dados do \buffer no índice configurado. Todos os parâmetros para o recebimento dos dados, tais como o ponteiro para o dado, a quantidade de \bytes a serem recebidos e o identificador do portal a ser usado, são passados como parâmetro pela \task 9.
     \item[12.] Esta \task é responsável por sinalizar o fim do recebimento dos dados, ativando a \task 5 novamente para atualizar o índice do \buffer.
+    \item[13.] Esta \task é responsável por resetar o controle interno da migração e invalidar \tlbs e \caches. Essa \task é ativada quando o estado atual é MSTATE\_FINISH. 
 
 \end{description}
 

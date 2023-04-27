@@ -12,7 +12,14 @@ Para responder a primeira pergunta, foram desenvolvidos experimentos sobre a man
 
 Para responder a segunda pergunta, foram desenvolvidos experimentos sobre a migração de processos no \nanvix. O experimento mensura o tempo de transferência de um processo entre \clusters de acordo com os recursos utilizados. Neste teste, variamos a quantidade de páginas de memória dinamicamente alocadas entre 0 e 32; e \threads usadas pela aplicação entre 1 e 17. Em resumo, neste experimento avaliamos como ocorre a progressão do tempo de transferência de um processo desde o mínimo de recursos utilizados (1 \thread e 0 páginas dinamicamente alocadas) até o máximo (17 \threads e 32 páginas dinamicamente alocadas).
 
-\mytodo{citar como foi avaliado o tempo; sync; tempo de setup; máquina utilizada; script automático}
+Para responder a terceira pergunta, foi feito outro teste que mensura o \downtime da aplicação em diversos cenários. Neste teste, mensuramos o \downtime variando a quantidade de processos migrados paralelamente desde o mínimo (1 processo, envolvendo 2 \clusters) até o máximo (8 processos, envolvendo 16 \clusters).
+
+Adicionalmente, um teste foi feito com o objetivo de garantir a capacidade do \daemon suportar múltiplas migrações. Neste experimento, um processo é migrado de \cluster em \cluster até que percorra todos os \clusters do processador \ie o processo é migrado realizando um movimento circular, passando do \cluster 0 para o 1, do 1 para o 2, e assim sucessivamente até retornar ao \cluster 0.
+
+Todos os testes foram realizados no processador \mppa. Realizamos múltiplas replicações para garantir maior confiança estatística (100 replicações para o primeiro experimento e 20 replicações para o segundo e terceiro experimento). Para a medição de tempo no segundo e terceiro experimento, utilizamos a abstração de comunicação \sync. Em resumo, no início do teste todos os \clusters sincronizavam entre si através do \sync. Neste momento, o \iocluster iniciava uma contagem de ciclos. Ao final do experimento, todos os \clusters envolvidos sincronizavam novamente. Neste momento, o \iocluster parava a contagem de ciclos e esse era o tempo que a migração demorou até seu término. Destaca-se que nos experimentos que precisavam de algum \setup inicial, o tempo de \setup não foi considerado. Por exemplo, no segundo experimento, o tempo para a criação de \threads, alocação e manipulação das páginas dinamicamente alocadas não é contabilizado no tempo final. O resultado, portanto, engloba apenas o \downtime da aplicação.
+
+
+\mytodo{citar o tamanho da aplicação. x paginas y threads, ...}
 
 \chapter{Resultados Parciais}
 \label{chap.results}

@@ -70,20 +70,32 @@ Quanto ao funcionamento dos experimentos, em resumo, no início do teste todos o
 	\caption{Impactos da virtualização sobre a manipulação de \threads.\label{fig.threads}}%
 \end{figure}
 
-O primeiro experimento, o qual mensurava o impacto do isolamento da aplicação através da \uarea e separação do binário de usuário e \kernel, mostrou que o subsistema de \threads foi positivamente afetado. A \autoref{fig.fork-join} ilustra que o \nanvix obteve um leve ganho de desempenho nas operações de criação e junção de \threads. A \autoref{fig.kernel-counters} mostra a origem do aumento da performance. Percebemos que houve uma diminuição na quantidade de faltas em \cache (tanto de dados como de instruções) e a quantidade de desvios é menor na versão do \nanvix com a \uarea. Isso ocorre porque a \uarea explora melhor a localidade espacial dos dados, já que os dados estão aglomerados em um espaço menor da memória. Como consequência disso, o número de faltas na \cache e de desvios diminui, resultando em um aumento de desempenho.
-
-\mytodo{fix images positions and captions}
-
 \begin{figure}[tb]
     \centering
     \includegraphics[width=\linewidth]{content/images/multiple_threads_pages.pdf}
-    \caption{...}
+    \caption{\Downtime da aplicação durante o experimento de migração fixando a quantidade de páginas alocadas dinamicamente}
     \label{fig.mtpages}
 \end{figure}
 
 \begin{figure}[tb]
     \centering
     \includegraphics[width=\linewidth]{content/images/multiple_threads_threads.pdf}
-    \caption{...}
+    \caption{\Downtime da aplicação durante o experimento de migração fixando a quantidade de \threads}
     \label{fig.mtthreads}
 \end{figure}
+
+O primeiro experimento, o qual mensurava o impacto do isolamento da aplicação através da \uarea e separação do binário de usuário e \kernel, mostrou que o subsistema de \threads foi positivamente afetado. A \autoref{fig.fork-join} ilustra que o \nanvix obteve um leve ganho de desempenho nas operações de criação e junção de \threads. A \autoref{fig.kernel-counters} mostra a origem do aumento da performance. Percebemos que houve uma diminuição na quantidade de faltas em \cache (tanto de dados como de instruções) e a quantidade de desvios é menor na versão do \nanvix com a \uarea. Isso ocorre porque a \uarea explora melhor a localidade espacial dos dados, já que os dados estão aglomerados em um espaço menor da memória. Como consequência disso, o número de faltas na \cache e de desvios diminui, resultando em um aumento de desempenho.
+
+O segundo experimento, que mensura o \downtime da aplicação em cenários variando a quantidade de recursos utilizados, mostrou os seguintes resultados. A \autoref{fig.mtpages} e a \autoref{fig.mtthreads} mostram a progressão de tempo sobre diferentes perspectivas (fixando-se as páginas e \threads, respectivamente). Como o esperado, o \downtime aumenta quanto maior for o número de páginas e \threads. Além disso, a quantidade de \threads se destaca por apresentar maior expressividade no tempo contabilizado em comparação com a quantidade de páginas. Isso acontece porque uma \thread acarreta em mais dados migrados do que uma página. De maneira geral, o \downtime é aproximadamente descrito pela função \ref{eq.downtime}:
+
+\begin{equation}\label{eq.downtime}
+    \begin{split}
+        f(p, t) = \frac{17}{32}*p+t+18
+    \end{split}
+\end{equation}
+
+Essa função descreve relativamente bem a progressão de tempo até 15 \threads. Como podemos observar nos gráficos, com 16 \threads há uma disparidade com a natureza aparentemente linear que a progressão de tempo aparenta ter. Isso acontece porque o \mppa possui 16 \cores por \cluster, o que significa que simultaneamente apenas 15 \threads de usuário podem executar, já que em um \core executam apenas \threads de sistema, que são responsáveis pelo tratamento de chamadas de sistema e execução das \tasks. Portanto, essa disparidade numérica que os gráficos apresentam são justificados pelo tempo extra que o teste ocupa com gerenciamento de \threads. Isso porque o teste finaliza com a junção de todas as \threads criadas no \cluster destinatário e tal processo exige tempo extra quando a quantidade de \threads é maior que 15, uma vez que algumas \threads precisariam esperar outras terminarem para poderem executar e, finalmente, finalizar sua execução.
+
+O terceiro experimento, que mensurava o \downtime da aplicação quando múltiplas migrações aconteciam simultaneamente, mostrou que a quantidade de migrações paralelas não impacta significativamente o tempo. É importante destacar que nesse experimento foram migradas aplicações que usavam o máximo de recursos de sistema. Mesmo assim, a quantidade de dados não foi suficiente para impactar no \downtime.
+
+Já o quarto experimento, o teste adicional que visava a comprovação da corretude do \daemon, mostrou que: o \daemon é capaz de ser reusado no mesmo \cluster diversas vezes independentemente do papel do \cluster na migração; e que é possível um processo ser migrado diversas vezes para diferentes \clusters, até em movimento circular envolvendo todos os \clusters, como no experimento.

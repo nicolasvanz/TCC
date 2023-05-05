@@ -30,9 +30,9 @@ Apesar dos processadores \lws serem uma alternativa às abordagens tradicionais 
 \begin{enumerate}[label= (\roman*)]
     \item Necessidade do uso de um modelo de programação híbrida que força troca de informação entre os \clusters exclusivamente por troca de mensagens via \noc enquanto a comunicação interna em um \cluster ocorre sobre memória compartilhada~\cite{kelly2013};
     \item Presença de um sistema de memória distribuída restritivo, formado por múltiplos espaços de endereçamento, o que exige o particionamento do conjunto de dados em blocos pequenos para manipulação nas pequenas memórias locais. A manipulação deve ocorrer um bloco de cada vez, necessitando a troca explicita de blocos com uma memória remota~\cite{Castro-PARCO:2016};
-    \item Maiores latências e gargalos de comunicação através da \noc comparado com comunicação em memória compartilhada;
-    \item Falta de suporte de coerência de \cache em \hardware visando a economia de energia. Exigindo do programador a gerência da \cache via \software; e
-    \item Configuração heterogênea do \hardware, como \clusters destinados a funcionalidades específicas (computação útil e I/O), o que dificulta o desenvolvimento de aplicações.
+    % \item Maiores latências e gargalos de comunicação através da \noc comparado com comunicação em memória compartilhada;
+    \item Falta de suporte de coerência de \cache em \hardware visando a economia de energia. Exigindo do programador a gerência da \cache via \software~\cite{francesquini2015}; e
+    \item Configuração heterogênea do \hardware, como \clusters destinados a funcionalidades específicas (computação útil e I/O), o que dificulta o desenvolvimento de aplicações~\cite{barbalace2015popcorn}.
 \end{enumerate}
 
 Atualmente, estudos exploram soluções para amenizar o impacto arquiteturais sobre o desenvolvimento de \software. \oss distribuídos destacam-se por proverem um ambiente de programação mais robusto e rico~\cite{asmussen_m3:_2016, kluge_operating_2014, penna:sbesc19}. Dentre essas soluções, o modelo de um \os distribuído baseado em uma abordagem \multikernel destaca-se por aderir a natureza distribuída e restritiva dos \lws~\cite{penna2017-1,penna2017-2,penna2019}.

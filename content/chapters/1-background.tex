@@ -3,24 +3,24 @@
 \chapter{Referencial Teórico}
 \label{chap.background}
 
-Neste capítulo serão apresentados conceitos fundamentais para o entendimento do trabalho. A \autoref{sec.lw} apresenta uma visão geral da evolução dos processadores, partindo dos \singlecores até os \lws. A \autoref{sec.nanvixos} apresenta o \nanvix, \so que será utilizado no desenvolvimento deste trabalho. A \autoref{sec.virtualizacao} descreve detalhes importantes sobre a virtualização e migração de processos.
+Neste capítulo serão apresentados conceitos fundamentais para o entendimento do trabalho. A \autoref{sec.lw} apresenta uma visão geral da evolução dos processadores, partindo dos \singlecores até os \lws. A \autoref{sec.nanvixos} apresenta o \nanvix, \so distribuído que será utilizado no desenvolvimento deste trabalho. A \autoref{sec.virtualizacao} descreve detalhes importantes sobre a virtualização e migração de processos.
 
 \section{Dos \singlecores aos \Lws}
 \label{sec.lw}
 
-O aumento de desempenho dos sistemas computacionais manteve-se como uma necessidade constante para o avanço da ciência em vários setores: astrologia, biologia, engenharia, etc. Até tempos atrás, esse objetivo era alcançado através do aumento da frequência de relógios do núcleo de processamento, do avanço na tecnologia dos semicondutores e do acréscimo do número de transistores em um \chip. Atualmente, nós estamos chegando ao limite físico que impede a aplicação de parte dessas técnicas. Além da dificuldade de garantir a dissipação de calor à medida que a frequência aumenta, o número de transistores que conseguimos colocar em uma mesma área de um \chip está chegando ao seu limite físico, \ie o tamanho dos transitores alcançou a escala atômica.
+O aumento de desempenho dos sistemas computacionais manteve-se como uma necessidade constante para o avanço da ciência em vários setores: astrologia, biologia, engenharia, etc. Até tempos atrás, esse objetivo era alcançado através do aumento da frequência de relógios do núcleo de processamento, do avanço na tecnologia dos semicondutores e do acréscimo do número de transistores em um \chip~\cite{amrouch2018negative}. Atualmente, nós já chegamos ao limite físico que impede a aplicação de parte dessas técnicas. Além da dificuldade de garantir a dissipação de calor à medida que a frequência aumenta, o número de transistores que conseguimos colocar em uma mesma área de um \chip chegou a um limite físico, \ie o tamanho dos transitores alcançou a escala atômica.
 
-Como alternativa para a continuidade nos avanços de poder computacional, foram exploradas novas técnicas. Em especial, foram desenvolvidas arquiteturas paralelas, que exploram o poder de processamento paralelo, o qual é atingido pela execução de múltiplos \cores simultaneamente. Essas novas arquiteturas são classificadas de acordo com a maneira com que conseguem manipular os dados. São elas:
+Como alternativa para a continuidade nos avanços de poder computacional, foram exploradas novas técnicas~\cite{fuller2011computing,gepner2006multi}. Em especial, foram desenvolvidas arquiteturas paralelas, que exploram o poder de processamento paralelo, o qual é atingido pela execução de múltiplos \cores simultaneamente~\cite{gepner2006multi}. Essas novas arquiteturas são classificadas de acordo com a maneira com que conseguem manipular os dados. São elas:
 \begin{inlinelist}
     \item \sisd;
     \item \simd;
     \item \misd;
     \item \mimd.
 \end{inlinelist}
-Neste trabalho, estamos interessados nas arquiteturas que suportam cargas de trabalho \mimd, as quais ainda podem ser divididas em multiprocessadores ou multicomputadores, como mostrado na \autoref{fig.mimd}~\cite{tanenbaum:4ed}.
+Neste trabalho, estamos interessados nas arquiteturas que suportam cargas de trabalho \mimd, as quais ainda podem ser divididas em multiprocessadores ou multicomputadores~\cite{tanenbaum:4ed}, como mostra a \autoref{fig.mimd}.
 % \todo{Sobre a fig mimd, não precisa ser agora mas: mudar o texto nas imagens para pt-br}
 
-Neste contexto, a classe de processadores \lws destacam-se por atrelar alto poder de processamento paralelo com eficiência energética. Os \lws são classificados como \mpsoc e suas arquiteturas apresentam as seguintes características:
+Neste contexto, a classe de processadores \lws destacam-se por atrelar alto poder de processamento com eficiência energética~\cite{francesquini2015}. Os \lws são classificados como \mpsoc e suas arquiteturas apresentam as seguintes características:
 \begin{enumerate}[label=(\roman*)]
     \item Integrar de centenas à milhares de núcleos de processamento operando a baixas frequências em um único \chip;
     \item Processar cargas de trabalho \mimd;
@@ -33,59 +33,65 @@ Neste contexto, a classe de processadores \lws destacam-se por atrelar alto pode
 \begin{figure}[t]
     \centering
     \includesvg[width=0.9\linewidth]{content/images/mimd.svg}
-    \caption{(a) um multiprocessador de memória compartilhada. (b) um multicomputator com troca de mensagens. (c) um sistema distribuído de grande escala~\cite{tanenbaum:4ed}.}
+    \caption{(a) multiprocessador de memória compartilhada. (b) multicomputator com troca de mensagens. (c) sistema distribuído de grande escala.}
+    \fonte{\cite{tanenbaum:4ed}}
     \label{fig.mimd}
 \end{figure}
 
 Alguns exemplos comerciais bem sucedidos de \lws são o \mppa~\cite{dinechin:2013}, PULP~\cite{pulp} e \taihulight~\cite{fu2016sunway}.
 %
-Especificamente, para o desenvolvimento deste trabalho foi utilizado o processador \mppa. A \autoref{fig.arch-mppa} apresenta uma visão geral do processador e suas peculiaridades, tais como:
+Especificamente, nós utilizamos o processador \mppa para o desenvolvimento deste trabalho. A \autoref{fig.arch-mppa} apresenta uma visão geral do processador \mppa e suas peculiaridades, tais como:
 
 \begin{enumerate}[label=(\roman*)]
     \item Integrar 288 núcleos de baixa frequência em um único \textit{chip};
     \item Possuir núcleos organizados em 20 \clusters;
     \item Dispor de 2 \nocs para transferência de dados entre \clusters, uma para controle e outra para dados;
     \item Possuir um sistema de memória distribuída composto por pequenas memórias locais, \eg \sram de 2 MB;
-    \item Não dispor de coerência de \cache;
-    \item Apresentar heterogeneidade: \clusters destinados à computação (\cclusters) e \clusters destinados à comunicação com periféricos (\ioclusters).
+    \item Não dispor de coerência de \cache em \hardware;
+    \item Apresentar heterogeneidade, como \clusters destinados à computação (\cclusters) e \clusters destinados à comunicação com periféricos (\ioclusters).
 \end{enumerate}
 
 \begin{figure}[t]
     \centering
     \includegraphics[width=0.6\linewidth]{content/images/arch-mppa-gs.png}
-    \caption{Visão arquitetural do processador \mppa~\cite{penna:sbesc19}.}
+    \caption{Visão arquitetural do processador \mppa.}
+    \fonte{\cite{penna:sbesc19}}
     \label{fig.arch-mppa}
 \end{figure}
 
 \section{\nanvixos}
 \label{sec.nanvixos}
 
-O \nanvix\footnote{Disponível em https://github.com/nanvix} é um \os distribuído e de propósito geral que busca equilibrar desempenho, portabilidade e programabilidade para \lws~\cite{penna:sbesc19}. O \nanvix é estruturado em três camadas de \kernel. São elas:
+O \nanvix\footnote{Disponível em https://github.com/nanvix} é um \os distribuído e de propósito geral que busca equilibrar desempenho, portabilidade e programabilidade para \lws~\cite{penna:sbesc19}. O \kernel do \nanvix é estruturado em três camadas de abstração. São elas:
 \begin{description}
     \item [\nanvix \hal]
          é a camada mais baixa que abstrai e provê o gerenciamento dos recursos de \hardware sobre uma visão comum~\cite{penna:hal}. Entre esses recursos estão: \cores, \tlbs, \cache, \mmu, \noc, interrupções, memória virtual e recursos de \io. De maneira geral, esta camada provê abstrações ao nivel do \core, \cluster e comunicação/sincronização entre \clusters~\cite{penna:thesis}. A Figura \ref{fig.hal-overview} ilustra a estrutura interna da \hal do \nanvix.
     \item [\nanvix \Microkernel]
-        é a camada intermediária que provê gerenciamento de recursos e os serviços mínimos de um \os em um \cluster. Entre esses serviços se encontram a comunição entre processos, gerenciamento de \threads e memória, controle de acesso à memória e interface para chamadas de sistema. As chamadas de sistema podem ser executadas localmente, caso acessem dados \rdo ou alterem estruturas internas do \core, ou remotamente pelo \mcore, que atende à requisição e libera o \score requisitante ao término da chamada~\cite{penna:thesis}. Essa característica adjetiva o \microkernel como assimétrico. A Figura \ref{fig.microkernel-overview} ilustra a estrutura interna do \microkernel do \nanvix.
+        é a camada intermediária que provê gerenciamento de recursos e os serviços mínimos de um \os em um \cluster. Entre esses serviços se encontram o gerenciamento de \threads e memória, controle de acesso à memória, interface para chamadas de sistema e a comunição entre processos. As chamadas de sistema podem ser executadas localmente, caso acessem dados \rdo ou alterem estruturas internas do \core, ou remotamente pelo \mcore, que atende à requisição e libera o \score requisitante ao término da chamada~\cite{penna:thesis}. Essa característica adjetiva o \microkernel como assimétrico. A Figura \ref{fig.microkernel-overview} ilustra a estrutura interna do \microkernel do \nanvix.
     \item [\nanvix \Multikernel]
-        é a camada superior que provê os serviços mais complexos de um \os e dispõe uma visão a nível do processador em si. Os serviços são hospedados em \ioclusters, \ie isolados das aplicações de usuário. Os serviços atendem as requisições vindas dos processos de usuário através de um modelo cliente-servidor. As requisições e respostas são enviadas/recebidas através de passagem de mensagem via \noc. Os serviços dessa camada podem ser entendidos como fontes de informação que mantém a execução dos processos consistentes no processador, tendo em vista a natureza distribuída da memória nessas arquiteturas. Alguns serviços incluídos no \nanvix são mecanismos de \spawn de processos e gerenciamento de nomes lógicos dos processos à fim a localização dos processos no processador.
+        é a camada superior que provê os serviços mais complexos de um \os e dispõe uma visão a nível do processador em si. Os serviços são hospedados em \ioclusters, \ie isolados das aplicações de usuário. Os serviços atendem as requisições vindas dos processos de usuário através de um modelo cliente-servidor. As requisições e respostas são enviadas/recebidas através de passagem de mensagem via \noc. Os serviços dessa camada podem ser entendidos como fontes de informação que mantém a execução dos processos consistentes no processador, tendo em vista a natureza distribuída da memória nessas arquiteturas. Alguns serviços incluídos no \nanvix são mecanismos de \spawn de processos e gerenciamento de nomes lógicos dos processos à fim de abstrair a localização dos processos no processador.
 \end{description}
 
 \begin{figure}[t]
     \centering
     \includesvg[width=0.8\linewidth]{content/images/hal.svg}
-    \caption{Estrutura interna da \hal do \nanvix~\cite{penna:thesis}.}
+    \caption{Estrutura interna da \hal do \nanvix.}
+    \fonte{\cite{penna:thesis}}
     \label{fig.hal-overview}
 \end{figure}
 
 \begin{figure}[t]
     \centering
     \includesvg[width=0.8\linewidth]{content/images/microkernel.svg}
-    \caption{Estrutura interna do \microkernel do \nanvix~\cite{penna:thesis}.}
+    \caption{Estrutura interna do \microkernel do \nanvix.}
+    \fonte{\cite{penna:thesis}}
     \label{fig.microkernel-overview}
 \end{figure}
 
 Em sua abordagem original, os processos no \nanvix são estáticos, \ie cada \cluster possui apenas um processo. Desse modo, uma vez que o processo inicia sua execução em um \cluster, este finalizará a execução no mesmo \cluster. 
-Isso torna o processo dependente do \cluster que o executa, fazendo com que a comunicação entre processos esteja atrelada aos \clusters nos quais os processos são executados (e não aos processos em si). A falta de mobilidade dos processos nesse modelo pode trazer sobrecargas ao processador, afetando diretamente o o desempenho do sistema quando múltiplas aplicações estão em execução simultânea no processador. No caso de aplicações paralelas, compostas por múltiplos processos (ou \textit{threads}) que se comunicam, a disposição dos processos (ou \textit{threads}) nos \clusters se torna importante, pois a comunicação entre \clusters próximos é mais rápida e resulta em menor consumo energético do processador. Sendo assim, melhorar a mobilidade e a disposição dos processos no processador possibilitaria melhorar o gerenciamento dos recursos do mesmo. Um exemplo de mobilidade é viabilizar a migração de processos entre \clusters. Neste contexto, este trabalho explora essa desassociação entre o processo e o \cluster que o executa. Deste modo, nós aumentamos a mobilidade dos processos, permitindo a migração de processos entre os \clusters do processador.
+Isso torna o processo dependente do \cluster que o executa, fazendo com que a comunicação entre processos esteja atrelada aos \clusters nos quais os processos são executados (e não aos processos em si). A falta de mobilidade dos processos nesse modelo pode trazer sobrecargas ao processador, afetando diretamente o desempenho do sistema quando múltiplas aplicações estão em execução simultânea no processador. No caso de aplicações paralelas, compostas por múltiplos processos (ou \textit{threads}) que se comunicam, a disposição dos processos (ou \textit{threads}) nos \clusters se torna importante, pois a comunicação entre \clusters próximos é mais rápida e resulta em menor consumo energético do processador. Sendo assim, melhorar a mobilidade e a disposição dos processos no processador possibilitaria melhorar o gerenciamento dos recursos do mesmo. 
+
+Um exemplo de mobilidade é viabilizar a migração de processos entre \clusters. Neste contexto, este trabalho explora essa desassociação entre o processo e o \cluster que o executa. Deste modo, nós aumentamos a mobilidade dos processos, permitindo a migração de processos entre os \clusters do processador.
 
 \subsection{Abstrações de Comunicação do \nanvix}
 
@@ -102,7 +108,8 @@ O \nanvix dispõe de três abstrações de comunicações para transferência de
                    {.44\textwidth}
                    {Modo $N:1$.}
                    {\includesvg[width=\textwidth]{content/images/sync-n-1.svg}}
-	\caption{Fluxo de execução da abstração \sync \cite{penna:thesis}.\label{fig.sync}}
+	\caption{Fluxo de execução da abstração \sync.\label{fig.sync}}
+    \fonte{\cite{penna:thesis}}
 \end{figure}
 
 \subsubsection{\sync}
@@ -114,7 +121,8 @@ O \sync pode ser operado duas maneiras distintas: o modo $1:N$ e $N:1$. No modo 
 \begin{figure}[t]
     \centering
     \includesvg[width=0.5\linewidth]{content/images/mailbox.svg}
-    \caption{Fluxo de execução da abstração \mailbox~\cite{penna:thesis}}
+    \caption{Fluxo de execução da abstração \mailbox.}
+    \fonte{\cite{penna:thesis}}
     \label{fig.mailbox}
 \end{figure}
 
@@ -125,7 +133,8 @@ A abstração \mailbox é responsável pelo suporte ao envio de mensagens de con
 \begin{figure}[t]
     \centering
     \includesvg[width=0.5\linewidth]{content/images/portal.svg}
-    \caption{Fluxo de execução da abstração \portal \cite{penna:thesis}}\label{fig.portal}
+    \caption{Fluxo de execução da abstração \portal.}\label{fig.portal}
+    \fonte{\cite{penna:thesis}}
 \end{figure}
 
 \subsubsection{\portal}
@@ -134,33 +143,38 @@ A abstração portal suporta a troca de mensagens grandes e segue a semântica $
 
 \section{Virtualização}
 \label{sec.virtualizacao}
-A virtualização pode ser entendida como uma técnica de abstração de \hardware que permite a criação de uma versão virtual de um ambiente, como computadores, \sos, sistemas de armazenamento, redes, aplicações, etc. Nesse cenário, muitas vezes é possível a criação de múltiplas instâncias dessa versão virtual, as quais competem pelos recursos físicos/reais. O isolamento e independência das instâncias virtuais garantem à virtualização algumas vantagens, que são muito exploradas hoje, especialmente em ambientes \cloud~\cite{manohar2013survey}. São elas: flexibilidade, portabilidade, escalabilidade e segurança.
+A virtualização pode ser entendida como uma técnica de abstração de \hardware que permite a criação de uma versão virtual de um ambiente, como computadores, \sos, sistemas de armazenamento, redes, aplicações, etc. Nesse cenário, muitas vezes é possível a criação de múltiplas instâncias dessa versão virtual, as quais competem pelos recursos físicos/reais. O isolamento e independência das instâncias virtuais garantem à virtualização algumas vantagens muito exploradas atualmente, especialmente em ambientes \cloud~\cite{manohar2013survey}. Dentre elas: flexibilidade, portabilidade, escalabilidade e segurança.
 
-O conceito de virtualização pode ser traçado desde a década de 50, durante a época dos \mainframes e da memória virtual (ainda emergente na época)~\cite{campbell2006introduction}. Nesse período, a preocupação era tornar um recurso físico acessível a múltiplos usuários simultaneamente. Essa motivação sustentou a evuloção da virtualização, levando ao surgimento das \vms e dos \hypervisors. Com o tempo, viu-se o surgimento de novos projetos, como o M44/44x da \ibm, responsável pelo nascimento de um novo \design para os sistemas de tempo compartilhado. Nessa nova estrutura, a máquina central repartia seus recursos em diversas instâncias de \vms, que eram utilizadas por múltiplos usuários simultaneamente.
+O conceito de virtualização pode ser traçado desde a década de 50, durante a época dos \mainframes e do emergente conceito de memória virtual~\cite{campbell2006introduction}. Nesse período, a preocupação era tornar um recurso físico acessível a múltiplos usuários simultaneamente. Essa motivação sustentou a evolução da virtualização, levando ao surgimento das \vms e dos \hypervisors. Com o tempo, viu-se o surgimento de novos projetos, como o M44/44x da \ibm, responsável pelo nascimento de um novo \design para os sistemas de tempo compartilhado. Nessa nova estrutura, a máquina central repartia seus recursos em diversas instâncias de \vms, que eram utilizadas por múltiplos usuários simultaneamente.
 
-O retorno das pesquisas sobre virtualização ocorreu mais recentemente, na década de 90. Essa foi a época em que o número de serviços e servidores cresceu bruscamente. Naturalmente, com o aumento do número de servidores e aplicações hospedadas nesses servidores, a necessidade de gerenciamento desses recursos também aumentou. Nesse cenário, a virtualização se mostrou uma solução viável por permitir que em um único servidor executassem diversas \vms rodando diferentes serviços, mantendo ainda assim a independência de execução entre eles. Isso significa que a interrupção ou quebra de um serviço não afeta os demais. Sendo assim, a virtualização garante uma maior flexibilidade e escalabilidade, além de reduzir os custos de manutenção e operação, afinal, dessa forma os recursos de \hardware são utilizados de maneira mais eficiente e há a redução na quantidade de máquinas físicas para gerenciar. 
+O retorno das pesquisas sobre virtualização ocorreu mais recentemente, na década de 90. Essa foi a época em que o número de serviços e servidores cresceu bruscamente. Naturalmente, com o aumento do número de servidores e aplicações hospedadas nesses servidores, a necessidade de gerenciamento desses recursos também aumentou. Nesse cenário, a virtualização mostrou-se uma solução viável por permitir que diversas \vms compartilhassem um único servidor mantendo, ainda assim, a independência dos serviços providos por essas \vms encapsulados. Isso significa que a interrupção ou quebra de um serviço não afeta os demais graças à virtualização, que garante uma maior flexibilidade e escalabilidade. Por consequência, a virtualização reduziu os custos de manutenção e operação, já que os recursos de \hardware foram utilizados de maneira mais eficiente e houve a redução na quantidade de máquinas físicas para gerenciar.
 
 Nos dias de hoje, a tendência de uso de \vms em servidores continua cresente. Hoje, a virtualização de servidor é uma das formas mais comuns de virtualização, sendo utilizada em ambientes \cloud para garantir o suporte à execução de múltiplas aplicações, possivelmente em \oss distintos sobre o mesmo \hardware~\cite{manohar2013survey}.
 
-Nas próximas seções serão apresentados alguns tipos de virtualização e suas peculiaridades.
-
 \subsection{Virtualização total}
-Neste tipo de virtualização o objetivo é abstrair o \hardware de um computador como um todo. Cada instância executa isoladamente e independentemente uma das outras. Neste tipo de virtualização, é utilizado um \vmm, também conhecido como \hypervisor, o qual, na virtualização total, é classificado como tipo 1~\cite{campbell2006introduction}. O \hypervisor tipo 1 é um \software que roda no nível mais privilegiado e atua como um intermediário entre o \hardware e os múltiplos \sos. O \hypervisor tipo 1 é o único programa do sistema que possui o acesso ao \hardware físico, \eg \cpu, memória e armazenamento, sendo responsável por gerenciar esses recursos de \hardware para cada instância virtual da máquina virtualizada~\cite{sweeney2016virtualization}.
+A virtualização total tem como objetivo abstrair o \hardware de um computador como um todo. Cada instância executa isoladamente e independentemente uma das outras. Neste tipo de virtualização, é utilizado um \vmm, também conhecido como \hypervisor, o qual, na virtualização total, é classificado como tipo 1~\cite{campbell2006introduction}. O \hypervisor tipo 1 é um \software que roda no nível mais privilegiado e atua como um intermediário entre o \hardware e os múltiplos \sos. O \hypervisor tipo 1 é o único programa do sistema que possui o acesso ao \hardware físico, \eg \cpu, memória e armazenamento, sendo responsável por gerenciar esses recursos de \hardware para cada instância virtual da máquina virtualizada~\cite{sweeney2016virtualization}.
 
 \subsection{Para-virtualização}
-Tal qual na virtualização total, neste tipo de virtualização, o objetivo também é a abstração da máquina em sua totalidade. Contudo, em contraste com a virtualização total, na para-virtualização uma única instância da máquina executa um \so, chamado de \so hospedeiro, que detém o acesso ao \hardware. Enquanto as demais instâncias executam seus respectivos \sos, chamados de \sos convidados, sob o intermédio de um \hypervisor (\vmm) tipo 2, que pode ser entendido como um processo regular do \so hospedeiro~\cite{campbell2006introduction}. Sendo assim, o \hypervisor tipo 2 atua como um intermediário entre o \so convidado e o \so hospedeiro. O \so hospedeiro reconhece as requisições do \so convidado e, gerencia os recursos de \hardware deste~\cite{sweeney2016virtualization}.
+De forma similar à virtualização total, o objetivo da para-virtualização também é a abstração da máquina em sua totalidade. Contudo, em contraste com a virtualização total, na para-virtualização uma única instância da máquina executa um \so, chamado de \so hospedeiro, que detém o acesso ao \hardware. Enquanto as demais instâncias executam seus respectivos \sos, chamados de \sos convidados, sob o intermédio de um \hypervisor (\vmm) tipo 2, que pode ser entendido como um processo regular do \so hospedeiro~\cite{campbell2006introduction}. Sendo assim, o \hypervisor tipo 2 atua como um intermediário entre o \so convidado e o \so hospedeiro. O \so hospedeiro reconhece as requisições do \so convidado e gerencia os recursos de \hardware deste~\cite{sweeney2016virtualization}.
 
 \subsection{Virtualização a Nível de Processo e Conteinerização}
 Virtualizar um processo ou aplicação é o processo de desacoplar a execução de um processo do sistema que o executa. Nesse contexto, o processo tem uma visão virtual única do sistema, de modo que a execução de cada aplicação ocorre independentemente uma da outra.
 
-Neste tipo de virtualização, cada aplicação é isolada em um ambiente virtual, também conhecido como contêiner, no qual estão contidas todas as bibliotecas, arquivos e configurações necessárias para a execução da aplicação. Como não é necessária a criação de um \so para cada aplicação, a virtualização se torna muito mais leve \ie tem um impacto menor na memória. Isso torna esse modelo uma fonte de inspiração para o desenvolvimento da virtualização em sistemas de memória limitados, que é o caso dos \lws.
+Neste tipo de virtualização, cada aplicação é isolada em um ambiente virtual, também conhecido como contêiner, no qual estão contidas todas as bibliotecas, arquivos e configurações necessárias para a execução da aplicação. Como não é necessária a criação de um \so para cada aplicação, a virtualização se torna muito mais leve \ie tem um impacto menor na memória.
+
+O fato do modelo de conteinerização exigir muito menos espaço e complexidade arquitetônica para existir torna este modelo muito atrativo para sistemas com restrições de memória, tal qual os \lws.
 
 \subsection{Outros Tipos de Virtualização}
-\begin{enumerate}[label=(\roman*)]
-    \item Virtualização de \desktop: usuários acessam o ambiente computacional, ou \desktop, remotamente. O poder e recursos computacionais estão centralizados, mas os pontos de acesso podem ser diversos. Também é conhecido como \vdi.
-    \item Virtualização de armazenamento: múltiplos dispositivos de armazenamento são unificados sob uma mesma visão de dados \ie os dados estão dispersos, mas aparecem como um único conjunto de dados compartilhados.
-    \item Virtualização de rede: múltiplas redes virtuais, cada uma com seu conjunto de recursos (como roteadores, \switches e \firewalls) operam sobre uma mesma rede física. Isso permite melhor gerenciamento de tráfego e otimizção.
-\end{enumerate}
+% \begin{enumerate}[label=(\roman*)]
+%     \item Virtualização de \desktop: usuários acessam o ambiente computacional, ou \desktop, remotamente. O poder e recursos computacionais estão centralizados, mas os pontos de acesso podem ser diversos. Também é conhecido como \vdi.
+%     \item Virtualização de armazenamento: múltiplos dispositivos de armazenamento são unificados sob uma mesma visão de dados \ie os dados estão dispersos, mas aparecem como um único conjunto de dados compartilhados.
+%     \item Virtualização de rede: múltiplas redes virtuais, cada uma com seu conjunto de recursos (como roteadores, \switches e \firewalls) operam sobre uma mesma rede física. Isso permite melhor gerenciamento de tráfego e otimizção.
+% \end{enumerate}
+\begin{description}
+    \item [Virtualização de \desktop:] usuários acessam o ambiente computacional, ou \desktop, remotamente. O poder e recursos computacionais estão centralizados, mas os pontos de acesso podem ser diversos. Também é conhecido como \vdi.
+    \item [Virtualização de armazenamento:] múltiplos dispositivos de armazenamento são unificados sob uma mesma visão de dados \ie os dados estão dispersos, mas aparecem como um único conjunto de dados compartilhados.
+    \item [Virtualização de rede:] múltiplas redes virtuais, cada uma com seu conjunto de recursos (como roteadores, \switches e \firewalls) operam sobre uma mesma rede física. Isso permite melhor gerenciamento de tráfego e otimizção.
+\end{description}
 
 \subsection{Virtualização no \nanvix}
 % \mytodo{problemas dos lws, pq a virtualização é dificultada?, ideia geral do microkernel e outros sistemas que vao ser virtuzalizados}
@@ -174,7 +188,7 @@ Na abordagem original do \nanvix, o processo é dependente do \cluster em que é
 
 \section{Migração}
 % \mytodo{pre-copy, post-copy, live migration}
-A migração é o processo de transferência de uma aplicação ou \vm de um ambiente a outro. A migração tem sido muito utilizada hoje em dia principalmente em ambientes \cloud~\cite{imran2022live}. Através da migração, os serviços são beneficiados com as suas vantagens, tais como:
+A migração é o processo de transferência de uma aplicação ou \vm de um ambiente a outro. A migração é muito usada atualmente principalmente em ambientes \cloud~\cite{imran2022live}. A migração traz diversos benefícios e vantagens aos serviços em um ambiente computacional, tais como:
 \begin{enumerate}[label=(\roman*)]
     \item Balanceamento de carga: é uma técnica que permite que a carga de trabalho de servidores sobrecarregasdos seja distribuída entre outras máquinas a fim de evitar falhas de sistema ou aumento de latência na resposta dos serviços. Através dessa técnica, \vms alocadas em servidores sobrecarregados são migrados para servidores menos utilizados, melhorando a utilização dos recursos computacionais.
     \item Tolerância a falhas: é uma técnica que permite a migração de uma \vm para um servidor em melhor condição de funcionamento quando o servidor em que está alocada apresenta algum tipo de falha.
@@ -185,24 +199,25 @@ A migração é o processo de transferência de uma aplicação ou \vm de um amb
 Nas próximas seções serão discutidos os principais tipos de migração.
 
 \subsection{Tipos de Migração}
-A migração pode ser classificada em dois tipos distintos: \coldmigration(\nonlivemigration) e \hotmigration (\livemigration)~\cite{imran2022live}. Esses tipos serão detalhados nas seções \ref{sec.coldmigration} e \ref{sec.hotmigration}, respectivamente.
+A migração pode ser classificada em dois tipos distintos: \coldmigration(\nonlivemigration) e \hotmigration (\livemigration)~\cite{imran2022live}.
 
 \subsubsection{\Coldmigration}\label{sec.coldmigration}
-Também é conhecido como \nonlivemigration. Neste tipo de migração, o sistema a ser migrado (contêiner ou \vm) precisa ser desligado antes do processo começar. Este é o tipo de migração cujo fluxo de execução segue o seguinte. O sistema é desligado, o estado (\checkpoint) do sistema é salvo e enviado ao \so ou \vm destinatário. O sistema é restaurado no destino e o estado do sistema apagado no remetente.
+Também é conhecido como \nonlivemigration. Neste tipo de migração, o sistema a ser migrado (contêiner ou \vm) precisa ser desligado antes do processo de migração começar.Detalhadamente, o sistema é desligado, o estado (\checkpoint) do sistema é salvo e enviado ao \so ou \vm destinatário. O sistema é restaurado no destino e o estado do sistema apagado no remetente.
 
-Este geralmente não é considerado um método eficiente e não é muito utilizado na indústria e mercado. Isso porque implica em um alto \downtime do sistema migrado devido à alta quantidade de dados a serem transferidos e pelo tempo extra para desligar e ligar o sistema novamente. Isso não é considerado aveitável atualmente, haja vista a grande quantidade de serviços que não podem parar sua execução~\cite{singh2022predictive, imran2022live}. A \autoref{fig.coldmigration} ilustra o fluxo de execução da \coldmigration.
+Este geralmente não é considerado um método eficiente e não é muito utilizado na indústria e mercado. Isso porque o período de tempo em que a aplicação fica inativa, \aka \downtime, é alto. O \downtime é elevado devido à alta quantidade de dados a serem transferidos e pelo tempo extra para desligar e ligar o sistema novamente. Isso não é considerado aveitável atualmente, haja vista a grande quantidade de serviços que não podem parar sua execução~\cite{singh2022predictive, imran2022live}. A \autoref{fig.coldmigration} ilustra o fluxo de execução da \coldmigration.
 
 \begin{figure}[bt]
     \centering
     \includegraphics[width=0.8\linewidth]{content/images/cold-migration-flow.pdf}
-    \caption{Fluxo de execução da \coldmigration. Adaptado de~\cite{migrationimages}}
+    \caption{Fluxo de execução da \coldmigration.}
     \label{fig.coldmigration}
+    \fonte{Adaptado de~\cite{migrationimages}}
 \end{figure}
 
 \subsubsection{\Hotmigration}\label{sec.hotmigration}
-Em contraste com a \coldmigration, na \hotmigration, também conhecida como \livemigration, o sistema a ser migrado não precisa ser desligado antes do processo começar. Isso com o objetivo de maximizar a performance do sistema durante a migração, melhorar o uso da rede e reduzir o \downtime do sistema~\cite{imran2022live}.
+Em contraste com a \coldmigration, na \hotmigration, também conhecida como \livemigration, o sistema a ser migrado não precisa ser desligado antes do processo começar. O principal objetivo desse processo é maximizar a performance do sistema durante a migração, melhorar o uso da rede e reduzir o \downtime do sistema~\cite{imran2022live}.
 
-Este modelo a migração ainda pode ser classificado de acordo com a técnica utilizada para a transferência dos dados. As técnicas são: \precopymigration, \postcopymigration e migração híbrida, as quais serão detahadas, respecitvamente, nas Seções \ref{sec.precopymigration}, \ref{sec.postcopymigration} e \ref{sec.hybridmigration}.
+Neste modelo, a migração poder ser classificada de acordo com a técnica utilizada para a transferência dos dados \ie \precopymigration, \postcopymigration e migração híbrida.
 
 \subsubsubsection{\Precopymigration}\label{sec.precopymigration}
 Neste modelo, ao receber a requisição de migração, o sistema cria uma pré-imagem do seu estado atual e a envia ao destinatário enquanto continua executando normalmente. Nesta estrutura está contida o esquema de paginação atual do sistema e, por vezes, alguns dados de execução. Conforme o esquema de paginação é modificado no remetente, essa estrutura é atualizada e enviada ao destinatário. Depois disso, é salvo o estado atual completo do sistema, que, então, é enviado ao destino. O sistema é restaurado no destino e o estado do sistema apagado no remetente. 
@@ -212,8 +227,9 @@ Esse fluxo de migração faz com que o tempo total de migração seja maior que 
 \begin{figure}[bt]
     \centering
     \includegraphics[width=0.8\linewidth]{content/images/pre-copy-migration-flow.pdf}
-    \caption{Fluxo de execução da \precopymigration. Adaptado de~\cite{migrationimages}}
+    \caption{Fluxo de execução da \precopymigration.}
     \label{fig.precopy}
+    \fonte{Adaptado de~\cite{migrationimages}}
 \end{figure}
 
 \subsubsubsection{\Postcopymigration}\label{sec.postcopymigration}
@@ -222,20 +238,23 @@ Neste modelo, o remetente cria um estado parcial do sistema em execução e o en
 \begin{figure}[bt]
     \centering
     \includegraphics[width=0.8\linewidth]{content/images/post-copy-migration-flow.pdf}
-    \caption{Fluxo de execução da \postcopymigration. Adaptado de~\cite{migrationimages}}
+    \caption{Fluxo de execução da \postcopymigration.}
     \label{fig.postcopy}
+    \fonte{Adaptado de~\cite{migrationimages}}
 \end{figure}
 
-
-\subsubsubsection{Migração Híbrida}\label{sec.hybridmigration}
-Neste modelo, são utilizadas as técnicas de \precopy e \postcopy em conjunto. Inicialmente, tal como na \precopymigration, é feita uma pré-imagem do sistema, que é enviada ao destinatário, enqunato o sistema executa normalmente. Em contraste com o método \precopy nesta etapa não são reenviadas as páginas modificadas/atualizadas. Depois, o estado completo do sistema é enviado e as páginas modificadas/atualizadas são requisitadas ao remetente tal como na \postcopymigration. Quando todas as páginas são transferidas ao destinatário, o sistema é apagado do remetente~\cite{singh2022predictive, imran2022live}. A \autoref{fig.hybridmigration} ilustra o fluxo de execução da migração híbrida.
-
-\begin{figure}[bt]
+\begin{figure}[b]
     \centering
     \includegraphics[width=0.8\linewidth]{content/images/hybrid-migration-flow.pdf}
-    \caption{Fluxo de execução da migração híbrida. Adaptado de~\cite{migrationimages}}
+    \caption{Fluxo de execução da migração híbrida.}
     \label{fig.hybridmigration}
+    \fonte{Adaptado de~\cite{migrationimages}}
 \end{figure}
+
+\subsubsubsection{Migração Híbrida}\label{sec.hybridmigration}
+Neste modelo, são utilizadas as técnicas de \precopy e \postcopy em conjunto. Inicialmente, uma pré-imagem do sistema é feita de forma similar ao modelo \precopymigration. Esta pré-imagem é enviada ao destinatário, enqunato o sistema executa normalmente. Em contraste com o método \precopy nesta etapa não são reenviadas as páginas modificadas/atualizadas. Depois, o estado completo do sistema é enviado e as páginas modificadas/atualizadas são requisitadas ao remetente tal como na \postcopymigration. Quando todas as páginas são transferidas ao destinatário, o sistema é apagado do remetente~\cite{singh2022predictive, imran2022live}. A \autoref{fig.hybridmigration} ilustra o fluxo de execução da migração híbrida.
+
+
 
 
 % \mytodo{adicinar seção detalhando o sistema de tasks no background?}

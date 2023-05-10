@@ -49,23 +49,22 @@ Com base nas motivações citadas previamente, os objetivos deste trabalho serã
 \subsection{Objetivo Principal}
 \label{sec.goals.primary}
 
-O objetivo principal deste trabalho é virtualizar os recursos internos de um \cluster de um \lw. Ao desvincular os recursos locais utilizados por um processo dentro do \nanvix, um \os para \lws, conseguimos prover maior controle e mobilidade de processos no processador.
+O objetivo principal deste trabalho é virtualizar os recursos internos de um \cluster de um \lw. Ao desvincular os recursos locais utilizados por um processo dentro do \nanvix, um \os distribuído para \lws, conseguimos prover maior controle e mobilidade de processos no processador.
 
 \subsection{Objetivos Específicos}
 \label{sec.goals.secondary}
 
 \begin{enumerate}[label= (\roman*)]
-    \item Propor um modelo de virtualização adaptado às necessidades e restrições dos \lws;
-    \item Implementar o modelo proposto no \nanvix, um \so distribuído para \lws;
-    \item Analisar a corretude da solução através do desenvolvimento de \benchmarks que avaliem a migração de processos;
+    \item Explorar e implementar um modelo de virtualização baseado em contêineres no \nanvix;
+    \item Explorar e implementar um modelo de migração de processos no \nanvix utilizando a abordagem de virtualização com contêineres;
     \item Analisar o impacto do modelo de virtualização no \nanvix;
-    \item Propor, implementar e avaliar um modelo de migração de processos para o \nanvix.
+    \item Analisar a corretude, eficiência e impacto da migração de processos  através do desenvolvimento de testes e experimentos;
 \end{enumerate}
 
 \section{Contribuições}
-Esse trabalho de conclusão propõe o suporte à virtualização e migração de processos no \nanvix. Parte desse trabalho foi publicado na \erad e recebeu o prêmio Aurora Cera de melhor artigo do Fórum de Iniciação Científica~\cite{vanz2022virtualizaccao}.
+Esse trabalho de conclusão propõe o suporte à virtualização e migração de processos no \nanvix. A parte inicial deste trabalho foi publicado na \erad e recebeu o prêmio Aurora Cera de melhor artigo do Fórum de Iniciação Científica~\cite{vanz2022virtualizaccao}.
 
 \section{Organização do Trabalho}
 \label{sec.organization}
 
-Os próximos capítulos do trabalho estão organizadas da seguinte maneira. O \autoref{chap.background} apresenta conceitos fundameitais para o entendimento do trabalho, tais como um detalhamento da arquitetura dos \lws e do \nanvix. O \autoref{chap.related-work} discute os trabalhos relacionados. O \autoref{chap.dev.virtualizacao} expõe a proposta deste trabalho de conclusão e os detalhes de desenvolvimento da solução a ser implementada. O \autoref{chap.results} exibe e discute alguns resultados preliminares já obtidos. Por fim, o \autoref{chap.conclusions} apresenta as conclusões deste trabalho e pontua os próximos passos da pesquisa.
+Os próximos capítulos deste trabalho estão organizadas da seguinte maneira. O \autoref{chap.background} apresenta conceitos fundamentais para o entendimento do trabalho, tais como um detalhamento sobre virtualização, migração de processos e um aprofundamento sobre a arquitetura dos \lws e do \nanvix. O \autoref{chap.related-work} discute os trabalhos relacionados. O \autoref{chap.dev.virtualizacao} expõe a proposta deste trabalho de conclusão de curso e os detalhes de desenvolvimento da solução. O \autoref{chap.experiment-methodology} exibe como ocorreu a tomada de decisão sobre o que avaliar e como os testes foram feitos. Os resultados experimentais são exibidos e discutidos no \autoref{chap.results}. Por fim, o \autoref{chap.conclusions} apresenta as conclusões deste trabalho e pontua os próximos passos da pesquisa.

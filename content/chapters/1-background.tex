@@ -17,7 +17,9 @@ Como alternativa para a continuidade nos avanços de poder computacional, foram 
     \item \misd;
     \item \mimd.
 \end{inlinelist}
-Neste trabalho, estamos interessados nas arquiteturas que suportam cargas de trabalho \mimd, as quais ainda podem ser divididas em multiprocessadores ou multicomputadores~\cite{tanenbaum:4ed}, como mostra a \autoref{fig.mimd}.
+Neste trabalho, estamos interessados nas arquiteturas que suportam cargas de trabalho \mimd. 
+
+Algumas dessas arquiteturas são ilustradas pela \autoref{fig.mimd}. A \autoref{fig.mimd1} apresenta uma visão conceitual de um multiprocessador de memória compartilhada, em que os múltiplos \cores têm acesso a toda a memória, a qual é compartilhada por todos os núcleos. A \autoref{fig.mimd2} exemplifica um multicomputador com troca de mensagens, em que conjuntos compostos por \cores e memória são interconectados por uma rede em \chip. As memórias são acessíveis somente pelos \cores pertencentes ao seu conjunto e os \cores se comunicam entre si via troca de mensagens através da rede que interconecta todos os conjuntos. Já a \autoref{fig.mimd3} evidencia um sistema distribuído de grande escala, em que computadores são conectados através de uma \wan com o intuito de formar um sistema distribuído.
 % \todo{Sobre a fig mimd, não precisa ser agora mas: mudar o texto nas imagens para pt-br}
 
 Neste contexto, a classe de processadores \lws destacam-se por atrelar alto poder de processamento com eficiência energética~\cite{francesquini2015}. Os \lws são classificados como \mpsoc e suas arquiteturas apresentam as seguintes características:
@@ -31,10 +33,25 @@ Neste contexto, a classe de processadores \lws destacam-se por atrelar alto pode
 \end{enumerate}
 
 \begin{figure}[t]
-    \centering
-    \includesvg[width=0.9\linewidth]{content/images/mimd.svg}
-    \caption{(a) multiprocessador de memória compartilhada. (b) multicomputator com troca de mensagens. (c) sistema distribuído de grande escala.}
-    \fonte{\cite{tanenbaum:4ed}}
+	\centering
+	
+    \caption{Exemplos de arquiteturas \mimd.}%
+	\subcaptionminipage[fig.mimd1]%
+                   {.25\textwidth}
+                   {multiprocessador de memória compartilhada.}
+                   {\includesvg[width=\textwidth]{content/images/mimd-1.svg}}
+	\qquad
+	\subcaptionminipage[fig.mimd2]
+                   {.25\textwidth}
+                   {multicompudator com troca de mensagens.}
+                   {\includesvg[width=\textwidth]{content/images/mimd-2.svg}}
+    \qquad
+    \subcaptionminipage[fig.mimd3]
+                   {.25\textwidth}
+                   {sistema distribuído de grande escala.}
+                   {\includesvg[width=\textwidth]{content/images/mimd-3.svg}}
+
+    \fonte{Adaptado de \citeonline{tanenbaum:4ed}}
     \label{fig.mimd}
 \end{figure}
 
@@ -53,9 +70,9 @@ Especificamente, nós utilizamos o processador \mppa para o desenvolvimento dest
 
 \begin{figure}[t]
     \centering
-    \includegraphics[width=0.6\linewidth]{content/images/arch-mppa-gs.png}
     \caption{Visão arquitetural do processador \mppa.}
-    \fonte{\cite{penna:sbesc19}}
+    \includegraphics[width=0.6\linewidth]{content/images/arch-mppa-gs.png}
+    \fonte{\citeonline{penna:sbesc19}}
     \label{fig.arch-mppa}
 \end{figure}
 
@@ -69,24 +86,33 @@ O \nanvix\footnote{Disponível em https://github.com/nanvix} é um \os distribu�
     \item [\nanvix \Microkernel]
         é a camada intermediária que provê gerenciamento de recursos e os serviços mínimos de um \os em um \cluster. Entre esses serviços se encontram o gerenciamento de \threads e memória, controle de acesso à memória, interface para chamadas de sistema e a comunição entre processos. As chamadas de sistema podem ser executadas localmente, caso acessem dados \rdo ou alterem estruturas internas do \core, ou remotamente pelo \mcore, que atende à requisição e libera o \score requisitante ao término da chamada~\cite{penna:thesis}. Essa característica adjetiva o \microkernel como assimétrico. A Figura \ref{fig.microkernel-overview} ilustra a estrutura interna do \microkernel do \nanvix.
     \item [\nanvix \Multikernel]
-        é a camada superior que provê os serviços mais complexos de um \os e dispõe uma visão a nível do processador em si. Os serviços são hospedados em \ioclusters, \ie isolados das aplicações de usuário. Os serviços atendem as requisições vindas dos processos de usuário através de um modelo cliente-servidor. As requisições e respostas são enviadas/recebidas através de passagem de mensagem via \noc. Os serviços dessa camada podem ser entendidos como fontes de informação que mantém a execução dos processos consistentes no processador, tendo em vista a natureza distribuída da memória nessas arquiteturas. Alguns serviços incluídos no \nanvix são mecanismos de \spawn de processos e gerenciamento de nomes lógicos dos processos à fim de abstrair a localização dos processos no processador.
+        é a camada superior que provê os serviços mais complexos de um \os e dispõe uma visão a nível do processador em si. Os serviços são hospedados em \ioclusters, \ie isolados das aplicações de usuário. Os serviços atendem as requisições vindas dos processos de usuário através de um modelo cliente-servidor. As requisições e respostas são enviadas/recebidas através de passagem de mensagem via \noc. Os serviços dessa camada podem ser entendidos como fontes de informação que mantém a execução dos processos consistentes no processador, tendo em vista a natureza distribuída da memória nessas arquiteturas. Alguns serviços incluídos no \nanvix são mecanismos de \spawn de processos e gerenciamento de nomes lógicos dos processos à fim de abstrair a localização dos processos no processador. A Figura \ref{fig.multikernel-overview} ilustra o \multikernel do \nanvix.
 \end{description}
 
-\begin{figure}[t]
+\begin{figure}[bt]
     \centering
-    \includesvg[width=0.8\linewidth]{content/images/hal.svg}
     \caption{Estrutura interna da \hal do \nanvix.}
-    \fonte{\cite{penna:thesis}}
+    \includesvg[width=0.9\linewidth]{content/images/hal.svg}
+    \fonte{\citeonline{penna:thesis}}
     \label{fig.hal-overview}
 \end{figure}
 
-\begin{figure}[t]
+\begin{figure}[bt]
     \centering
-    \includesvg[width=0.8\linewidth]{content/images/microkernel.svg}
     \caption{Estrutura interna do \microkernel do \nanvix.}
-    \fonte{\cite{penna:thesis}}
+    \includesvg[width=0.9\linewidth]{content/images/microkernel.svg}
+    \fonte{\citeonline{penna:thesis}}
     \label{fig.microkernel-overview}
 \end{figure}
+
+\begin{figure}[bt]
+    \centering
+    \caption{Estrutura interna do \multikernel do \nanvix.}
+    \includegraphics[width=0.9\linewidth]{content/images/multikernel.png}
+    \fonte{\citeonline{penna:thesis}}
+    \label{fig.multikernel-overview}
+\end{figure}
+
 
 Em sua abordagem original, os processos no \nanvix são estáticos, \ie cada \cluster possui apenas um processo. Desse modo, uma vez que o processo inicia sua execução em um \cluster, este finalizará a execução no mesmo \cluster. 
 Isso torna o processo dependente do \cluster que o executa, fazendo com que a comunicação entre processos esteja atrelada aos \clusters nos quais os processos são executados (e não aos processos em si). A falta de mobilidade dos processos nesse modelo pode trazer sobrecargas ao processador, afetando diretamente o desempenho do sistema quando múltiplas aplicações estão em execução simultânea no processador. No caso de aplicações paralelas, compostas por múltiplos processos (ou \textit{threads}) que se comunicam, a disposição dos processos (ou \textit{threads}) nos \clusters se torna importante, pois a comunicação entre \clusters próximos é mais rápida e resulta em menor consumo energético do processador. Sendo assim, melhorar a mobilidade e a disposição dos processos no processador possibilitaria melhorar o gerenciamento dos recursos do mesmo. 
@@ -160,7 +186,7 @@ De forma similar à virtualização total, o objetivo da para-virtualização ta
 \subsection{Virtualização a Nível de Processo e Conteinerização}
 Virtualizar um processo ou aplicação é o processo de desacoplar a execução de um processo do sistema que o executa. Nesse contexto, o processo tem uma visão virtual única do sistema, de modo que a execução de cada aplicação ocorre independentemente uma da outra.
 
-Neste tipo de virtualização, cada aplicação é isolada em um ambiente virtual, também conhecido como contêiner, no qual estão contidas todas as bibliotecas, arquivos e configurações necessárias para a execução da aplicação. Como não é necessária a criação de um \so para cada aplicação, a virtualização se torna muito mais leve \ie tem um impacto menor na memória.
+Neste tipo de virtualização, cada aplicação é isolada em um ambiente virtual, também conhecido como contêiner, no qual estão contidas todas as bibliotecas, arquivos e configurações necessárias para a execução da aplicação. Como não é necessária a criação de um \so para cada aplicação, a virtualização se torna muito mais leve, \ie tem um impacto menor na memória.
 
 O fato do modelo de conteinerização exigir muito menos espaço e complexidade arquitetônica para existir torna este modelo muito atrativo para sistemas com restrições de memória, tal qual os \lws.
 

@@ -125,6 +125,7 @@ O \nanvix dispõe de três abstrações de comunicações para transferência de
 
 \begin{figure}[tb]
 	\centering
+    \caption{Fluxo de execução da abstração \sync.\label{fig.sync}}
 	\subcaptionminipage[fig.sync1n]%
                    {.44\textwidth}
                    {Modo $1:N$.}
@@ -134,8 +135,7 @@ O \nanvix dispõe de três abstrações de comunicações para transferência de
                    {.44\textwidth}
                    {Modo $N:1$.}
                    {\includesvg[width=\textwidth]{content/images/sync-n-1.svg}}
-	\caption{Fluxo de execução da abstração \sync.\label{fig.sync}}
-    \fonte{\cite{penna:thesis}}
+    \fonte{\citeonline{penna:thesis}}
 \end{figure}
 
 \subsubsection{\sync}
@@ -146,9 +146,9 @@ O \sync pode ser operado duas maneiras distintas: o modo $1:N$ e $N:1$. No modo 
 
 \begin{figure}[t]
     \centering
-    \includesvg[width=0.5\linewidth]{content/images/mailbox.svg}
     \caption{Fluxo de execução da abstração \mailbox.}
-    \fonte{\cite{penna:thesis}}
+    \includesvg[width=0.5\linewidth]{content/images/mailbox.svg}
+    \fonte{\citeonline{penna:thesis}}
     \label{fig.mailbox}
 \end{figure}
 
@@ -158,9 +158,9 @@ A abstração \mailbox é responsável pelo suporte ao envio de mensagens de con
 
 \begin{figure}[t]
     \centering
-    \includesvg[width=0.5\linewidth]{content/images/portal.svg}
     \caption{Fluxo de execução da abstração \portal.}\label{fig.portal}
-    \fonte{\cite{penna:thesis}}
+    \includesvg[width=0.5\linewidth]{content/images/portal.svg}
+    \fonte{\citeonline{penna:thesis}}
 \end{figure}
 
 \subsubsection{\portal}
@@ -234,10 +234,10 @@ Este geralmente não é considerado um método eficiente e não é muito utiliza
 
 \begin{figure}[bt]
     \centering
-    \includegraphics[width=0.8\linewidth]{content/images/cold-migration-flow.pdf}
     \caption{Fluxo de execução da \coldmigration.}
+    \includegraphics[width=0.8\linewidth]{content/images/cold-migration-flow.pdf}
     \label{fig.coldmigration}
-    \fonte{Adaptado de~\cite{migrationimages}}
+    \fonte{Adaptado de~\citeonline{migrationimages}}
 \end{figure}
 
 \subsubsection{\Hotmigration}\label{sec.hotmigration}
@@ -252,10 +252,10 @@ Esse fluxo de migração faz com que o tempo total de migração seja maior que 
 
 \begin{figure}[bt]
     \centering
-    \includegraphics[width=0.8\linewidth]{content/images/pre-copy-migration-flow.pdf}
     \caption{Fluxo de execução da \precopymigration.}
+    \includegraphics[width=0.8\linewidth]{content/images/pre-copy-migration-flow.pdf}
     \label{fig.precopy}
-    \fonte{Adaptado de~\cite{migrationimages}}
+    \fonte{Adaptado de~\citeonline{migrationimages}}
 \end{figure}
 
 \subsubsubsection{\Postcopymigration}\label{sec.postcopymigration}
@@ -263,18 +263,18 @@ Neste modelo, o remetente cria um estado parcial do sistema em execução e o en
 
 \begin{figure}[bt]
     \centering
-    \includegraphics[width=0.8\linewidth]{content/images/post-copy-migration-flow.pdf}
     \caption{Fluxo de execução da \postcopymigration.}
+    \includegraphics[width=0.8\linewidth]{content/images/post-copy-migration-flow.pdf}
     \label{fig.postcopy}
-    \fonte{Adaptado de~\cite{migrationimages}}
+    \fonte{Adaptado de~\citeonline{migrationimages}}
 \end{figure}
 
 \begin{figure}[b]
     \centering
-    \includegraphics[width=0.8\linewidth]{content/images/hybrid-migration-flow.pdf}
     \caption{Fluxo de execução da migração híbrida.}
+    \includegraphics[width=0.8\linewidth]{content/images/hybrid-migration-flow.pdf}
     \label{fig.hybridmigration}
-    \fonte{Adaptado de~\cite{migrationimages}}
+    \fonte{Adaptado de~\citeonline{migrationimages}}
 \end{figure}
 
 \subsubsubsection{Migração Híbrida}\label{sec.hybridmigration}

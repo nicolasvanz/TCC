@@ -40,7 +40,7 @@ Sendo assim, percebemos que a quantidade de dados enviada varia em função da q
 \]
 ou simplesmente:
 \begin{equation}\label{eq.3}
-    23008 + 4096(2*NTHREADS + NPAGES + min(P, 1))
+    23008 + 4096(2*NTHREADS + NPAGES + min(NPAGES, 1))
 \end{equation}
 
 Onde \texttt{NTHREADS} é a quantidade de \threads criadas e \texttt{NPAGES} a quantidade de páginas criadas.
@@ -59,30 +59,34 @@ Quanto ao funcionamento dos experimentos, em resumo, no início do teste todos o
 % Para avaliar o impacto das mudanças feitas para a virtualização, foram desenvolvidos experimentos sobre a manipulação de \threads e suporte à migração de processos no \nanvix. Todos os experimentos foram executados no processador \mppa e os resultados mostrados são valores médios de 100 replicações de cada experimento para garantir 95\% de confiança estatística, resultando em um desvio padrão inferior a 1\%.
 \begin{figure}[tb]
 	\centering
+    \caption{Impactos da virtualização sobre a manipulação de \threads.
+    \label{fig.threads}}%
 	\subcaptionminipage[fig.fork-join]%
-                   {.5\textwidth}
+                   {.55\textwidth}
                    {Tempo de criação de \threads.}
                    {\includegraphics[width=\textwidth]{content/images/fork-join-kernel-time-bars.pdf}}
-	\qquad
+	\quad
 	\subcaptionminipage[fig.kernel-counters]
                    {.4\textwidth}
                    {Métricas do \kernel.}
                    {\includegraphics[width=\textwidth]{content/images/fork-join-kernel-counters.pdf}}
-	\caption{Impactos da virtualização sobre a manipulação de \threads.\label{fig.threads}}%
+    \fonte{Desenvolvido pelo autor.}
 \end{figure}
 
 \begin{figure}[tb]
     \centering
-    \includegraphics[width=\linewidth]{content/images/multiple_threads_pages.pdf}
     \caption{\Downtime da aplicação durante o experimento de migração fixando a quantidade de páginas alocadas dinamicamente}
+    \includegraphics[width=\linewidth]{content/images/multiple_threads_pages.pdf}
     \label{fig.mtpages}
+    \fonte{Desenvolvido pelo autor.}
 \end{figure}
 
 \begin{figure}[tb]
     \centering
-    \includegraphics[width=\linewidth]{content/images/multiple_threads_threads.pdf}
     \caption{\Downtime da aplicação durante o experimento de migração fixando a quantidade de \threads}
+    \includegraphics[width=\linewidth]{content/images/multiple_threads_threads.pdf}
     \label{fig.mtthreads}
+    \fonte{Desenvolvido pelo autor.}
 \end{figure}
 
 O primeiro experimento, o qual mensurava o impacto do isolamento da aplicação através da \uarea e separação do binário de usuário e \kernel, mostrou que o subsistema de \threads foi positivamente afetado. A \autoref{fig.fork-join} ilustra que o \nanvix obteve um leve ganho de desempenho nas operações de criação e junção de \threads. A \autoref{fig.kernel-counters} mostra a origem do aumento da performance. Percebemos que houve uma diminuição na quantidade de faltas em \cache (tanto de dados como de instruções) e a quantidade de desvios é menor na versão do \nanvix com a \uarea. Isso ocorre porque a \uarea explora melhor a localidade espacial dos dados, já que os dados estão aglomerados em um espaço menor da memória. Como consequência disso, o número de faltas na \cache e de desvios diminui, resultando em um aumento de desempenho.

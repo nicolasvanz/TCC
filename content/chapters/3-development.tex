@@ -27,6 +27,7 @@ Sendo assim, o desenvolvimento da virtualização nesse sistema implica no isola
 \begin{figure}[t]
 	\centering
 	
+    \caption{Diferença da estrutura do \nanvix com e sem a \textit{User Area}.}%
 	\subcaptionminipage[fig.nanvix.without-uarea]%
                    {.4\textwidth}
                    {\os sem isolamento.}
@@ -38,8 +39,8 @@ Sendo assim, o desenvolvimento da virtualização nesse sistema implica no isola
                    {\includegraphics[width=\textwidth]{content/images/nanvix-with-uarea-uk.pdf}}
 
 	\includegraphics[width=.33\linewidth]{content/images/legenda.pdf}
+    \fonte{Desenvolvido pelo autor.}
 	
-	\caption{Diferença da estrutura do \nanvix com e sem a \textit{User Area}.}%
 \end{figure}
 
 \section{Isolamento do contexto de um processo de usuário}
@@ -127,9 +128,10 @@ Genericamente, podemos dizer que o fluxo de migração é composto por três pas
 
 \begin{figure}[b]
     \centering
-    \includegraphics[width=\linewidth]{content/images/migration-steps-tasks.pdf}
     \caption{Fluxo de tasks de migração}
+    \includegraphics[width=\linewidth]{content/images/migration-steps-tasks.pdf}
     \label{fig.migrationsteps}
+    \fonte{Desenvolvido pelo autor.}
 \end{figure}
 
 Mais detalhadamente, neste trabalho foi utilizado um sistema de \tasks que em conjunto constroem essas três etapas apresentadas. A \autoref{fig.migrationsteps} ilustra o fluxo de execução da migração. Nela, cada quadro corresponde a uma \task e a escrita que cada quadro indica o que a \task faz. Destaca-se que neste fluxo todas as comunicações são assíncronas. O que significa que em nenhum momento uma \task espera ativamente pelo término de uma comunicação. Isso é feito com o intuito de evitar que o sistema seja bloqueado por alguma \task que esteja esperando por uma comunicação. Dito isso, esse \design de migração baseado em \tasks foi adotado por garantir o isolamento das etapas de migração em passos bem definidos e porque o funcionamento da comunicação assíncrona está intrinsecamente ligado ao sistema de \tasks do \nanvix. Com mais profundidade, uma comunicação assíncrona funciona da seguinte maneira: uma \task envia mensagens de tamanho fixo repetidas vezes até que se atinja a quantidade de \bytes passada como parâmetro. Quando a mensagem é enviada completamente, é enviado um sinal a outra \task, cuja função é sinalizar o final de uma comunicação. As estruturas de ambas as \tasks são criadas e configuradas de acordo com a funcionalidade desejada.

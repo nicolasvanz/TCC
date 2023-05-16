@@ -123,59 +123,56 @@ Um exemplo de mobilidade é viabilizar a migração de processos entre \clusters
 
 O \nanvix dispõe de três abstrações de comunicações para transferência de dados e sincronização entre \clusters~\cite{penna:thesis}. Nas próximas seções serão detalhadas as três abstrações principais do \nanvix.
 
-\begin{figure}[tb]
-	\centering
-    \caption{Fluxo de execução da abstração \sync.\label{fig.sync}}
-	\subcaptionminipage[fig.sync1n]%
-                   {.44\textwidth}
-                   {Modo $1:N$.}
-                   {\includesvg[width=\textwidth]{content/images/sync-1-n.svg}}
-	\qquad
-	\subcaptionminipage[fig.syncn1]
-                   {.44\textwidth}
-                   {Modo $N:1$.}
-                   {\includesvg[width=\textwidth]{content/images/sync-n-1.svg}}
-    \fonte{\citeonline{penna:thesis}}
-\end{figure}
+% \begin{figure}[tb]
+% 	\centering
+%     \caption{Fluxo de execução da abstração \sync.\label{fig.sync}}
+% 	\subcaptionminipage[fig.sync1n]%
+%                    {.44\textwidth}
+%                    {Modo $1:N$.}
+%                    {\includesvg[width=\textwidth]{content/images/sync-1-n.svg}}
+% 	\qquad
+% 	\subcaptionminipage[fig.syncn1]
+%                    {.44\textwidth}
+%                    {Modo $N:1$.}
+%                    {\includesvg[width=\textwidth]{content/images/sync-n-1.svg}}
+%     \fonte{\citeonline{penna:thesis}}
+% \end{figure}
 
-\subsubsection{\sync}
+\begin{description} 
 
-A abstração \sync suporta a sincronização entre \textit{kernels}. Através dela um processo pode esperar um sinal, que pode ser disparado por outro processo remotamente através das interfaces \noc. Essa abstração é muito utilizada na inicialização do sistema para garantir um estado inicial consistente dos subsistemas do \os~\cite{penna:thesis}.
+    \item[\sync.] A abstração \sync suporta a sincronização entre \textit{kernels}. Através dela um processo pode esperar um sinal, que pode ser disparado por outro processo remotamente através das interfaces \noc. Essa abstração é muito utilizada na inicialização do sistema para garantir um estado inicial consistente dos subsistemas do \os~\cite{penna:thesis}.
 
-O \sync pode ser operado duas maneiras distintas: o modo $1:N$ e $N:1$. No modo $1:N$ (\autoref{fig.sync1n}) um nó envia uma notificação a múltiplos nós, que estão esperando pelo sinal e são liberados após o recebimento do sinal. Em contraste, no modo $N:1$ (\autoref{fig.syncn1}), múltiplos nós enviam uma notificação a um único nó, que é liberado após o recebimento do sinal de todos os outros nós envolvidos~\cite{penna:thesis}.
+% O \sync pode ser operado duas maneiras distintas: o modo $1:N$ e $N:1$. No modo $1:N$ (\autoref{fig.sync1n}) um nó envia uma notificação a múltiplos nós, que estão esperando pelo sinal e são liberados após o recebimento do sinal. Em contraste, no modo $N:1$ (\autoref{fig.syncn1}), múltiplos nós enviam uma notificação a um único nó, que é liberado após o recebimento do sinal de todos os outros nós envolvidos~\cite{penna:thesis}.
 
-\begin{figure}[t]
-    \centering
-    \caption{Fluxo de execução da abstração \mailbox.}
-    \includesvg[width=0.5\linewidth]{content/images/mailbox.svg}
-    \fonte{\citeonline{penna:thesis}}
-    \label{fig.mailbox}
-\end{figure}
+% \begin{figure}[t]
+%     \centering
+%     \caption{Fluxo de execução da abstração \mailbox.}
+%     \includesvg[width=0.5\linewidth]{content/images/mailbox.svg}
+%     \fonte{\citeonline{penna:thesis}}
+%     \label{fig.mailbox}
+% \end{figure}
 
-\subsubsection{\mailbox}
+    \item[\mailbox.] A abstração \mailbox é responsável pelo suporte ao envio de mensagens de controle através da troca de pequenas mensagens de tamanho fixo. A abstração segue a semântica $N:1$ e funciona da seguinte forma: um nó (destinatário da mensagem) possuí uma \mailbox, da qual lê mensagens, e múltiplos nós (remetentes da mensagem) podem escrever nessa \mailbox~\cite{penna:thesis}.
 
-A abstração \mailbox é responsável pelo suporte ao envio de mensagens de controle através da troca de pequenas mensagens de tamanho fixo. A abstração segue a semântica $N:1$ e funciona da seguinte forma: um nó (destinatário da mensagem) possuí uma \mailbox, da qual lê mensagens, e múltiplos nós (remetentes da mensagem) podem escrever nessa \mailbox~\cite{penna:thesis}. A \autoref{fig.mailbox} ilustra o fluxo de execução da \mailbox.
+% \begin{figure}[t]
+%     \centering
+%     \caption{Fluxo de execução da abstração \portal.}\label{fig.portal}
+%     \includesvg[width=0.5\linewidth]{content/images/portal.svg}
+%     \fonte{\citeonline{penna:thesis}}
+% \end{figure}
 
-\begin{figure}[t]
-    \centering
-    \caption{Fluxo de execução da abstração \portal.}\label{fig.portal}
-    \includesvg[width=0.5\linewidth]{content/images/portal.svg}
-    \fonte{\citeonline{penna:thesis}}
-\end{figure}
-
-\subsubsection{\portal}
-
-A abstração portal suporta a troca de mensagens grandes e segue a semântica $1:1$. A abstração pode ter uso em diversos cenários que exigem grandes transferências de dados entre \clusters~\cite{penna:thesis}. A \autoref{fig.portal} ilustra o fluxo de execução da abstração \portal.
+\item[\portal.] A abstração portal suporta a troca de mensagens grandes e segue a semântica $1:1$. A abstração pode ter uso em diversos cenários que exigem grandes transferências de dados entre \clusters~\cite{penna:thesis}.
+\end{description}
 
 \section{Virtualização}
 \label{sec.virtualizacao}
-A virtualização pode ser entendida como uma técnica de abstração de \hardware que permite a criação de uma versão virtual de um ambiente, como computadores, \sos, sistemas de armazenamento, redes, aplicações, etc. Nesse cenário, muitas vezes é possível a criação de múltiplas instâncias dessa versão virtual, as quais competem pelos recursos físicos/reais. O isolamento e independência das instâncias virtuais garantem à virtualização algumas vantagens muito exploradas atualmente, especialmente em ambientes \cloud~\cite{manohar2013survey}. Dentre elas: flexibilidade, portabilidade, escalabilidade e segurança.
+A virtualização pode ser entendida como uma técnica de abstração de \hardware que permite a criação de uma versão virtual de um ambiente, como computadores, \sos, sistemas de armazenamento, redes, aplicações, etc. Nesse cenário, muitas vezes é possível a criação de múltiplas instâncias dessa versão virtual, as quais competem pelos recursos físicos/reais. A virtual ização pode ser classificada em três grupos principais: a virtualização total; a para-virtualização e a virtualização a nível de processo. Além disso, o isolamento e independência das instâncias virtuais garantem à virtualização algumas vantagens muito exploradas atualmente, especialmente em ambientes \cloud~\cite{manohar2013survey}. Dentre elas: flexibilidade, portabilidade, escalabilidade e segurança.
 
 O conceito de virtualização pode ser traçado desde a década de 50, durante a época dos \mainframes e do emergente conceito de memória virtual~\cite{campbell2006introduction}. Nesse período, a preocupação era tornar um recurso físico acessível a múltiplos usuários simultaneamente. Essa motivação sustentou a evolução da virtualização, levando ao surgimento das \vms e dos \hypervisors. Com o tempo, viu-se o surgimento de novos projetos, como o M44/44x da \ibm, responsável pelo nascimento de um novo \design para os sistemas de tempo compartilhado. Nessa nova estrutura, a máquina central repartia seus recursos em diversas instâncias de \vms, que eram utilizadas por múltiplos usuários simultaneamente.
 
-O retorno das pesquisas sobre virtualização ocorreu mais recentemente, na década de 90. Essa foi a época em que o número de serviços e servidores cresceu bruscamente. Naturalmente, com o aumento do número de servidores e aplicações hospedadas nesses servidores, a necessidade de gerenciamento desses recursos também aumentou. Nesse cenário, a virtualização mostrou-se uma solução viável por permitir que diversas \vms compartilhassem um único servidor mantendo, ainda assim, a independência dos serviços providos por essas \vms encapsulados. Isso significa que a interrupção ou quebra de um serviço não afeta os demais graças à virtualização, que garante uma maior flexibilidade e escalabilidade. Por consequência, a virtualização reduziu os custos de manutenção e operação, já que os recursos de \hardware foram utilizados de maneira mais eficiente e houve a redução na quantidade de máquinas físicas para gerenciar.
+O retorno das pesquisas sobre virtualização ocorreu mais recentemente, na década de 90~\cite{campbell2006introduction}. Essa foi a época em que o número de serviços e servidores cresceu bruscamente. Naturalmente, com o aumento do número de servidores e aplicações hospedadas nesses servidores, a necessidade de gerenciamento desses recursos também aumentou. Nesse cenário, a virtualização mostrou-se uma solução viável por permitir que diversas \vms compartilhassem um único servidor mantendo, ainda assim, a independência dos serviços providos por essas \vms encapsulados. Isso significa que a interrupção ou quebra de um serviço não afeta os demais graças à virtualização, que garante uma maior flexibilidade e escalabilidade. Por consequência, a virtualização reduziu os custos de manutenção e operação, já que os recursos de \hardware foram utilizados de maneira mais eficiente e houve a redução na quantidade de máquinas físicas para gerenciar.
 
-Nos dias de hoje, a tendência de uso de \vms em servidores continua cresente. Hoje, a virtualização de servidor é uma das formas mais comuns de virtualização, sendo utilizada em ambientes \cloud para garantir o suporte à execução de múltiplas aplicações, possivelmente em \oss distintos sobre o mesmo \hardware~\cite{manohar2013survey}.
+Atualmente, a tendência de uso de \vms em servidores continua crescente. Hoje, a virtualização de servidor é uma das formas mais comuns de virtualização, sendo utilizada em ambientes \cloud para garantir o suporte à execução de múltiplas aplicações, possivelmente em \oss distintos sobre o mesmo \hardware~\cite{manohar2013survey}.
 
 \subsection{Virtualização total}
 A virtualização total tem como objetivo abstrair o \hardware de um computador como um todo. Cada instância executa isoladamente e independentemente uma das outras. Neste tipo de virtualização, é utilizado um \vmm, também conhecido como \hypervisor, o qual, na virtualização total, é classificado como tipo 1~\cite{campbell2006introduction}. O \hypervisor tipo 1 é um \software que roda no nível mais privilegiado e atua como um intermediário entre o \hardware e os múltiplos \sos. O \hypervisor tipo 1 é o único programa do sistema que possui o acesso ao \hardware físico, \eg \cpu, memória e armazenamento, sendo responsável por gerenciar esses recursos de \hardware para cada instância virtual da máquina virtualizada~\cite{sweeney2016virtualization}.

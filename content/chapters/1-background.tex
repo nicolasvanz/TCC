@@ -187,6 +187,22 @@ Neste tipo de virtualização, cada aplicação é isolada em um ambiente virtua
 
 O fato do modelo de conteinerização exigir muito menos espaço e complexidade arquitetônica para existir torna este modelo muito atrativo para sistemas com restrições de memória, tal qual os \lws.
 
+Alguns conceitos muito presentes na conteinerização são:
+\begin{description}
+    \item[\namespace.] \Namespaces foram introduzidos no \kernel do \linux com o objetivo de isolar recursos virtuais de um grupo de processos~\cite{gao2017containerleaks}. Os processos podem ser associados a vários \namespaces e, por isso, podem ter visões diferentes e customizadas dos recursos do sistema~\cite{watada2019emerging}. Atualmente, existem seis tipos diferentes de \namespaces~\cite{watada2019emerging}:
+    \begin{enumerate}[label=(\roman*)]
+        \item \mount: O \mount \namespace isola o sistema de arquivos e permite que um processo veja um sistema de arquivos diferente do sistema de arquivos real do hospedeiro~\cite{watada2019emerging}. Através dele é possível que cada contêiner tenha seu diretório raiz específico~\cite{dua2014virtualization};
+        \item \uts: garante que cada contêiner possa ver e alterar seu próprio \hostname, tornando-o um nó independentemente nomeado na rede~\cite{watada2019emerging, dua2014virtualization};
+        \item \pid: virtualiza os identificadores dos processos de forma que cada contêiner tenha sua própria árvore de processos \ie os processos pertencentes a um \namespace são visíveis àqueles pertencentes ao mesmo \namespace. Dessa forma, cada processo em um contêiner é associado a dois identificadores: um global e único associado ao hospedeiro; e um local associado ao contêiner~\cite{watada2019emerging};
+        \item NET: virtualiza os artefatos de rede, como dispositivos de rede, endereços IPs, portas e tabelas de roteamento, permitindo que cada contêiner tenha seus próprios componentes de rede virtuais~\cite{watada2019emerging, dua2014virtualization};
+        \item \ipc: provê isolamento de mecanismos de comunicação entre processos, tais como: filas de mensagens, semáforos e segmentos de memória compartilhados~\cite{watada2019emerging, dua2014virtualization};
+        \item \user: isola o usuário, permitindo que um usuário comum (sem privilégios) no hospedeiro seja considerado um superusuário por um processo dentro do \namespace~\cite{watada2019emerging, dua2014virtualization}.
+    \end{enumerate}
+    \item[\cgroups.]  
+\end{description}
+
+Atualmente existem diversos mecanismos de conteinerização
+
 \subsection{Outros Tipos de Virtualização}
 % \begin{enumerate}[label=(\roman*)]
 %     \item Virtualização de \desktop: usuários acessam o ambiente computacional, ou \desktop, remotamente. O poder e recursos computacionais estão centralizados, mas os pontos de acesso podem ser diversos. Também é conhecido como \vdi.

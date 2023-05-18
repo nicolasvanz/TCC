@@ -196,12 +196,14 @@ Alguns conceitos muito presentes na conteinerização são:
         \item \pid: virtualiza os identificadores dos processos de forma que cada contêiner tenha sua própria árvore de processos \ie os processos pertencentes a um \namespace são visíveis àqueles pertencentes ao mesmo \namespace. Dessa forma, cada processo em um contêiner é associado a dois identificadores: um global e único associado ao hospedeiro; e um local associado ao contêiner~\cite{watada2019emerging};
         \item NET: virtualiza os artefatos de rede, como dispositivos de rede, endereços IPs, portas e tabelas de roteamento, permitindo que cada contêiner tenha seus próprios componentes de rede virtuais~\cite{watada2019emerging, dua2014virtualization};
         \item \ipc: provê isolamento de mecanismos de comunicação entre processos, tais como: filas de mensagens, semáforos e segmentos de memória compartilhados~\cite{watada2019emerging, dua2014virtualization};
-        \item \user: isola o usuário, permitindo que um usuário comum (sem privilégios) no hospedeiro seja considerado um superusuário por um processo dentro do \namespace~\cite{watada2019emerging, dua2014virtualization}.
+        \item \user: isola o usuário, permitindo que um usuário comum (sem privilégios) no hospedeiro seja considerado um superusuário por um processo dentro do \namespace~\cite{watada2019emerging}.
     \end{enumerate}
-    \item[\cgroups.]  
+    \item[\cgroups.] É um mecanismo que permite a limitação da quantidade de recursos que um contêiner pode utilizar. Os recursos que podem ser limitados incluem: memória, \cpu, \io e rede~\cite{watada2019emerging}. Esta é uma ferramenta utilizada por muitas plataformas de conteinerização, como o \docker e \lxc, para garantir que um contêiner não utilize mais recursos do que o necessário.
 \end{description}
 
-Atualmente existem diversos mecanismos de conteinerização
+Várias ferramentas de conteinerização utilizam \namespaces e \cgroups, ou conceitos similares, para a criação de um ambiente virtual para execução de um contêiner de aplicação ou contêiner de máquina.
+
+\lxc é uma dessas ferramentas de conteinerização. Ele é uma implementação que usa as funcionalidades de \namespaces e \cgroups do \linux para isolar os recursos do sistema hospedeiro~\cite{watada2019emerging}. O \lxd é a interface com que o usuário cria e interage com os contêineres. A principal vantagem do \lxc surge por ser baseado em mecanismos do próprio \kernel. Essa característica o torna mais eficiente e provê um melhor isolamento de recursos, em especial de rede e sistema de arquivos~\cite{dua2014virtualization}. Em contrapartida, dentre algumas limitações do \lxc estão: os contêineres por ser uma implementação baseada no \kernel do \linux, o \lxc não é portável para outros sistemas operacionais; os contêineres compartilham o mesmo \kernel~\cite{dua2014virtualization}.
 
 \subsection{Outros Tipos de Virtualização}
 % \begin{enumerate}[label=(\roman*)]

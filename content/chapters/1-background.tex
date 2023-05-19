@@ -183,7 +183,7 @@ De forma similar à virtualização total, o objetivo da para-virtualização ta
 \subsection{Virtualização a Nível de Processo e Conteinerização}
 Virtualizar um processo ou aplicação é o processo de desacoplar a execução de um processo do sistema que o executa. Nesse contexto, o processo tem uma visão virtual única do sistema, de modo que a execução de cada aplicação ocorre independentemente uma da outra.
 
-Neste tipo de virtualização, cada aplicação é isolada em um ambiente virtual, também conhecido como contêiner, no qual estão contidas todas as bibliotecas, arquivos e configurações necessárias para a execução da aplicação. Como não é necessária a criação de um \so para cada aplicação, a virtualização se torna muito mais leve, \ie tem um impacto menor na memória.
+A \autoref{fig.cont3} ilustra o modelo de execução de uma aplicação conteinerizada. Diferentemente dos modelos que utilizam \hypervisors tipo 1 ou 2, respectivamente ilustrados nas Figuras \ref{fig.cont1} e \ref{fig.cont2}, neste tipo de virtualização, cada aplicação é isolada em um ambiente virtual, também conhecido como contêiner. No contêiner estão contidas todas as bibliotecas, arquivos e configurações necessárias para a execução da aplicação. Como não é necessária a criação de um \so para cada aplicação, a virtualização se torna muito mais leve, \ie tem um impacto menor na memória.
 
 O fato do modelo de conteinerização exigir muito menos espaço e complexidade arquitetônica para existir torna este modelo muito atrativo para sistemas com restrições de memória, tal qual os \lws.
 
@@ -200,6 +200,29 @@ Alguns conceitos muito presentes na conteinerização são:
     \end{enumerate}
     \item[\cgroups.] É um mecanismo que permite a limitação da quantidade de recursos que um contêiner pode utilizar. Os recursos que podem ser limitados incluem: memória, \cpu, \io e rede~\cite{watada2019emerging}. Esta é uma ferramenta utilizada por muitas plataformas de conteinerização, como o \docker e \lxc, para garantir que um contêiner não utilize mais recursos do que o necessário.
 \end{description}
+
+\begin{figure}[tb]
+	\centering
+	
+    \caption{Comparação de modelos de ambientes de execução de aplicação.}%
+	\subcaptionminipage[fig.cont1]%
+                   {.27\textwidth}
+                   {Com \hypervisor tipo 1.}
+                   {\includegraphics[width=\textwidth]{content/images/vmvscont-1.png}}
+	\qquad
+	\subcaptionminipage[fig.cont2]
+                   {.27\textwidth}
+                   {Com \hypervisor tipo 2.}
+                   {\includegraphics[width=\textwidth]{content/images/vmvscont-2.png}}
+    \qquad
+    \subcaptionminipage[fig.cont3]
+                   {.27\textwidth}
+                   {Com contêiner.}
+                   {\includegraphics[width=\textwidth]{content/images/vmvscont-3.png}}
+
+    \fonte{Adaptado de \citeonline{combe2016docker}}
+    \label{fig.cont}
+\end{figure}
 
 Várias ferramentas de conteinerização utilizam \namespaces e \cgroups, ou conceitos similares, para a criação de um ambiente virtual para execução de um contêiner de aplicação ou contêiner de máquina.
 

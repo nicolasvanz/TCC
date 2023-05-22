@@ -10,8 +10,16 @@ Ambientes \cloud, nos quais o sistema de memória é de alta capacidade, usufrue
 Nesse contexto, visando atenuar o impacto da virtualização no sistema de memória, o presente trabalho explora um modelo de virtualização mais leve, baseado em contêineres adaptado para \lws. O \so executa os contêineres como aplicações virtuais. Sendo assim, não há a necessidade de um \os convidado, resultando em um menor impacto no sistema de memória e requisitando menor complexidade do \hardware~\cite{thalheim2018cntr, sharma2016containers}.
 
 
-\section{contexto de um processo}
-% \mytodo{conteinerização no nanvix}
+\section{Virtualização no \nanvix}
+% \mytodo{problemas dos lws, pq a virtualização é dificultada?, ideia geral do microkernel e outros sistemas que vao ser virtuzalizados}
+
+O foco deste trabalho é desacoplar a execução de um processo do \cluster em que ele é alocado, tornando possível a execução do processo em qualquer \cluster. Para isso, é necessário que seja introduzido o conceito de virtualização no \nanvix.
+
+É importante destacar que o \nanvix é um \so para \lws, os quais apresentam um sistema de memória restritivo, com memória local pequena. Isso torna difícil a virtualização, pois a criação de uma duplicata inteira do \so para cada processo é inviável. Sendo assim, a utilização de contêineres se torna atrativa. 
+
+Na abordagem original do \nanvix, o processo é dependente do \cluster em que é alocado, o que afeta o suporte a migração e diminui a eficiência computacional, como detalhado na \autoref{sec.nanvixos}. Nesse contexto, a virtualização torna-se útil por aumentar a mobilidade dos processos, o que possibilitaria o gerenciamento da distribuição dos processos no processador. Especificamente, este trabalho explora um modelo mais leve de virtualização para \lws baseada em contêineres. Contêineres são executados pelo \os como aplicações virtuais e não incluem um \os convidado, não sendo necessária a criação de duplicatas de \sos e resultando em um menor impacto no sistema de memória e requisitando menor complexidade do \hardware~\cite{thalheim2018cntr, sharma2016containers, zhang2018comparative}.
+
+\section{contexto de um processo no nanvix}
 
 Para o desenvolvimento da virtualização, é necessário entender o contexto de um processo no \nanvix e as relações que atrelam o processo ao \cluster e ao \so \ie as dependências que o processo tem com os recursos reais de um \cluster e com a estrutura interna do \so. De maneira geral, os módulos que compõem um processo são: \threads, \syscalls, sistema de memória e comunicação. Todos esses módulos de alguma forma têm dependências no \kernel ou \cluster. Essas dependências são ilustradas genericamente na \autoref{fig.nanvix.without-uarea} e algumas delas estão listadas abaixo:
 

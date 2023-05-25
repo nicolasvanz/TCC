@@ -100,7 +100,9 @@ Nesse cenário, um contêiner é definido como a junção do código de usuário
 \section{Migração de Processos}
 \label{sec.migracao}
 
-Como aplicação direta do isolamento do processo, conseguida através da virtualização com os contêineres, a migração de processos torna-se mais palpável. Especificamente, nós eliminamos a necessidade de descobrir quais são e onde estão as informações que compõem o estado de um processo dentro do \nanvix porque tudo está isolado via conteinerização, facilitando a transferência de seu contexto. Isso só é possível porque os \clusters possuem uma estrutura de \kernel idêntica (devido às mudanças desenvolvidas no processo de compilação detalhados na \autoref{sec.divisao-dados-instrucao}). Por este motivo, eliminamos o envio de dados redundantes entre \clusters referentes à instância local do \os, atenuando o impacto da migração sobre a \noc.
+Como aplicação direta do isolamento do processo, conseguida através da virtualização com os contêineres, a migração de processos torna-se mais factível. Especificamente, nós eliminamos a necessidade de descobrir quais são e onde estão as informações que compõem o estado de um processo dentro do \nanvix. Todo o estado do processo está agora isolado via conteinerização, facilitando a transferência de seu contexto. Isso só é possível porque os \clusters possuem uma estrutura de \kernel idêntica (devido às mudanças desenvolvidas no processo de compilação e ligação detalhados na \autoref{sec.divisao-dados-instrucao}). 
+
+Como consequência da uniformidade do \kernel entre os \clusters, eliminamos o envio de dados redundantes durante a migração. Isso porque os dados referentes à instância local do \os não precisam ser enviados, já que o \kernel é idêntico em todos os \clusters. Dessa forma, apenas os dados relacionados ao contêiner são migrados/enviados, o que atenua o impacto da migração sobre a \noc.
 
 \subsection{Rotina de migração}
 \label{sec.rotina-migracao}
@@ -109,9 +111,9 @@ Para a migração de um processo entre \clusters foi desenvolvida uma rotina de 
 
 \subsubsection{\Daemon de Migração}
 
-O \daemon de migração é inicializado durante o \boot do sistema. Resumidamente, o \daemon é composto por um fluxo de \tasks, as quais são inicializadas e conectadas durante a inicialização do módulo de migração, que ocorre durante o \boot. Além disso, nesse período ainda é criada a porta de \mailbox por onde o \daemon recebe as requisições de migração.
+O \daemon de migração é inicializado durante o \boot do sistema. Resumidamente, o \daemon é composto por um fluxo de \tasks~\cite{souto:thesis}, as quais são inicializadas e conectadas durante a inicialização do módulo de migração, que ocorre durante o \boot. Além disso, nesse período ainda é criada a porta de \mailbox por onde o \daemon recebe as requisições de migração e um \portal \default para recebimento dos dados durante a migração. Em contraste, o \portal de envio de dados e as \mailboxes para envio das mensagens de migração são criados sob demanda durante a migração e destruídos após o término dela. Isso é feito com o intuito de economizar os recursos de comunicação do sistema.
     
-O fluxo de migração de inicia com o recebimento de uma requisição de migração. Quando uma requisição é detectada \ie quando é lida uma mensagem de migração da porta específica do \daemon, a \task principal do \daemon (o \handler do \daemon de migração) é ativa. Esta função é responsável por interpretar a mensagem recebida. É neste momento em que os \clusters envolvidos são identificados \ie é reconhecido qual é o \cluster remetente e qual o \cluster destinatário. É importante destacar que tanto o \cluster remetente quanto o destinatário recebem a mesma mensagem, porém com códigos de operação diferentes. Enquanto um recebe uma mensagem com o código de envio dos dados (identificando o remetente), o outro recebe uma mensagem com o código de recebimento de dados (identificando o destinatário).
+O fluxo de migração se inicia com o recebimento de uma requisição de migração. Quando uma requisição é detectada \ie quando é lida uma mensagem de migração da porta específica do \daemon, a \task principal do \daemon (o \handler do \daemon de migração) é ativa. Esta função é responsável por interpretar a mensagem recebida. É neste momento em que os \clusters envolvidos são identificados \ie é reconhecido qual é o \cluster remetente e qual o \cluster destinatário. É importante destacar que tanto o \cluster remetente quanto o destinatário recebem a mesma mensagem, porém com códigos de operação diferentes. Enquanto um recebe uma mensagem com o código de envio dos dados (identificando o remetente), o outro recebe uma mensagem com o código de recebimento de dados (identificando o destinatário).
 
 Depois da identificação dos \clusters envolvidos e seus papéis durante o procedimento, são executadas as \tasks responsáveis pela migração de fato \ie pelo envio e recebimento de dados.
 
@@ -122,8 +124,14 @@ Genericamente, podemos dizer que o fluxo de migração é composto por três pas
 \begin{description}
 	\item[1. Congelamento da execução do processo em um estado consistente.] \hfill
 	
-    Antes do envio da aplicação a outro \cluster, é necessário que o processo esteja em um estado consistente e estático. Isso significa que durante o processo de migração é preciso que todas as operações dele sejam pausadas. Isso é feito objetivando evitar inconsistências que podem ser causadas por condições de corrida \eg impedir perda de instruções, impedir perda de retornos de chamadas de sistemas, impedir perda de sinais de sincronização, impedir inconsistência de valores de variáveis de usuário, etc. 
-    Para atingir esse estado consistente, foi criada a chamada de sistema \freeze, a qual é invocada no início do processo de migração. Esta é uma chamada de sistema que é tratada apenas pelo \mcore. Especificamente, esta chamada ativa uma variável interna do \so que impede o escalonamento de \threads de aplicação (\threads que não executam no \mcore) e envia um sinal de reescalonamento para todos os \scores, para que as \threads de usuário saiam de execução o mais rápido possível. Isso garante uma pausa na aplicação sem que o \so seja impedido de executar, o que é imprescindível para a migração, já que as informações do processo precisam ser enviadas pelas interfaces \noc do \cluster remetente, o que exige que o \so atenda às requisições de envio de dados. Isso só é possível se as \threads de sistema continuarem a ser executadas apesar do congelamento das de usuário.
+    Antes do envio da aplicação a outro \cluster, é necessário que o processo esteja em um estado consistente e estático. Isso significa que durante o processo de migração é preciso que todas as operações dele sejam pausadas. Isso é feito objetivando evitar inconsistências que podem ser causadas por condições de corrida \eg impedir:
+    \begin{inlinelist}
+        \item perda de retornos de chamadas de sistemas;
+        \item perda de sinais de sincronização;
+        \item inconsistência de valores de variáveis de usuário;
+        \item inconsistência no alocamento de memória;
+    \end{inlinelist} etc. 
+    Para atingir esse estado consistente, foi criada a chamada de sistema \freeze, a qual é invocada no início do processo de migração. Esta é uma chamada de sistema que é tratada apenas pelo \mcore. Especificamente, esta chamada ativa uma variável interna do \so que impede o escalonamento de \threads de aplicação (\threads que não executam no \mcore) e envia um sinal de reescalonamento para todos os \scores, para que as \threads de usuário saiam de execução o mais rápido possível. Isso garante uma pausa na aplicação sem que o \so seja impedido de executar. Isso é importante pois as informações do processo precisam ser enviadas pelas interfaces \noc do \cluster remetente, o que exige que o \so atenda às requisições de envio de dados. Portanto, é imprescindível que o \so não seja pausado como a aplicação. Ou seja, é essencial que as \threads de sistema continuem a ser executadas apesar do congelamento das de usuário.
     Após o travamento no escalonamento de \threads de usuário, novas chamadas de sistema requisitadas pela aplicação não podem ocorrer. Sendo assim, após a migração, o \cluster destinatário atenderá às chamadas não atendidas e reconhecerá as atendidas, pois as estruturas de sincronização e variáveis de retorno são migradas também durante o processo. Após o congelamento do escalonamento e a retirada das \threads de usuário dos \scores, o processo é considerado consistente e seu contexto está apto para ser migrado.
     
 	\item[2. Transferência do contexto do processo entre \clusters.] \hfill
@@ -143,32 +151,57 @@ Genericamente, podemos dizer que o fluxo de migração é composto por três pas
     \fonte{Desenvolvido pelo autor.}
 \end{figure}
 
-Mais detalhadamente, neste trabalho foi utilizado um sistema de \tasks que em conjunto constroem essas três etapas apresentadas. A \autoref{fig.migrationsteps} ilustra o fluxo de execução da migração. Nela, cada quadro corresponde a uma \task e a escrita que cada quadro indica o que a \task faz. Destaca-se que neste fluxo todas as comunicações são assíncronas. O que significa que em nenhum momento uma \task espera ativamente pelo término de uma comunicação. Isso é feito com o intuito de evitar que o sistema seja bloqueado por alguma \task que esteja esperando por uma comunicação. Dito isso, esse \design de migração baseado em \tasks foi adotado por garantir o isolamento das etapas de migração em passos bem definidos e porque o funcionamento da comunicação assíncrona está intrinsecamente ligado ao sistema de \tasks do \nanvix. Com mais profundidade, uma comunicação assíncrona funciona da seguinte maneira: uma \task envia mensagens de tamanho fixo repetidas vezes até que se atinja a quantidade de \bytes passada como parâmetro. Quando a mensagem é enviada completamente, é enviado um sinal a outra \task, cuja função é sinalizar o final de uma comunicação. As estruturas de ambas as \tasks são criadas e configuradas de acordo com a funcionalidade desejada.
+Mais detalhadamente, neste trabalho foi utilizado um sistema de \tasks que em conjunto constroem essas três etapas apresentadas. A \autoref{fig.migrationsteps} ilustra o fluxo de execução da migração. Nela, cada quadro corresponde a uma \task e a descrição de cada quadro indica o que a \task faz. Destaca-se que neste fluxo todas as comunicações são assíncronas. O que significa que em nenhum momento uma \task espera ativamente pelo término de uma comunicação. Isso é feito com o intuito de evitar que o sistema seja bloqueado por alguma \task que esteja esperando por uma comunicação. 
 
-Portanto, tendo em vista que a comunicação assíncrona fundamenta-se na utilização de \tasks, é natural e mais simples que o \daemon de migração seja composto por \tasks. Desse modo as \tasks de início e fim das comunicações são conectadas às \tasks de controle da migração.
+Esse \design de migração baseado em \tasks foi adotado porque:
+\begin{inlinelist}
+    \item garante o isolamento das etapas de migração em passos bem definidos;
+    \item permite a construção de um \design de \daemon mais leve, que não consuma muitos recursos;
+    \item o funcionamento da comunicação assíncrona está intrinsecamente ligado ao sistema de \tasks do \nanvix. 
+\end{inlinelist}
+
+% Com mais profundidade, uma comunicação assíncrona funciona da seguinte maneira: uma \task envia mensagens de tamanho fixo repetidas vezes até que se atinja a quantidade de \bytes passada como parâmetro. Quando a mensagem é enviada completamente, é enviado um sinal a outra \task, cuja função é sinalizar o final de uma comunicação. As estruturas de ambas as \tasks são criadas e configuradas de acordo com a funcionalidade desejada.
+
+% Portanto, tendo em vista que a comunicação assíncrona fundamenta-se na utilização de \tasks, é natural e mais simples que o \daemon de migração seja composto por \tasks. Desse modo as \tasks de início e fim das comunicações são conectadas às \tasks de controle da migração.
 
 Abaixo estão descritos o funcionamento mais detalhado de cada \task de migração de acordo com o número identificador ilustrado na \autoref{fig.migrationsteps}.
 
 
 \begin{description}[leftmargin=*,labelwidth=!,labelindent=0pt]
-    \item[1.] Esta é a \task responsável pela leitura assíncrona de uma mensagem enviada ao \daemon de migração. Esta \task é ativa no momento de \boot durante a etapa de configuração do sistema de migração e é reativada no momento em que uma migração finaliza com ou sem êxito \ie assim que uma migração finaliza seja por ter completado todo seu processo ou por ocorrência de algum erro. Isso permite que o fluxo seja reusado, o que significa que o \cluster pode atender múltiplas requisições de migração sequêncialmente independentemente do papel do \cluster (remetente ou destinatário).
-    \item[2.] Esta \task é ativa no momento em que uma mensagem é lida pela \task 1. Portanto, esta é a \task responsável por sinalizar que uma mensagem foi recebida e lida.
-    \item[3.] Esta é a \task que interpreta a mensagem recebida. A mensagem é composta por um código de operação que identifica o papel do cluster na migração e por dois inteiros que identificam os \clusters envolvidos na migração. Caso o \cluster seja o destinatário, durante a execução desta \task é invocada a chamada de sistema \freeze para congelar a execução do processo de usuário (neste momento o \cluster remetente já deve ter congelado sua execução também). Caso o \cluster seja o remetente, é criado um \portal para envio de dados, os quais serão recebidos pelo destinatário pelo \portal \default de recebimento de dados de migração (configurado no momento de \boot). Essa \task passa um parâmetro indicando o papel do \cluster na migração. Nas etapas posteriores esse parâmetro é decisivo na escolha dos subfluxos que o procedimento deve seguir \eg envio ou recebimento de dados.
-    \item[4.] Esta \task é responsável pelo gerenciamento do estado atual do envio/recebimento de dados da migração. No total são 10 estados. Abaixo estão os estados e as estruturas que são manejadas em cada um deles:
-    \begin{description}[leftmargin=!,labelwidth=\widthof{MSTATE\_FRAMES\_BITMAP \qquad}]
-        \item [MSTATE\_SECTIONS] Seções do binário identificadas como partes do usuário: \texttt{.user.text}, \texttt{.user.data}, \texttt{.user.bss} e \texttt{.user.rodata}.
-        \item [MSTATE\_UAREA] \uarea.
-        \item [MSTATE\_SYSBOARD] Tabela de chamadas de sistema.
-        \item [MSTATE\_PAGEDIR] Tabela de diretórios.
-        \item [MSTATE\_PAGETAB] Tabela de páginas.
-        \item [MSTATE\_KSTACKSIDS] Lista responsável pela identificação de quais páginas de \kernel estão sendo usadas.
-        \item [MSTATE\_KSTACKSPHYS] Páginas de \kernel que estão sendo usadas.
-        \item [MSTATE\_FRAMES\_BITMAP] \Bitmap responsável pela identificação de quais \frames estão sendo usados.
-        \item [MSTATE\_FRAMES\_PHYS] \Frames de usuário que estão sendo usados
-        \item [MSTATE\_FINISH] Não manipula estruturas. Apenas reseta o controle interno da migração e invalida \tlbs e \caches.
-    \end{description}
+    \item[1.] Esta é a \task responsável pela leitura assíncrona de uma mensagem de migração. Esta \task é ativa no momento de \boot durante a etapa de configuração do sistema de migração e é reativada no momento em que uma migração finaliza com ou sem êxito \ie assim que uma migração finaliza seja por ter completado todo seu processo ou por ocorrência de algum erro. Isso permite que o fluxo seja reusado, o que significa que o \cluster pode atender múltiplas requisições de migração  independentemente do papel do \cluster (remetente ou destinatário).
+    \item[2.] Esta \task é responsável por esperar o término da leitura assíncrona disparada pela \task 1. Portanto, esta é a \task indica ao \daemon quando uma mensagem é recebida e lida completamente.
+    \item[3.] Esta é a \task que interpreta a mensagem recebida. A mensagem é composta por um código de operação que identifica o papel do cluster na migração e por dois inteiros que identificam os \clusters envolvidos na migração. Caso o \cluster seja o destinatário, durante a execução desta \task é invocada a chamada de sistema \freeze para congelar a execução do processo de usuário (neste momento o \cluster remetente já deve ter congelado sua execução também). Caso o \cluster seja o remetente, durante a execução desta \task é criado um \portal para envio de dados, os quais serão recebidos pelo destinatário pelo \portal \default de recebimento de dados de migração (configurado no momento de \boot). Essa \task passa um parâmetro indicando o papel do \cluster na migração. Nas etapas posteriores esse parâmetro é decisivo na escolha dos subfluxos que o procedimento deve seguir \eg envio ou recebimento de dados.
+    \item[4.] Esta \task é responsável pelo gerenciamento do estado atual do envio/recebimento de dados da migração. No total são 10 estados. Na \autoref{table.mstates} estão os estados e as estruturas que são manejadas em cada um deles.
+    \begin{table}[tb]
+        \centering
+        \begin{tabular}{ | m{57mm} | m{80mm} | }
+            \hline
+                MSTATE\_SECTIONS & Seções do binário identificadas como partes do usuário: \texttt{.user.text}, \texttt{.user.data}, \texttt{.user.bss} e \texttt{.user.rodata}.  \\
+            \hline 
+                MSTATE\_UAREA & \uarea.  \\
+            \hline
+                MSTATE\_SYSBOARD & Tabela de chamadas de sistema.  \\
+            \hline
+                MSTATE\_PAGEDIR & Tabela de diretórios.  \\
+            \hline
+                MSTATE\_PAGETAB & Tabela de páginas.  \\
+            \hline
+                MSTATE\_KSTACKSIDS & Lista responsável pela identificação de quais páginas de \kernel estão sendo usadas.  \\
+            \hline
+                MSTATE\_KSTACKSPHYS & Páginas de \kernel que estão sendo usadas.  \\
+            \hline
+                MSTATE\_FRAMES\_BITMAP & \Bitmap responsável pela identificação de quais \frames estão sendo usados.  \\
+            \hline
+                MSTATE\_FRAMES\_PHYS & \Frames de usuário que estão sendo usados  \\
+            \hline
+                MSTATE\_FINISH & Não manipula estruturas. Apenas reseta o controle interno da migração e invalida \tlbs e \caches. \\
+            \hline
+        \end{tabular}
+        \caption{Estados da migração e estruturas manipuladas em cada um deles.}
+        \label{table.mstates}
+    \end{table}
     De acordo com o estado atual, são configurados os \buffers para o envio/recebimento de dados (o que ocorre respectivamente nas \tasks 6 e 7), os limites inferior e superior do \myloop que percorre o \buffer (na \task 5) e uma função de condição que verifica se elemento em dado índice do \buffer atual precisa ser enviado.
-    \item[5.] Esta \task é responsável por atualizar o índice atual do \buffer configurado na \task 4 e indicar se a estrutura foi completamente percorrida ou não. Caso o limite superior, também configurado pela \task 4, foi atingido, a \task 4 á ativa, atualizando o estado atual. Caso contrário, um novo índice é considerado para o envio/recebimento de dados.
+    \item[5.] Esta \task é responsável por atualizar o índice atual do \buffer configurado na \task 4 e indicar se a estrutura foi completamente percorrida ou não. Caso o limite superior, também configurado pela \task 4, foi atingido, a \task 4 é liberada, atualizando o estado atual. Caso contrário, um novo índice é considerado para o envio/recebimento de dados.
     \item[6.] Esta \task é ativa desde que o \cluster exerça o papel de remetente na migração. A \task é responsável por verificar se a posição atual na estrutura atual precisa ser enviada. Essa checagem é feita através da função de condição configurada na \task 4. Esse comportamento é muito útil quando consideramos a lista de páginas de \kernel, por exemplo. Nesse cenário a verificação (através da função de condição) de quais páginas precisam ser enviadas evita o envio de dados não essenciais ou redundantes. Caso o elemento do \buffer configurado exija a transferência de dados, a \task 7 é ativada para tal. Caso contrário, a \task 5 é ativada para atualizar o índice para o próximo elemento do \buffer.
     \item[7.] Esta \task é responsável pelo envio assíncrono dos dados do \buffer no índice configurado. Todos os parâmetros para o envio dos dados, tais como o ponteiro para o dado, a quantidade de \bytes a serem enviadas e o identificador do portal a ser usado, são passados como parâmetro pela \task 6.
     \item[8.] Esta \task é responsável por sinalizar o fim do envio dos dados, ativando a \task 5 novamente para atualizar o índice do \buffer.
@@ -184,6 +217,6 @@ Abaixo estão descritos o funcionamento mais detalhado de cada \task de migraç�
 
 A funcionalidade de migração que o \daemon de migração provê é acessível através de uma função de sistema chamada \kmigrateto. Essa função recebe como parâmetro apenas o identificador do \cluster para o qual o processo deve ser migrado.
 
-O procedimento da função \kmigrateto é detalhado a seguir. Primeiramente, uma \task é criada para a construção das mensagens de migração e para o envio dessas mensagens às portas \mailbox dos \daemons de migração dos \clusters envolvidos. Essa \task envia uma mensagem de migração para o próprio \cluster que invocou a função \kmigrateto (o remetente) e para o \cluster identificado pelo parâmetro (o destinatário).
+O procedimento da função \kmigrateto é detalhado a seguir. Primeiramente, uma \task é criada para a construção das mensagens de migração e para o envio dessas mensagens às portas \mailbox dos \daemons de migração dos \clusters envolvidos. Essa \task envia uma mensagem de migração para o próprio \cluster que invocou a função \kmigrateto (o remetente) e para o \cluster identificado pelo parâmetro (o destinatário). É interressante destacar que o \daemon foi projetado possibilitando expansão das suas funcionalidades sem maiores complicações.
 
-É interressante destacar que o \daemon foi projetado possibilitando expansão das suas funcionalidades sem maiores complicações. Como exemplos de trabalhos futuros temos: implementação de uma funcionalidade em que um terceiro \cluster peça a migração de um processo entre outros \clusters distintos; Desenvolvimento de um serviço de escalonamento de processos que considere a melhor distribuíção dos processos entre os \clusters do processador; implementação de um sistema de \checkpointing de processos, visando o salvamento do estado de um processo em disco. Todos essas funcionalidades podem utilizar o \daemon de migração como suporte para suas responsabilidades específicas.
+% Como exemplos de trabalhos futuros temos: implementação de uma funcionalidade em que um terceiro \cluster peça a migração de um processo entre outros \clusters distintos; Desenvolvimento de um serviço de escalonamento de processos que considere a melhor distribuíção dos processos entre os \clusters do processador; implementação de um sistema de \checkpointing de processos, visando o salvamento do estado de um processo em disco. Todos essas funcionalidades podem utilizar o \daemon de migração como suporte para suas responsabilidades específicas.

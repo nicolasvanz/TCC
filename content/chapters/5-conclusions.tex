@@ -5,7 +5,9 @@
 Neste trabalho, foi explorado um modelo de virtualização leve baseado em contêineres que considera as restrições arquiteturais dos \lws, adaptando-se as suas restrições, principalmente relacionadas à memória. A virtualização proposta visa melhorar a mobilidade e gerenciamento de processos para \lws no contexto de em um \os distribuído, o \nanvix.
 %
 
-Os resultados mostraram que a virtualização nesses ambientes é possível, bem como a migração de processos entre os \clusters do processador. A migração não afeta significativamente o sistema de comunicação, sendo possível realizar múltiplas migrações simultaneamente, e provocou um \downtime relativamente baixo, já que evitamos o envio de dados redundantes \eg relacionados ao \kernel. O isolamento das dependências de um processo aumentaram o desempenho de operações do \kernel na execução normal do \so, em especial no subsistema de \threads.
+Os resultados mostraram que a virtualização nesses ambientes é possível, bem como a migração de processos entre os \clusters do processador. A migração não afeta significativamente o sistema de comunicação, sendo possível realizar múltiplas migrações simultaneamente. Neste contexto, a conteinerização exerceu o papel principal ao evitar o envio de dados redundantes relativos ao \kernel e a melhor organizar os dados internos do \kernel e do usuário. 
+
+A migração provocou um \downtime que varia entre 19~ms e 101~ms, dependendo da quantidade de recursos utilizados. O isolamento das dependências de um processo aumentaram o desempenho de operações do \kernel na execução normal do \so, em especial no subsistema de \threads.
 
 \section{Trabalhos Futuros}
 Como trabalhos futuros, pretende-se:

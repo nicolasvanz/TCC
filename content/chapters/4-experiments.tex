@@ -54,6 +54,7 @@ Quanto ao funcionamento dos experimentos, no início do teste todos os \clusters
 \chapter{Resultados Experimentais}
 \label{chap.results}
 
+Neste capítulo, serão apresentados os resultados obtidos através dos experimentos desenvolvidos.
 % A solução foi avaliada em etapas anteriores ao desenvolvimento atual do trabalho e os resultados seguintes englobam apenas o susbsistema de \threads do \nanvix. 
 % \todo{Seria bom colocar um capítulo de metodologia com perguntas que gostariamos de responder e detalhamento dos experimentos}
 % %
@@ -90,9 +91,15 @@ Quanto ao funcionamento dos experimentos, no início do teste todos os \clusters
     \fonte{Desenvolvido pelo autor.}
 \end{figure}
 
-O primeiro experimento, o qual mensurava o impacto do isolamento da aplicação através da \uarea e separação do binário de usuário e \kernel, mostrou que o subsistema de \threads foi positivamente afetado. A \autoref{fig.fork-join} ilustra que o \nanvix obteve um leve ganho de desempenho nas operações de criação e junção de \threads. A \autoref{fig.kernel-counters} mostra a origem do aumento da performance. Percebemos que houve uma diminuição na quantidade de faltas em \cache (tanto de dados como de instruções) e a quantidade de desvios é menor na versão do \nanvix com a \uarea. Isso ocorre porque a \uarea explora melhor a localidade espacial dos dados, já que os dados estão aglomerados em um espaço menor da memória. Como consequência disso, o número de faltas na \cache e de desvios diminui, resultando em um aumento de desempenho.
+\section{Análise do Impacto da UAREA e do Isolamento de Código e Dados de Usuário sobre a Manipulação de \threads}
 
-O segundo experimento, que mensura o \downtime da aplicação em cenários variando a quantidade de recursos utilizados, mostrou os seguintes resultados. A \autoref{fig.mtpages} e a \autoref{fig.mtthreads} mostram a progressão de tempo sobre diferentes perspectivas (fixando-se as páginas e \threads, respectivamente). Como o esperado, o \downtime aumenta quanto maior for o número de páginas e \threads. Além disso, a quantidade de \threads se destaca por apresentar maior expressividade no tempo contabilizado em comparação com a quantidade de páginas. Isso acontece porque uma \thread acarreta em mais dados migrados do que uma página. De maneira geral, o \downtime é aproximadamente descrito pela função \ref{eq.downtime}:
+Ao analisar o isolamento da aplicação através da UArea e separação do binário de usuário e kernel, percebemos um impacto positivo no subsistema de threads do Nanvix. A \autoref{fig.fork-join} ilustra que o \nanvix obteve um leve ganho de desempenho na operação de criação de \threads e não introduziu mudanças significativas na operação de junção de \threads. A \autoref{fig.kernel-counters} mostra a origem do aumento da performance na operação de criação de \threads, exibindo a quantidade de desvios e faltas nas \caches de dados e instrução. Percebemos que houve uma diminuição na quantidade de faltas em \cache (tanto de dados como de instruções) e a quantidade de desvios é menor na versão do \nanvix com a \uarea. Isso ocorre porque a \uarea explora melhor a localidade espacial dos dados, já que os dados estão aglomerados em um espaço menor da memória. Como consequência disso, o número de faltas na \cache e de desvios diminui, resultando em um aumento de desempenho.
+
+\section{Análise do \downtime da Migração de Acordo com a Quantidade de Dados Manipulados}
+
+A \autoref{fig.mtpages} e a \autoref{fig.mtthreads} mostram a progressão de tempo sobre diferentes perspectivas (fixando-se as páginas e \threads, respectivamente). Como o esperado, o \downtime aumenta quanto maior for o número de páginas e \threads, com um mínimo de 5,26~\% e uma máximo de 431~\%. Ou seja, quanto maior for a memória utilizada, maior o tempo de comunicação entre os \clusters. Além disso, a quantidade de \threads se destaca por apresentar maior expressividade no tempo contabilizado em comparação com a quantidade de páginas. Isso acontece porque uma \thread requer mais dados migrados além de uma página \eg é preciso migrar duas pilhas de execução, que totalizam duas páginas de memória e as estruturas de manipulação dessa \thread.
+
+De maneira geral, o \downtime é aproximadamente descrito pela Função \ref{eq.downtime}:
 
 \begin{equation}\label{eq.downtime}
     \begin{split}
@@ -100,8 +107,20 @@ O segundo experimento, que mensura o \downtime da aplicação em cenários varia
     \end{split}
 \end{equation}
 
-Essa função descreve relativamente bem a progressão de tempo até 15 \threads. Como podemos observar nos gráficos, com 16 \threads há uma disparidade com a natureza aparentemente linear que a progressão de tempo aparenta ter. Isso acontece porque o \mppa possui 16 \cores por \cluster, o que significa que simultaneamente apenas 15 \threads de usuário podem executar, já que em um \core executam apenas \threads de sistema, que são responsáveis pelo tratamento de chamadas de sistema e execução das \tasks. Portanto, essa disparidade numérica que os gráficos apresentam são justificados pelo tempo extra que o teste ocupa com gerenciamento de \threads. Isso porque o teste finaliza com a junção de todas as \threads criadas no \cluster destinatário e tal processo exige tempo extra quando a quantidade de \threads é maior que 15, uma vez que algumas \threads precisariam esperar outras terminarem para poderem executar e, finalmente, finalizar sua execução.
+A Função~\ref{eq.downtime} aproxima a progressão de tempo até 15 \threads. Contudo, como podemos observar nas Figuras \ref{fig.mtpages} e \ref{fig.mtthreads}, ocorre uma disparidade com 16 \threads, afetando a natureza linear observada até 15 \threads. Isso acontece porque o \mppa possui 16 núcleos em um \cluster e, como o \nanvix apresenta um \microkernel assimétrico, um núcleo é reservado exclusivamente para a execução de \threads e tarefas do sistema. Desta forma, ao criar 16 \threads, nós extrapolamos a quantidade de núcleos disponíveis ao usuário. A competição de recursos entre duas \threads introduz, em média, X~\% de sobrecarga ao \downtime. Ou seja, o salto numérico observado nas Figuras \ref{fig.mtpages} e \ref{fig.mtthreads} é resultado do tempo extra utilizado no experimento para o genrenciamento das \threads, já que temos mais \threads do que núcleos em que estas podem executar.
 
-O terceiro experimento, que mensurava o \downtime da aplicação quando múltiplas migrações aconteciam simultaneamente, mostrou que a quantidade de migrações paralelas não impacta significativamente o tempo. É importante destacar que nesse experimento foram migradas aplicações que usavam o máximo de recursos de sistema. Mesmo assim, a quantidade de dados não foi suficiente para impactar no \downtime.
+\section{Análise do Impacto de Migrações Paralelas sobre o Sistema de Comunicação}
 
-Já o quarto experimento, o teste adicional que visava a comprovação da corretude do \daemon, mostrou que: o \daemon é capaz de ser reusado no mesmo \cluster diversas vezes independentemente do papel do \cluster na migração; e que é possível um processo ser migrado diversas vezes para diferentes \clusters, até em movimento circular envolvendo todos os \clusters, como no experimento.
+O experimento que mensurava o \downtime da aplicação quando múltiplas migrações aconteciam simultaneamente, mostrou que a quantidade de migrações paralelas não impacta significativamente o tempo. É importante destacar que nesse experimento foram migradas aplicações que usavam o máximo de recursos de sistema. Mesmo assim, a quantidade de dados não foi suficiente para impactar no \downtime, o que significa que a topologia e a taxa de transferência da \noc do \mppa supre a demanda de transferência de dados.
+
+Considerando os cenários em que há 1, 2, 4 ou 8 migrações simultâneas, o \downtime médio foi de 101~ms. Esse foi o mesmo valor obervado nas Figuras \ref{fig.mtpages} e \ref{fig.mtthreads} considerando o máximo de recursos: 16 \threads e 32 páginas.
+
+\section{Análise da Capacidade do \daemon Realizar Múltiplas Migrações Utilizando um mesmo \cluster}
+
+O teste que visava a comprovação da corretude do \daemon executou completamente sem ocorrência de erros. Isso significa que:
+\begin{inlinelist}
+    \item o \daemon é capaz de ser reusado no mesmo \cluster diversas vezes independentemente do papel do \cluster na migração; e
+    \item é possível um processo ser migrado diversas vezes para diferentes \clusters, até mesmo em movimento circular envolvendo todos os \clusters
+\end{inlinelist}.
+
+Esse comportamento é possível porque o \daemon é totalmente separado da aplicação e está associado ao \kernel. Isso permite que o \daemon conclua a migração como receptor e, logo em seguida, a partir da requisição da aplicação que acordou, volte a migrar.

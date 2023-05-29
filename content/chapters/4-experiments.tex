@@ -93,7 +93,13 @@ Neste capítulo, serão apresentados os resultados obtidos através dos experime
 
 \section{Análise do Impacto da UAREA e do Isolamento de Código e Dados de Usuário sobre a Manipulação de \threads}
 
-Ao analisar o isolamento da aplicação através da UArea e separação do binário de usuário e kernel, percebemos um impacto positivo no subsistema de threads do Nanvix. A \autoref{fig.fork-join} ilustra que o \nanvix obteve um leve ganho de desempenho na operação de criação de \threads e não introduziu mudanças significativas na operação de junção de \threads. A \autoref{fig.kernel-counters} mostra a origem do aumento da performance na operação de criação de \threads, exibindo a quantidade de desvios e faltas nas \caches de dados e instrução. Percebemos que houve uma diminuição na quantidade de faltas em \cache (tanto de dados como de instruções) e a quantidade de desvios é menor na versão do \nanvix com a \uarea. Isso ocorre porque a \uarea explora melhor a localidade espacial dos dados, já que os dados estão aglomerados em um espaço menor da memória. Como consequência disso, o número de faltas na \cache e de desvios diminui, resultando em um aumento de desempenho.
+Ao analisar o isolamento da aplicação através da UArea e separação do binário de usuário e kernel, percebemos um impacto positivo no subsistema de threads do Nanvix. A \autoref{fig.fork-join} ilustra que o \nanvix obteve um leve ganho de desempenho na operação de criação de \threads e não introduziu mudanças significativas na operação de junção de \threads. A \autoref{fig.kernel-counters} mostra a origem do aumento da performance na operação de criação de \threads, exibindo a quantidade de desvios e faltas nas \caches de dados e instrução. Percebemos que houve uma diminuição de:
+\begin{inlinelist}
+    \item 7,8~\% na quantidade de desvios;
+    \item 5,8~\% na quantidade de faltas na \dcache; e
+    \item 6,45~\% na quantidade de faltas na \icache.
+\end{inlinelist}
+Isso ocorre porque a \uarea explora melhor a localidade espacial dos dados, já que os dados estão aglomerados em um espaço menor da memória. Como consequência disso, o número de faltas na \cache e de desvios diminui, resultando em um aumento de desempenho.
 
 \section{Análise do \downtime da Migração de Acordo com a Quantidade de Dados Manipulados}
 

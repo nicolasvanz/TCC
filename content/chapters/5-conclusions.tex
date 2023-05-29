@@ -7,7 +7,7 @@ Neste trabalho, foi explorado um modelo de virtualização leve baseado em cont�
 
 Os resultados mostraram que a virtualização nesses ambientes é possível, bem como a migração de processos entre os \clusters do processador. A migração não afeta significativamente o sistema de comunicação, sendo possível realizar múltiplas migrações simultaneamente. Neste contexto, a conteinerização exerceu o papel principal ao evitar o envio de dados redundantes relativos ao \kernel e a melhor organizar os dados internos do \kernel e do usuário. 
 
-A migração provocou um \downtime que varia entre 19~ms e 101~ms, dependendo da quantidade de recursos utilizados. O isolamento das dependências de um processo aumentaram o desempenho de operações do \kernel na execução normal do \so, em especial no subsistema de \threads.
+A migração provocou um \downtime que varia entre 19~ms e 101~ms, dependendo da quantidade de recursos utilizados. O isolamento das dependências de um processo aumentaram o desempenho de operações do \kernel na execução normal do \so, diminuindo a quantidade de desvios, faltas na \dcache e faltas na \icache em 7,8~\%, 5,8~\% e 6,45~\%, respectivamente.
 
 \section{Trabalhos Futuros}
 Como trabalhos futuros, pretende-se:

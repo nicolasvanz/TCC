@@ -63,9 +63,28 @@ Esta abordagem torna algumas das funcionalidades do \os onerosas porque ela difi
 \subsection{Divisão de Dados e Instruções}
 \label{sec.divisao-dados-instrucao}
 
+\begin{figure}[tb]
+	\centering
+	
+    \caption{Visão simplificada da estrutura do binário gerado na compilação.}%
+	\subcaptionminipage[fig.binary-original]%
+                   {.2\textwidth}
+                   {Sem isolamento entre usuário e \kernel.}
+                   {\vspace{31mm}\includegraphics[width=\textwidth]{content/images/binary-structure-original.pdf}}
+	\qquad
+	\subcaptionminipage[fig.binary-modified]
+                   {.2\textwidth}
+                   {Com isolamento entre usuário e \kernel.}
+                   {\includegraphics[width=\textwidth]{content/images/binary-structure-modified.pdf}}
+
+	\includegraphics[width=.5\linewidth]{content/images/binary-structure-subtitle.pdf}
+    \fonte{Desenvolvido pelo autor.}
+	
+\end{figure}
+
     A geração original de um executável do \nanvix compila todos os níveis em bibliotecas estáticas (\hal, \microkernel, \libnanvix, \ulibc e \multikernel) e as junta com a aplicação do usuário de forma a misturar o que é \kernel do que é usuário.
     %
-    Visando a separação das informações entre usuário e \kernel, nós adaptamos o \script de ligação original do \nanvix. Na nova versão, as seções .text, .data, .bss e .rodata dos arquivos binários compilados são renomeados, especificando a qual camada de abstração tal arquivo pertence. Desta forma, é possível identificar dados e instruções de cada camada do \nanvix, assim como as informações do usuário. 
+    Visando a separação das informações entre usuário e \kernel, nós adaptamos o \script de ligação original do \nanvix. A \autoref{fig.binary-original} ilustra como o binário era estruturado originalmente e a \autoref{fig.binary-modified}, como o é estruturado depois das modificações. Na nova versão, as seções .text, .data, .bss e .rodata dos arquivos binários compilados são renomeados, especificando a qual camada de abstração tal arquivo pertence. Desta forma, é possível identificar dados e instruções de cada camada do \nanvix, assim como as informações do usuário. 
     
     Sendo assim, são geradas seções .text, .data, .rodata e .bss específicas para o \kernel e usuário. Portanto, todas as informações de \kernel, alocadas nos endereços mais baixos da memória, são isoladas das informações de aplicação, alocadas nos endereços mais altos da memória. Neste processo, são exportadas algumas constantes que apontam onde começam e terminam as partes do binário que são relacionadas ao \kernel e à aplicação \eg \textit{\_\_KERNEL\_TEXT\_START}, \textit{\_\_KERNEL\_TEXT\_END}, \textit{\_\_USER\_DATA\_START}, \textit{\_\_USER\_START}, etc. Essas constantes permitem a manipulação e gerenciamento mais precisos dos segmentos de memória do \kernel e da aplicação.
     

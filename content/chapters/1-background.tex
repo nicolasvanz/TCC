@@ -164,6 +164,14 @@ O \nanvix dispõe de três abstrações de comunicações para transferência de
 \item[\portal.] A abstração portal suporta a troca de mensagens grandes e segue a semântica $1:1$. A abstração pode ter uso em diversos cenários que exigem grandes transferências de dados entre \clusters~\cite{penna:thesis}.
 \end{description}
 
+\subsection{\Tasks no \nanvix}
+
+No \nanvix há um sistema de \tasks leves cooperativas~\cite{souto:thesis}. Nesse sistema, uma \task é definida como uma subrotina que pode ser executada periodicamente e que constitui um passo em um fluxo de execução. As \tasks podem ser conectadas umas as outras, o que torna possível a criação \myloops ou condicionais, gerando um grafo de execução.
+
+As \tasks são escalonadas pelo \dispatcher, que é executado no \mcore. O \dispatcher utiliza uma mesma área de memória \ie pilha, para a execução das \tasks. Isso reduz o consumo de memória, já que não é necessário um processo ou \thread dedicado à \task~\cite{souto:thesis}.
+
+Sendo assim, o sistema de \tasks leves cooperativas se torna uma alternativa boa para o desenvolvimento de protocolos, comunicação, interfaces de \io e \daemons. Isso porque evita o uso de recursos que são escassos no ambiente em que são utilizadas: \thread e memória.
+
 \section{Virtualização}
 \label{sec.virtualizacao}
 A virtualização pode ser entendida como uma técnica de abstração de \hardware que permite a criação de uma versão virtual de um ambiente, como computadores, \sos, sistemas de armazenamento, redes, aplicações, etc. Nesse cenário, muitas vezes é possível a criação de múltiplas instâncias dessa versão virtual, as quais competem pelos recursos físicos/reais. A virtual ização pode ser classificada em três grupos principais: a virtualização total; a para-virtualização e a virtualização a nível de processo. Além disso, o isolamento e independência das instâncias virtuais garantem à virtualização algumas vantagens muito exploradas atualmente, especialmente em ambientes \cloud~\cite{manohar2013survey}. Dentre elas: flexibilidade, portabilidade, escalabilidade e segurança.

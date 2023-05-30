@@ -126,7 +126,7 @@ Como consequência da uniformidade do \kernel entre os \clusters, eliminamos o e
 \subsection{Rotina de migração}
 \label{sec.rotina-migracao}
 
-Para a migração de um processo entre \clusters foi desenvolvida uma rotina de migração. A funcionalidade é similar ao \criu, ferramenta utilizada por \softwares de gerenciamento de contêineres como o Docker. Porém, a migração é executada por intermédio de \daemons do \os. Neste projeto, foi implementado o algoritmo \hotmigration, em que a aplicação é migrada enquanto é executada, como detalhado na \autoref{sec.hotmigration} utilizando a técnica \precopy visto na \autoref{sec.precopymigration}. De forma resumida, a aplicação é migrada durante sua execução, sendo restaurada no \cluster destinatário após a transferência completa dos dados do contêiner. A seguir é detalhado como funciona o \daemon e o fluxo de migração.
+Para a migração de um processo entre \clusters foi desenvolvida uma rotina de migração. A funcionalidade é similar ao \criu, ferramenta utilizada por \softwares de gerenciamento de contêineres como o Docker. Porém, a migração é executada por intermédio de \daemons do \os. Neste projeto, foi implementado o algoritmo \hotmigration, em que a aplicação é migrada enquanto é executada, como detalhado na \autoref{sec.hotmigration}, utilizando a técnica \precopy, vista na \autoref{sec.precopymigration}. De forma resumida, a aplicação é migrada durante sua execução, sendo restaurada no \cluster destinatário após a transferência completa dos dados do contêiner. A seguir é detalhado como funciona o \daemon e o fluxo de migração.
 
 \subsubsection{\Daemon de Migração}
 

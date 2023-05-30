@@ -267,9 +267,9 @@ A migração é o processo de transferência de uma aplicação ou \vm de um amb
 A migração pode ser classificada em dois tipos distintos: \coldmigration(\nonlivemigration) e \hotmigration (\livemigration)~\cite{imran2022live}.
 
 \subsubsection{\Coldmigration}\label{sec.coldmigration}
-A \autoref{fig.coldmigration} ilustra o fluxo de execução da \coldmigration,também é conhecida como \nonlivemigration. Neste tipo de migração, o sistema a ser migrado (contêiner ou \vm) precisa ser desligado antes do processo de migração começar.Detalhadamente, o sistema é desligado, o estado (\checkpoint) do sistema é salvo e enviado ao \so ou \vm destinatário. O sistema é restaurado no destino e o estado do sistema apagado no remetente.
+A \autoref{fig.coldmigration} ilustra o fluxo de execução da \coldmigration,também é conhecida como \nonlivemigration. Neste tipo de migração, a \vm (ou contêiner) a ser migrada precisa ser desligada antes do processo de migração começar. Detalhadamente, o sistema é desligado, o estado (\checkpoint) do sistema é salvo e enviado ao \so ou \vm destinatário. O sistema é restaurado no destino e o estado do sistema apagado no remetente.
 
-Este geralmente não é considerado um método eficiente e não é muito utilizado na indústria e mercado. Isso porque o período de tempo em que a aplicação fica inativa, \aka \downtime, é alto. O \downtime é elevado devido à alta quantidade de dados a serem transferidos e pelo tempo extra para desligar e ligar o sistema novamente. Isso não é considerado aveitável atualmente, haja vista a grande quantidade de serviços que não podem parar sua execução~\cite{singh2022predictive, imran2022live}.
+Este geralmente não é considerado um método eficiente e não é muito utilizado na indústria e mercado. Isso porque o período de tempo em que a aplicação fica inativa, \aka \downtime, é alto. O \downtime é elevado devido à alta quantidade de dados a serem transferidos e pelo tempo extra para desligar e ligar o sistema novamente. Isso não é considerado aceitável atualmente, haja vista a grande quantidade de serviços que não podem parar sua execução~\cite{singh2022predictive, imran2022live}.
 
 \begin{figure}[bt]
     \centering
@@ -280,12 +280,12 @@ Este geralmente não é considerado um método eficiente e não é muito utiliza
 \end{figure}
 
 \subsubsection{\Hotmigration}\label{sec.hotmigration}
-Em contraste com a \coldmigration, na \hotmigration, também conhecida como \livemigration, o sistema a ser migrado não precisa ser desligado antes do procedimento começar. O principal objetivo desse processo é maximizar a performance do sistema durante a migração, melhorar o uso da rede e reduzir o \downtime do sistema~\cite{imran2022live}.
+Em contraste com a \coldmigration, na \hotmigration, também conhecida como \livemigration, a \vm (ou contêiner) a ser migrada não precisa ser desligada antes do procedimento começar. Os principais objetivos desse processo são: maximizar a performance do sistema durante a migração; melhorar o uso da rede; e reduzir o \downtime do sistema~\cite{imran2022live}.
 
 Neste modelo, a migração poder ser classificada de acordo com a técnica utilizada para a transferência dos dados \ie \precopymigration, \postcopymigration e migração híbrida.
 
 \subsubsubsection{\Precopymigration}\label{sec.precopymigration}
-A \autoref{fig.precopy} ilustra o fluxo de execução da \precopymigration. Neste modelo, ao receber a requisição de migração, o sistema cria uma pré-imagem do seu estado atual e a envia ao destinatário enquanto continua executando normalmente. Nesta estrutura está contida o esquema de paginação atual do sistema e, por vezes, alguns dados de execução. Conforme o esquema de paginação é modificado no remetente, essa estrutura é atualizada e enviada ao destinatário. Depois disso, é salvo o estado atual completo do sistema, que, então, é enviado ao destino. O sistema é restaurado no destino e o estado do sistema apagado no remetente. 
+A \autoref{fig.precopy} ilustra o fluxo de execução da \precopymigration. Neste modelo, ao receber a requisição de migração, o remetente cria uma pré-imagem do estado atual da \vm (ou contêiner) e a envia ao destinatário enquanto continua executando normalmente. Nesta estrutura está contida o esquema de paginação atual e, por vezes, alguns dados de execução. Conforme o esquema de paginação é modificado no remetente, essa estrutura é atualizada e enviada ao destinatário. Depois disso, é salvo o estado atual completo da \vm (ou contêiner), que, então, é enviada ao destino, onde é restaurada. 
 
 Esse fluxo de migração faz com que o tempo total de migração seja maior que o do \coldmigration, já que há a retransmissão de dados, em especial páginas de memória. Em contrapartida, o \downtime é reduzido, pois o sistema executa normalmente na parte inicial da migração, quando é feita e enviada a pré-imagem ao destinatário~\cite{singh2022predictive, imran2022live}.
 
@@ -298,7 +298,7 @@ Esse fluxo de migração faz com que o tempo total de migração seja maior que 
 \end{figure}
 
 \subsubsubsection{\Postcopymigration}\label{sec.postcopymigration}
-Tal como ilustrado pela \autoref{fig.postcopy}, no modelo \postcopymigration o remetente cria um estado parcial do sistema em execução e o envia ao destinatário. Nesse estado, está incluso apenas o essencial para o início do procedimento de descongelamento do sistema, não abrangendo o esquema de paginação. Quando o sistema é restaurado no destinatário, ocorrerão várias faltas de páginas, as quais resultam em requisições de páginas ao remetente, o qual as envia ao destinatário. Quando todas as páginas são transferidas ao destinatário, o sistema é apagado do remetente~\cite{singh2022predictive, imran2022live}.
+Tal como ilustrado pela \autoref{fig.postcopy}, no modelo \postcopymigration o remetente cria um estado parcial da \vm (ou contêiner) em execução e o envia ao destinatário. Nesse estado, está incluso apenas o essencial para o início do procedimento de descongelamento do sistema, não abrangendo o esquema de paginação. Quando o sistema é restaurado no destinatário, ocorrerão várias faltas de páginas, as quais resultam em requisições de páginas ao remetente, o qual as envia ao destinatário. Quando todas as páginas são transferidas ao destinatário, a \vm (ou contêiner) é apagada do remetente~\cite{singh2022predictive, imran2022live}.
 
 \begin{figure}[bt]
     \centering
@@ -317,7 +317,7 @@ Tal como ilustrado pela \autoref{fig.postcopy}, no modelo \postcopymigration o r
 \end{figure}
 
 \subsubsubsection{Migração Híbrida}\label{sec.hybridmigration}
-Como podemos observar na \autoref{fig.hybridmigration}, no modelo de migração híbrida são utilizadas as técnicas de \precopy e \postcopy em conjunto. Inicialmente, uma pré-imagem do sistema é feita de forma similar ao modelo \precopymigration. Esta pré-imagem é enviada ao destinatário, enqunato o sistema executa normalmente. Em contraste com o método \precopy nesta etapa não são reenviadas as páginas modificadas/atualizadas. Depois, o estado completo do sistema é enviado e as páginas modificadas/atualizadas são requisitadas ao remetente tal como na \postcopymigration. Quando todas as páginas são transferidas ao destinatário, o sistema é apagado do remetente~\cite{singh2022predictive, imran2022live}.
+Como podemos observar na \autoref{fig.hybridmigration}, no modelo de migração híbrida são utilizadas as técnicas de \precopy e \postcopy em conjunto. Inicialmente, uma pré-imagem da \vm (ou contêiner) é feita de forma similar ao modelo \precopymigration. Esta pré-imagem é enviada ao destinatário, enquanto o sistema executa normalmente. Em contraste com o método \precopy nesta etapa não são reenviadas as páginas modificadas/atualizadas. Depois, o estado completo do sistema é enviado e as páginas modificadas/atualizadas são requisitadas ao remetente tal como na \postcopymigration. Quando todas as páginas são transferidas ao destinatário, a \vm (ou contêiner) é apagada do remetente~\cite{singh2022predictive, imran2022live}.
 
 
 

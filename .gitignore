@@ -40,4 +40,5 @@ auto
 _minted-*
 !main.pdf
 !content/images/*.pdf
+!content/appendix/*.pdf
 svg-inkscape

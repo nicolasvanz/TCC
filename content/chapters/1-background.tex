@@ -8,7 +8,7 @@ Neste capítulo serão apresentados conceitos fundamentais para o entendimento d
 \section{Dos \singlecores aos \Lws}
 \label{sec.lw}
 
-O aumento de desempenho dos sistemas computacionais manteve-se como uma necessidade constante para o avanço da ciência em vários setores: astrologia, biologia, engenharia, etc. Até tempos atrás, esse objetivo era alcançado através do aumento da frequência de relógios do núcleo de processamento, do avanço na tecnologia dos semicondutores e do acréscimo do número de transistores em um \chip~\cite{amrouch2018negative}. Atualmente, nós já chegamos ao limite físico que impede a aplicação de parte dessas técnicas. Além da dificuldade de garantir a dissipação de calor à medida que a frequência aumenta, o número de transistores que conseguimos colocar em uma mesma área de um \chip chegou a um limite físico, \ie o tamanho dos transitores alcançou a escala atômica.
+O aumento de desempenho dos sistemas computacionais manteve-se como uma necessidade constante para o avanço da ciência em vários setores: astrologia, biologia, engenharia, etc. Até tempos atrás, esse objetivo era alcançado através do aumento da frequência de relógios do núcleo de processamento, do avanço na tecnologia dos semicondutores e do acréscimo do número de transistores em um \chip~\cite{amrouch2018negative}. Atualmente, chegou-se ao limite físico que impede a aplicação de parte dessas técnicas. Além da dificuldade de garantir a dissipação de calor à medida que a frequência aumenta, o número de transistores que se consegue colocar em uma mesma área de um \chip chegou a um limite físico, \ie o tamanho dos transistores alcançou a escala atômica.
 
 Como alternativa para a continuidade nos avanços de poder computacional, foram exploradas novas técnicas~\cite{fuller2011computing,gepner2006multi}. Em especial, foram desenvolvidas arquiteturas paralelas, que exploram o poder de processamento paralelo, o qual é atingido pela execução de múltiplos \cores simultaneamente~\cite{gepner2006multi}. Essas novas arquiteturas são classificadas de acordo com a maneira com que conseguem manipular os dados. São elas:
 \begin{inlinelist}
@@ -43,7 +43,7 @@ Neste contexto, a classe de processadores \lws destacam-se por atrelar alto pode
 	\qquad
 	\subcaptionminipage[fig.mimd2]
                    {.25\textwidth}
-                   {multicompudator com troca de mensagens.}
+                   {multicomputador com troca de mensagens.}
                    {\includesvg[width=\textwidth]{content/images/mimd-2.svg}}
     \qquad
     \subcaptionminipage[fig.mimd3]
@@ -82,11 +82,15 @@ Especificamente, nós utilizamos o processador \mppa para o desenvolvimento dest
 O \nanvix\footnote{Disponível em https://github.com/nanvix} é um \os distribuído e de propósito geral que busca equilibrar desempenho, portabilidade e programabilidade para \lws~\cite{penna:sbesc19}. O \kernel do \nanvix é estruturado em três camadas de abstração. São elas:
 \begin{description}
     \item [\nanvix \hal]
-         é a camada mais baixa que abstrai e provê o gerenciamento dos recursos de \hardware sobre uma visão comum~\cite{penna:hal}. Entre esses recursos estão: \cores, \tlbs, \cache, \mmu, \noc, interrupções, memória virtual e recursos de \io. De maneira geral, esta camada provê abstrações ao nivel do \core, \cluster e comunicação/sincronização entre \clusters~\cite{penna:thesis}. A Figura \ref{fig.hal-overview} ilustra a estrutura interna da \hal do \nanvix.
+         é a camada mais baixa que abstrai e provê o gerenciamento dos recursos de \hardware sobre uma visão comum~\cite{penna:hal}. A \autoref{fig.hal-overview} ilustra a estrutura interna da \hal do \nanvix. Entre os recursos geridos estão: \cores, \tlbs, \cache, \mmu, \noc, interrupções, memória virtual e recursos de \io. De maneira geral, esta camada provê abstrações ao nível do \core, \cluster e comunicação/sincronização entre \clusters~\cite{penna:thesis}.
     \item [\nanvix \Microkernel]
-        é a camada intermediária que provê gerenciamento de recursos e os serviços mínimos de um \os em um \cluster. Entre esses serviços se encontram o gerenciamento de \threads e memória, controle de acesso à memória, interface para chamadas de sistema e a comunição entre processos. As chamadas de sistema podem ser executadas localmente, caso acessem dados \rdo ou alterem estruturas internas do \core, ou remotamente pelo \mcore, que atende à requisição e libera o \score requisitante ao término da chamada~\cite{penna:thesis}. Essa característica adjetiva o \microkernel como assimétrico. A Figura \ref{fig.microkernel-overview} ilustra a estrutura interna do \microkernel do \nanvix.
+        é a camada intermediária que provê gerenciamento de recursos e os serviços mínimos de um \os em um \cluster. A Figura \ref{fig.microkernel-overview} ilustra a estrutura interna do \microkernel do \nanvix. Pode-se observar que entre os serviços se encontram o gerenciamento de \threads e memória, controle de acesso à memória, interface para chamadas de sistema e a comunicação entre processos. As chamadas de sistema podem ser executadas:
+        \begin{inlinelist}
+            \item localmente, caso acessem dados \rdo ou alterem estruturas internas do \core, ou
+            \item remotamente pelo \mcore (\ie o \core exclusivo para execução de tarefas do \so), que atende à requisição e libera o \score (\ie o \core destinado às \threads de usuário) requisitante ao término da chamada~\cite{penna:thesis}. Essa característica adjetiva o \microkernel como assimétrico.
+        \end{inlinelist}
     \item [\nanvix \Multikernel]
-        é a camada superior que provê os serviços mais complexos de um \os e dispõe uma visão a nível do processador em si. Os serviços são hospedados em \ioclusters, \ie isolados das aplicações de usuário. Os serviços atendem as requisições vindas dos processos de usuário através de um modelo cliente-servidor. As requisições e respostas são enviadas/recebidas através de passagem de mensagem via \noc. Os serviços dessa camada podem ser entendidos como fontes de informação que mantém a execução dos processos consistentes no processador, tendo em vista a natureza distribuída da memória nessas arquiteturas. Alguns serviços incluídos no \nanvix são mecanismos de \spawn de processos e gerenciamento de nomes lógicos dos processos à fim de abstrair a localização dos processos no processador. A Figura \ref{fig.multikernel-overview} ilustra o \multikernel do \nanvix.
+        é a camada superior que provê os serviços mais complexos de um \os e dispõe uma visão a nível do processador em si. A Figura \ref{fig.multikernel-overview} ilustra o \multikernel do \nanvix. Os serviços são hospedados em \ioclusters, \ie isolados das aplicações de usuário. Os serviços atendem as requisições vindas dos processos de usuário através de um modelo cliente-servidor. As requisições e respostas são enviadas/recebidas através de passagem de mensagem via \noc. Os serviços dessa camada podem ser entendidos como fontes de informação que mantém a execução dos processos consistentes no processador, tendo em vista a natureza distribuída da memória nessas arquiteturas. Como pode-se observar na \autoref{fig.multikernel-overview}, alguns serviços incluídos no \nanvix são mecanismos de \spawn de processos e gerenciamento de nomes lógicos dos processos a fim de abstrair a localização dos processos no processador. 
 \end{description}
 
 \begin{figure}[bt]
@@ -152,7 +156,7 @@ O \nanvix dispõe de três abstrações de comunicações para transferência de
 %     \label{fig.mailbox}
 % \end{figure}
 
-    \item[\mailbox.] A abstração \mailbox é responsável pelo suporte ao envio de mensagens de controle através da troca de pequenas mensagens de tamanho fixo. A abstração segue a semântica $N:1$ e funciona da seguinte forma: um nó (destinatário da mensagem) possuí uma \mailbox, da qual lê mensagens, e múltiplos nós (remetentes da mensagem) podem escrever nessa \mailbox~\cite{penna:thesis}.
+    \item[\mailbox.] A abstração \mailbox é responsável pelo suporte ao envio de mensagens de controle através da troca de pequenas mensagens de tamanho fixo. A abstração segue a semântica $N:1$ e funciona da seguinte forma: um nó (destinatário da mensagem) possui uma \mailbox, da qual lê mensagens, e múltiplos nós (remetentes da mensagem) podem escrever nessa \mailbox~\cite{penna:thesis}.
 
 % \begin{figure}[t]
 %     \centering
@@ -166,7 +170,7 @@ O \nanvix dispõe de três abstrações de comunicações para transferência de
 
 \subsection{\Tasks no \nanvix}
 
-No \nanvix há um sistema de \tasks leves cooperativas~\cite{souto:thesis}. Nesse sistema, uma \task é definida como uma subrotina que pode ser executada periodicamente e que constitui um passo em um fluxo de execução. As \tasks podem ser conectadas umas as outras, o que torna possível a criação \myloops ou condicionais, gerando um grafo de execução.
+No \nanvix há um sistema de \tasks leves cooperativas~\cite{souto:thesis}. Nesse sistema, uma \task é definida como uma sub-rotina que pode ser executada periodicamente e que constitui um passo em um fluxo de execução. As \tasks podem ser conectadas umas as outras, o que torna possível a criação \myloops ou condicionais, gerando um grafo de execução.
 
 As \tasks são escalonadas pelo \dispatcher, que é executado no \mcore. O \dispatcher utiliza uma mesma área de memória \ie pilha, para a execução das \tasks. Isso reduz o consumo de memória, já que não é necessário um processo ou \thread dedicado à \task~\cite{souto:thesis}.
 
@@ -174,7 +178,7 @@ Sendo assim, o sistema de \tasks leves cooperativas se torna uma alternativa boa
 
 \section{Virtualização}
 \label{sec.virtualizacao}
-A virtualização pode ser entendida como uma técnica de abstração de \hardware que permite a criação de uma versão virtual de um ambiente, como computadores, \sos, sistemas de armazenamento, redes, aplicações, etc. Nesse cenário, muitas vezes é possível a criação de múltiplas instâncias dessa versão virtual, as quais competem pelos recursos físicos/reais. A virtual ização pode ser classificada em três grupos principais: a virtualização total; a para-virtualização e a virtualização a nível de processo. Além disso, o isolamento e independência das instâncias virtuais garantem à virtualização algumas vantagens muito exploradas atualmente, especialmente em ambientes \cloud~\cite{manohar2013survey}. Dentre elas: flexibilidade, portabilidade, escalabilidade e segurança.
+A virtualização pode ser entendida como uma técnica de abstração de \hardware que permite a criação de uma versão virtual de um ambiente, como computadores, \sos, sistemas de armazenamento, redes, aplicações, etc. Nesse cenário, muitas vezes é possível a criação de múltiplas instâncias dessa versão virtual, as quais competem pelos recursos físicos/reais. A virtualização pode ser classificada em três grupos principais: a virtualização total; a para-virtualização e a virtualização a nível de processo. Além disso, o isolamento e independência das instâncias virtuais garantem à virtualização algumas vantagens muito exploradas atualmente, especialmente em ambientes \cloud~\cite{manohar2013survey}. Dentre elas: flexibilidade, portabilidade, escalabilidade e segurança.
 
 O conceito de virtualização pode ser traçado desde a década de 50, durante a época dos \mainframes e do emergente conceito de memória virtual~\cite{campbell2006introduction}. Nesse período, a preocupação era tornar um recurso físico acessível a múltiplos usuários simultaneamente. Essa motivação sustentou a evolução da virtualização, levando ao surgimento das \vms e dos \hypervisors. Com o tempo, viu-se o surgimento de novos projetos, como o M44/44x da \ibm, responsável pelo nascimento de um novo \design para os sistemas de tempo compartilhado. Nessa nova estrutura, a máquina central repartia seus recursos em diversas instâncias de \vms, que eram utilizadas por múltiplos usuários simultaneamente.
 
@@ -188,7 +192,7 @@ A virtualização total tem como objetivo abstrair o \hardware de um computador 
 \subsection{Para-virtualização}
 De forma similar à virtualização total, o objetivo da para-virtualização também é a abstração da máquina em sua totalidade. Contudo, em contraste com a virtualização total, na para-virtualização uma única instância da máquina executa um \so, chamado de \so hospedeiro, que detém o acesso ao \hardware. Enquanto as demais instâncias executam seus respectivos \sos, chamados de \sos convidados, sob o intermédio de um \hypervisor (\vmm) tipo 2, que pode ser entendido como um processo regular do \so hospedeiro~\cite{campbell2006introduction}. Sendo assim, o \hypervisor tipo 2 atua como um intermediário entre o \so convidado e o \so hospedeiro. O \so hospedeiro reconhece as requisições do \so convidado e gerencia os recursos de \hardware deste~\cite{sweeney2016virtualization}.
 
-\subsection{Virtualização a Nível de Processo e Conteinerização}
+\subsection{Virtualização a Nível de Sistema Operacional e Conteinerização}
 Virtualizar um processo ou aplicação é o processo de desacoplar a execução de um processo do sistema que o executa. Nesse contexto, o processo tem uma visão virtual única do sistema, de modo que a execução de cada aplicação ocorre independentemente uma da outra.
 
 A \autoref{fig.cont3} ilustra o modelo de execução de uma aplicação conteinerizada. Diferentemente dos modelos que utilizam \hypervisors tipo 1 ou 2, respectivamente ilustrados nas Figuras \ref{fig.cont1} e \ref{fig.cont2}, neste tipo de virtualização, cada aplicação é isolada em um ambiente virtual, também conhecido como contêiner. No contêiner estão contidas todas as bibliotecas, arquivos e configurações necessárias para a execução da aplicação. Como não é necessária a criação de um \so para cada aplicação, a virtualização se torna muito mais leve, \ie tem um impacto menor na memória.
@@ -197,7 +201,7 @@ O fato do modelo de conteinerização exigir muito menos espaço e complexidade 
 
 Alguns conceitos muito presentes na conteinerização são:
 \begin{description}
-    \item[\namespace.] \Namespaces foram introduzidos no \kernel do \linux com o objetivo de isolar recursos virtuais de um grupo de processos~\cite{gao2017containerleaks}. Os processos podem ser associados a vários \namespaces e, por isso, podem ter visões diferentes e customizadas dos recursos do sistema~\cite{watada2019emerging}. Atualmente, existem seis tipos diferentes de \namespaces~\cite{watada2019emerging}:
+    \item[\namespace.] \Namespaces foram introduzidos no \kernel do \linux com o objetivo de isolar recursos virtuais de um grupo de processos~\cite{gao2017containerleaks}. Os processos podem ser associados a vários \namespaces e, por isso, podem ter visões diferentes e personalizadas dos recursos do sistema~\cite{watada2019emerging}. Atualmente, existem seis tipos diferentes de \namespaces~\cite{watada2019emerging}:
     \begin{enumerate}[label=(\roman*)]
         \item \mount: O \mount \namespace isola o sistema de arquivos e permite que um processo veja um sistema de arquivos diferente do sistema de arquivos real do hospedeiro~\cite{watada2019emerging}. Através dele é possível que cada contêiner tenha seu diretório raiz específico~\cite{dua2014virtualization};
         \item \uts: garante que cada contêiner possa ver e alterar seu próprio \hostname, tornando-o um nó independentemente nomeado na rede~\cite{watada2019emerging, dua2014virtualization};
@@ -236,38 +240,38 @@ Várias ferramentas de conteinerização utilizam \namespaces e \cgroups, ou con
 
 \lxc é uma dessas ferramentas de conteinerização. Ele é uma implementação que usa as funcionalidades de \namespaces e \cgroups do \linux para isolar os recursos do sistema hospedeiro~\cite{watada2019emerging}. O \lxd é a interface com que o usuário cria e interage com os contêineres. A principal vantagem do \lxc surge por ser baseado em mecanismos do próprio \kernel. Essa característica o torna mais eficiente e provê um melhor isolamento de recursos, em especial de rede e sistema de arquivos~\cite{dua2014virtualization}. Em contrapartida, dentre algumas limitações do \lxc estão: por ser uma implementação baseada no \kernel do \linux, o \lxc não é portável para outros sistemas operacionais; há ainda problemas de segurança em aberto; e os contêineres compartilham o mesmo \kernel~\cite{dua2014virtualization}.
 
-Outra ferramenta muito conhecida é o \docker. O \docker traz uma abordagem um pouco diferente do \lxc. Enquanto no \lxc é posssível criar \vms, com diversos processos executando isoladamente do hospedeiro em um mesmo contêiner, a proposta do \docker é a execução de processos únicos \ie o foco é a portabilidade e ser um suporte a execução de microsserviços~\cite{lxcvsdocker}. Em sua abordagem inicial, o \docker utilizava o \lxc internamente~\cite{dua2014virtualization}, porém nas versões mais modernas o \lxc foi substituído pelo \conteinerd, que é outra biblioteca de criação e gerenciamento de contêineres~\cite{containerd}. Mesmo não sendo mais uma extensão do \lxc, o \docker ainda utiliza funcionalidades do \kernel do \linux \eg \namespaces e \cgroups, em seu funcionamento interno. Isso faz com que sua execução em outros \sos \eg \mac e \windows, exija a utilização de uma \vm (mais leve que as convencionais) para sua execução.
+Outra ferramenta muito conhecida é o \docker. O \docker traz uma abordagem um pouco diferente do \lxc. Enquanto no \lxc é possível criar \vms, com diversos processos executando isoladamente do hospedeiro em um mesmo contêiner, a proposta do \docker é a execução de processos únicos \ie o foco é a portabilidade e ser um suporte a execução de microsserviços~\cite{lxcvsdocker}. Em sua abordagem inicial, o \docker utilizava o \lxc internamente~\cite{dua2014virtualization}, porém nas versões mais modernas o \lxc foi substituído pelo \conteinerd, que é outra biblioteca de criação e gerenciamento de contêineres~\cite{containerd}. Mesmo não sendo mais uma extensão do \lxc, o \docker ainda utiliza funcionalidades do \kernel do \linux \eg \namespaces e \cgroups, em seu funcionamento interno. Isso faz com que sua execução em outros \sos \eg \mac e \windows, exija a utilização de uma \vm (mais leve que as convencionais) para sua execução.
 
-Essas e outras ferramantas de conteinerização trouxeram novas possibilidades ao mundo da computação. A surgimento dessas tecnologias aumentaram a flexibilidade dos servidores, já que agora é possível criar ambientes isolados para as aplicações. Além disso, esse isolamento de execução permite a utilização de algumas técnicas, como a migração de contêineres, a interrupção de uma aplicação isoladamente, o \checkpointing, etc.
+Essas e outras ferramentas de conteinerização trouxeram novas possibilidades ao mundo da computação. A surgimento dessas tecnologias aumentaram a flexibilidade dos servidores, já que agora é possível criar ambientes isolados para as aplicações. Além disso, esse isolamento de execução permite a utilização de algumas técnicas, como a migração de contêineres, a interrupção de uma aplicação isoladamente, o \checkpointing, etc.
 
 
 \subsection{Outros Tipos de Virtualização}
 % \begin{enumerate}[label=(\roman*)]
 %     \item Virtualização de \desktop: usuários acessam o ambiente computacional, ou \desktop, remotamente. O poder e recursos computacionais estão centralizados, mas os pontos de acesso podem ser diversos. Também é conhecido como \vdi.
 %     \item Virtualização de armazenamento: múltiplos dispositivos de armazenamento são unificados sob uma mesma visão de dados \ie os dados estão dispersos, mas aparecem como um único conjunto de dados compartilhados.
-%     \item Virtualização de rede: múltiplas redes virtuais, cada uma com seu conjunto de recursos (como roteadores, \switches e \firewalls) operam sobre uma mesma rede física. Isso permite melhor gerenciamento de tráfego e otimizção.
+%     \item Virtualização de rede: múltiplas redes virtuais, cada uma com seu conjunto de recursos (como roteadores, \switches e \firewalls) operam sobre uma mesma rede física. Isso permite melhor gerenciamento de tráfego e otimização.
 % \end{enumerate}
 \begin{description}
     \item [Virtualização de \desktop:] usuários acessam o ambiente computacional, ou \desktop, remotamente. O poder e recursos computacionais estão centralizados, mas os pontos de acesso podem ser diversos. Também é conhecido como \vdi.
     \item [Virtualização de armazenamento:] múltiplos dispositivos de armazenamento são unificados sob uma mesma visão de dados \ie os dados estão dispersos, mas aparecem como um único conjunto de dados compartilhados.
-    \item [Virtualização de rede:] múltiplas redes virtuais, cada uma com seu conjunto de recursos (como roteadores, \switches e \firewalls) operam sobre uma mesma rede física. Isso permite melhor gerenciamento de tráfego e otimizção.
+    \item [Virtualização de rede:] múltiplas redes virtuais, cada uma com seu conjunto de recursos (como roteadores, \switches e \firewalls) operam sobre uma mesma rede física. Isso permite melhor gerenciamento de tráfego e otimização.
 \end{description}
 
 \section{Migração}
 % \mytodo{pre-copy, post-copy, live migration}
 A migração é o processo de transferência de uma aplicação ou \vm de um ambiente a outro. A migração é muito usada atualmente principalmente em ambientes \cloud~\cite{imran2022live}. A migração traz diversos benefícios e vantagens aos serviços em um ambiente computacional, tais como:
 \begin{enumerate}[label=(\roman*)]
-    \item Balanceamento de carga: é uma técnica que permite que a carga de trabalho de servidores sobrecarregasdos seja distribuída entre outras máquinas a fim de evitar falhas de sistema ou aumento de latência na resposta dos serviços. Através dessa técnica, \vms alocadas em servidores sobrecarregados são migrados para servidores menos utilizados, melhorando a utilização dos recursos computacionais~\cite{wood2007black}.
+    \item Balanceamento de carga: é uma técnica que permite que a carga de trabalho de servidores sobrecarregados seja distribuída entre outras máquinas a fim de evitar falhas de sistema ou aumento de latência na resposta dos serviços. Através dessa técnica, \vms alocadas em servidores sobrecarregados são migrados para servidores menos utilizados, melhorando a utilização dos recursos computacionais~\cite{wood2007black}.
     \item Tolerância a falhas: é uma técnica que permite a migração de uma \vm para um servidor em melhor condição de funcionamento quando o servidor em que está alocada apresenta algum tipo de falha~\cite{nagarajan2007proactive}.
-    \item Manutenção de sistema: os servidores requerem que periodicamente sejam feitas revisões/manutenções em seus sistemas. Durante esses períodos, as aplicações alocadas nestas máquinas não conseguiriam executar. Graças à migração, estas aplicações/\vms são tranferidas a outro servidor durante esses intervalos de manutenção sem que os serviços sejam afetados~\cite{devi2011security}.
+    \item Manutenção de sistema: os servidores requerem que periodicamente sejam feitas revisões/manutenções em seus sistemas. Durante esses períodos, as aplicações alocadas nestas máquinas não conseguiriam executar. Graças à migração, estas aplicações/\vms são transferidas a outro servidor durante esses intervalos de manutenção sem que os serviços sejam afetados~\cite{devi2011security}.
     \item Gerenciamento de energia: através da migração, é possível gerenciar a alocação de \vms nos servidores de modo que alguns não tenham carga de trabalho a executar e possam ser desligados, economizando energia. Isso é feito, claro, de uma maneira que não sobrecarregue os servidores que estão em funcionamento~\cite{hu2008magnet}.
 \end{enumerate}
 
-\subsection{Tipos de Migração}
-A migração pode ser classificada em dois tipos distintos: \coldmigration(\nonlivemigration) e \hotmigration (\livemigration)~\cite{imran2022live}.
+% \subsection{Tipos de Migração}
+A migração pode ser classificada de acordo com em dois tipos principais. São eles: \coldmigration(\nonlivemigration) e \hotmigration (\livemigration)~\cite{imran2022live}.
 
-\subsubsection{\Coldmigration}\label{sec.coldmigration}
-A \autoref{fig.coldmigration} ilustra o fluxo de execução da \coldmigration,também é conhecida como \nonlivemigration. Neste tipo de migração, a \vm (ou contêiner) a ser migrada precisa ser desligada antes do processo de migração começar. Detalhadamente, o sistema é desligado, o estado (\checkpoint) do sistema é salvo e enviado ao \so ou \vm destinatário. O sistema é restaurado no destino e o estado do sistema apagado no remetente.
+\subsection{\Coldmigration}\label{sec.coldmigration}
+A \autoref{fig.coldmigration} ilustra o fluxo de execução da \coldmigration, também é conhecida como \nonlivemigration. Neste tipo de migração, a \vm (ou contêiner) a ser migrada precisa ser desligada antes do processo de migração começar. Detalhadamente, o sistema é desligado, o estado (\checkpoint) do sistema é salvo e enviado ao \so ou \vm destinatário. O sistema é restaurado no destino e o estado do sistema apagado no remetente.
 
 Este geralmente não é considerado um método eficiente e não é muito utilizado na indústria e mercado. Isso porque o período de tempo em que a aplicação fica inativa, \aka \downtime, é alto. O \downtime é elevado devido à alta quantidade de dados a serem transferidos e pelo tempo extra para desligar e ligar o sistema novamente. Isso não é considerado aceitável atualmente, haja vista a grande quantidade de serviços que não podem parar sua execução~\cite{singh2022predictive, imran2022live}.
 
@@ -279,13 +283,13 @@ Este geralmente não é considerado um método eficiente e não é muito utiliza
     \fonte{Adaptado de~\citeonline{migrationimages}}
 \end{figure}
 
-\subsubsection{\Hotmigration}\label{sec.hotmigration}
+\subsection{\Hotmigration}\label{sec.hotmigration}
 Em contraste com a \coldmigration, na \hotmigration, também conhecida como \livemigration, a \vm (ou contêiner) a ser migrada não precisa ser desligada antes do procedimento começar. Os principais objetivos desse processo são: maximizar a performance do sistema durante a migração; melhorar o uso da rede; e reduzir o \downtime do sistema~\cite{imran2022live}.
 
 Neste modelo, a migração poder ser classificada de acordo com a técnica utilizada para a transferência dos dados \ie \precopymigration, \postcopymigration e migração híbrida.
 
-\subsubsubsection{\Precopymigration}\label{sec.precopymigration}
-A \autoref{fig.precopy} ilustra o fluxo de execução da \precopymigration. Neste modelo, ao receber a requisição de migração, o remetente cria uma pré-imagem do estado atual da \vm (ou contêiner) e a envia ao destinatário enquanto continua executando normalmente. Nesta estrutura está contida o esquema de paginação atual e, por vezes, alguns dados de execução. Conforme o esquema de paginação é modificado no remetente, essa estrutura é atualizada e enviada ao destinatário. Depois disso, é salvo o estado atual completo da \vm (ou contêiner), que, então, é enviada ao destino, onde é restaurada. 
+\subsubsection{\Precopymigration}\label{sec.precopymigration}
+A \autoref{fig.precopy} ilustra o fluxo de execução da \precopymigration. Neste modelo, ao receber a requisição de migração, o remetente cria uma pré-imagem do estado atual da \vm (ou contêiner) e a envia ao destinatário enquanto continua executando normalmente. Nesta estrutura está contido o esquema de paginação atual e, por vezes, alguns dados de execução. Conforme o esquema de paginação é modificado no remetente, essa estrutura é atualizada e enviada ao destinatário. Depois disso, é salvo o estado atual completo da \vm (ou contêiner), que, então, é enviada ao destino, onde é restaurada. 
 
 Esse fluxo de migração faz com que o tempo total de migração seja maior que o do \coldmigration, já que há a retransmissão de dados, em especial páginas de memória. Em contrapartida, o \downtime é reduzido, pois o sistema executa normalmente na parte inicial da migração, quando é feita e enviada a pré-imagem ao destinatário~\cite{singh2022predictive, imran2022live}.
 
@@ -297,7 +301,7 @@ Esse fluxo de migração faz com que o tempo total de migração seja maior que 
     \fonte{Adaptado de~\citeonline{migrationimages}}
 \end{figure}
 
-\subsubsubsection{\Postcopymigration}\label{sec.postcopymigration}
+\subsubsection{\Postcopymigration}\label{sec.postcopymigration}
 Tal como ilustrado pela \autoref{fig.postcopy}, no modelo \postcopymigration o remetente cria um estado parcial da \vm (ou contêiner) em execução e o envia ao destinatário. Nesse estado, está incluso apenas o essencial para o início do procedimento de descongelamento do sistema, não abrangendo o esquema de paginação. Quando o sistema é restaurado no destinatário, ocorrerão várias faltas de páginas, as quais resultam em requisições de páginas ao remetente, o qual as envia ao destinatário. Quando todas as páginas são transferidas ao destinatário, a \vm (ou contêiner) é apagada do remetente~\cite{singh2022predictive, imran2022live}.
 
 \begin{figure}[bt]
@@ -308,7 +312,7 @@ Tal como ilustrado pela \autoref{fig.postcopy}, no modelo \postcopymigration o r
     \fonte{Adaptado de~\citeonline{migrationimages}}
 \end{figure}
 
-\begin{figure}[b]
+\begin{figure}[ht!]
     \centering
     \caption{Fluxo de execução da migração híbrida.}
     \includegraphics[width=0.8\linewidth]{content/images/hybrid-migration-flow.pdf}
@@ -316,9 +320,16 @@ Tal como ilustrado pela \autoref{fig.postcopy}, no modelo \postcopymigration o r
     \fonte{Adaptado de~\citeonline{migrationimages}}
 \end{figure}
 
-\subsubsubsection{Migração Híbrida}\label{sec.hybridmigration}
-Como podemos observar na \autoref{fig.hybridmigration}, no modelo de migração híbrida são utilizadas as técnicas de \precopy e \postcopy em conjunto. Inicialmente, uma pré-imagem da \vm (ou contêiner) é feita de forma similar ao modelo \precopymigration. Esta pré-imagem é enviada ao destinatário, enquanto o sistema executa normalmente. Em contraste com o método \precopy nesta etapa não são reenviadas as páginas modificadas/atualizadas. Depois, o estado completo do sistema é enviado e as páginas modificadas/atualizadas são requisitadas ao remetente tal como na \postcopymigration. Quando todas as páginas são transferidas ao destinatário, a \vm (ou contêiner) é apagada do remetente~\cite{singh2022predictive, imran2022live}.
+\subsubsection{Migração Híbrida}\label{sec.hybridmigration}
+Como podemos observar na \autoref{fig.hybridmigration}, no modelo de migração híbrida são utilizadas as técnicas de \precopy e \postcopy em conjunto. Inicialmente, uma pré-imagem da \vm (ou contêiner) é feita de forma similar ao modelo \precopymigration. Esta pré-imagem é enviada ao destinatário, enquanto o sistema executa normalmente. Em contraste com o método \precopy, nesta etapa não são reenviadas as páginas modificadas/atualizadas. Depois, o estado completo do sistema é enviado e as páginas modificadas/atualizadas são requisitadas ao remetente tal como na \postcopymigration. Quando todas as páginas são transferidas ao destinatário, a \vm (ou contêiner) é apagada do remetente~\cite{singh2022predictive, imran2022live}.
 
+\section{Técnicas Utilizadas no Trabalho}
+
+O desenvolvimento deste trabalho foi inspirado por duas técnicas citadas acima: a virtualização a nível de \so e a \precopymigration. Ambas as técnicas foram adaptadas ao contexto dos \lws e ao \nanvix.
+
+A virtualização a nível de \so é atrativa para o desenvolvimento deste trabalho pois neste tipo de virtualização não é necessária a presença de um \so convidado, em contraste com a virtualização total e a para-virtualização. Por esse motivo, este modelo não demanda tanto uso de memória. Essa característica atende as exigências dos \lws, nos quais a memória é limitada.
+
+O principal motivo da utilização da \precopymigration neste trabalho é a redução de complexidade do sistema de migração. Os \lws têm pouca memória a sua disposição. Isso significa que as aplicações de usuário não podem ocupar muita memória. Logo, durante a migração de uma aplicação, o tempo dedicado à transferência de memória é menor. Ou seja, considera-se que a transferência de páginas não é tão expressiva no \downtime a ponto de exigir um sistema mais complexo de migração.
 
 
 

@@ -5,19 +5,14 @@
 Neste trabalho, foi explorado um modelo de virtualização leve baseado em contêineres que considera as restrições arquiteturais dos \lws, adaptando-se as suas restrições, principalmente relacionadas à memória. A virtualização proposta visa melhorar a mobilidade e gerenciamento de processos para \lws no contexto de em um \os distribuído, o \nanvix. Todas as mudanças realizadas neste trabalho são de código aberto e estão disponíveis no repositório oficial do \nanvix\footnote{Disponível em https://github.com/nanvix}.
 %
 
-Os resultados mostraram que a virtualização nesses ambientes é possível, bem como a migração de processos entre os \clusters do processador. A migração não afeta significativamente o sistema de comunicação, sendo possível realizar múltiplas migrações simultaneamente. Neste contexto, a conteinerização exerceu o papel principal ao evitar o envio de dados redundantes relativos ao \kernel e a melhor organizar os dados internos do \kernel e do usuário. 
+Os resultados mostraram que a virtualização nesses ambientes é possível, bem como a migração de processos entre os \clusters do processador. O sistema de comunicação não é um gargalo para as migrações, sendo possível realizar múltiplas migrações simultaneamente. Neste contexto, a conteinerização exerceu o papel principal ao evitar o envio de dados redundantes relativos ao \kernel e melhor organizar os dados internos do \kernel e do usuário. 
 
-A migração provocou um \downtime que varia entre 19~ms e 101~ms, dependendo da quantidade de recursos utilizados. O isolamento das dependências de um processo aumentaram o desempenho de operações do \kernel na execução normal do \so, diminuindo a quantidade de desvios, faltas na \dcache e faltas na \icache em 7,8~\%, 5,8~\% e 6,45~\%, respectivamente.
-
-
+A migração provocou um \downtime que varia entre 19~ms e 101~ms, dependendo da quantidade de recursos utilizados. O isolamento das dependências de um processo não impactou negativamente o sistema. Pelo contrário, a conteinerização aumentou o desempenho da operação de criação de \threads. Além disso, aumentou o desempenho do \kernel na execução normal do \so, diminuindo a quantidade de desvios, faltas na \dcache e faltas na \icache em 7,8~\%, 5,8~\% e 6,45~\%, respectivamente.
 
 \section{Trabalhos Futuros}
-Como trabalhos futuros, pretende-se:
 
-\begin{enumerate}[label=(\roman*)]
-    \item Ampliar a virtualização, englobando o subsistema de comunicação;
-    \item Habilitar a execução simultânea de múltiplas aplicações no processador e sua proteção;
-    \item Implementar um escalonador no \nanvix que considere a melhor distribuição de processos entre os \clusters;
-    \item Implementar um sistema de \checkpointing que torne possível guardar estados de processos em disco;
-\end{enumerate}
+A conteinerização desenvolvida neste trabalho engloba parcialmente o contexto que um processo pode ter no \nanvix. Estão incluídos no contêiner informações relacionadas ao gerenciamento de \threads, gerenciamento de memória e gerenciamento de chamadas de sistema. Naturalmente, a expansão da conteinerização com o intuito de abranger todos os subsistemas do \nanvix é um possível trabalho futuro. Nesta expansão, pode-se considerar a inclusão do sistema de comunicação e possivelmente de \tasks.
 
+Além disso, as chamadas de sistema \freeze e \unfreeze podem ser utilizadas com um propósito diferente do proposto por este trabalho. Essas funcionalidades foram criadas para habilitar ou desabilitar a execução de \threads de usuário em um \cluster a fim de tornar um processo apto para a migração. Contudo, essas chamadas de sistema podem ser utilizadas com outra finalidade. Através do \freeze e \unfreeze, pode-se pausar um processo e salvar em disco uma \snapshot, que representa o estado do processo em dado momento. Com isso, é viável, por exemplo, criar um sistema de \checkpointing objetivando tornar as aplicações tolerantes a falhas, sendo possível recarregar um estado antigo do processo.
+
+Adicionalmente, uma aplicação direta da migração de processos é o rearranjo dos processos no processador de modo a organizar os processos nos \clusters de maneira ótima. Sendo assim, evidencia-se o desenvolvimento de um escalonador de processos no \nanvix que considere a melhor distribuição de processos entre os \clusters. Além disso, destaca-se como trabalho futuro a habilitação da execução simultânea de múltiplas aplicações no processador e da sua proteção. 

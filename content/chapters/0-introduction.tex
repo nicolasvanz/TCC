@@ -21,7 +21,7 @@ A \autoref{fig.lw-overview} ilustra uma visão conceitual da arquitetura de um \
 \begin{figure}[t]
 	\centering
 	\caption{Visão conceitual de um processador \lw}
-	\includegraphics[width=0.5\linewidth]{content/images/lw-overview-gs.jpg}
+	\includegraphics[width=0.48\linewidth]{content/images/lw-overview-gs.jpg}
     \fonte{\citeonline{penna2021inter}}
     \label{fig.lw-overview}
 \end{figure}
@@ -36,7 +36,7 @@ Apesar dos processadores \lws serem uma alternativa às abordagens tradicionais 
     \item Configuração heterogênea do \hardware, como \clusters destinados a funcionalidades específicas (computação útil e I/O), o que dificulta o desenvolvimento de aplicações~\cite{barbalace2015popcorn}.
 \end{enumerate}
 
-Atualmente, estudos exploram soluções para amenizar o impacto arquiteturais sobre o desenvolvimento de \software. \oss distribuídos destacam-se por proverem um ambiente de programação mais robusto e rico~\cite{asmussen_m3:_2016, kluge_operating_2014, penna:sbesc19}. Dentre essas soluções, o modelo de um \os distribuído baseado em uma abordagem \multikernel, o \nanvix, destaca-se por aderir a natureza distribuída e restritiva dos \lws~\cite{penna2017-2,penna2019}.
+Atualmente, estudos exploram soluções para amenizar o impacto arquitetural sobre o desenvolvimento de \software. \oss distribuídos destacam-se por proverem um ambiente de programação mais robusto e rico~\cite{asmussen_m3:_2016, kluge_operating_2014, penna:sbesc19}. Dentre essas soluções, o modelo de um \os distribuído baseado em uma abordagem \multikernel, o \nanvix, destaca-se por aderir a natureza distribuída e restritiva dos \lws~\cite{penna2017-2,penna2019}.
 
 Apesar do \nanvix ser uma solução promissora para o desenvolvimento de \software em \lws, a maneira como o \os é estruturado atualmente ainda pode ser melhorada. O mecanismo de gerenciamento de processos dificulta a mobilidade dos processos dentro do processador, já que o processo passa todo seu ciclo de vida em um mesmo \cluster. Isso significa que a partir do momento em que o processo inicia a execução em um \cluster, ele fará todo seu trabalho computacional e finalizará a execução no mesmo \cluster. Isso afeta negativamente o desempenho do sistema pois impede o remanejamento dos processos sob demanda para melhor aproveitamento dos recursos disponíveis. Por exemplo, alocar processos que se comunicam intensamente em \clusters próximos reduz a latência de comunicação e aumenta o desempenho da aplicação~\cite{vanz2022virtualizaccao}.
 
@@ -47,7 +47,7 @@ Neste contexto, este trabalho explora um modelo mais leve de virtualização par
 \section{Objetivos}
 \label{sec.goals}
 
-Com base nas motivações citadas previamente, os objetivos deste trabalho serão especificados nas próximas seções.
+Com base nas motivações citadas previamente, nas próximas seções serão expostos o objetivo principal do trabalho e os os objetivos específicos.
 
 \subsection{Objetivo Principal}
 \label{sec.goals.primary}

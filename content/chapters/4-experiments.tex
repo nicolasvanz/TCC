@@ -16,32 +16,35 @@ Para responder a pergunta \ref{item.q2}, foi desenvolvido outro experimento. O e
 
 Para responder a pergunta \ref{item.q3}, nós desenvolvemos um experimento que mensura o \downtime da aplicação quando variamos a quantidade de processos migrados paralelamente. Neste experimento são considerados quatro cenários de migração paralela em que cada processo é migrado uma vez entre um par de \clusters. Os cenários se diferenciam pela quantidade de processos e \clusters: 1, 2, 4 e 8 processos, o que abrange, respectivamente, 2, 4, 8 e 16 \cclusters. Um \iocluster é utilizado em todos os cenários com o intuito de registrar o tempo obtido.
 
-Para responder a pergunta \ref{item.q4}, desenvolvemos um experimento que avalia a corretude do \daemon quando realizamos mais de uma migração envolvendo o mesmo \cluster e variando o papel deste na migração. Neste experimento, um processo é migrado de \cluster em \cluster até que percorra todos os \cclusters do processador \ie o processo é migrado realizando um movimento circular, passando do \cluster 0 para o 1, do 1 para o 2, e assim sucessivamente até retornar ao \cluster 0. O movimento circular garante que todos os \clusters façam duas migrações: uma como remetente e outra como destinatário, totalizando 16 migrações.
+Para responder a pergunta \ref{item.q4}, desenvolvemos um experimento que avalia a corretude do \daemon quando realizamos mais de uma migração envolvendo o mesmo \cluster e variando o papel deste na migração. Neste experimento, um processo é migrado de \cluster em \cluster até que percorra todos os \cclusters do processador \ie o processo é migrado realizando um movimento circular, passando do \cluster 0 para o 1, do 1 para o 2, e assim sucessivamente até retornar ao \cluster 0. O movimento circular garante que todos os \clusters façam duas migrações: uma como remetente e outra como destinatário, totalizando 16 migrações. Destaca-se que quaisquer dois \clusters podem ser os envolvidos durante uma migração. O esquema de migração circular foi adotado porque conseguimos generalizar os \clusters envolvidos na migração, de modo que o processo \textit{cluster}$_n$ migrará para o \textit{cluster}$_{n + 1 \pmod{16}}$.
 
-Todos os testes foram realizados no processador \mppa. Realizamos múltiplas replicações para garantir maior confiança estatística. Foram feitas 100 replicações para o primeiro experimento e 20 replicações para os demais. A medição de tempo no segundo e terceiro experimento foi feita utilizando a abstração de comunicação \sync. Como as estruturas utilizadas por cada experimento variam, a quantidade de dados enviada também varia. Contudo, podemos generalizar a quantidade de \bytes enviada através da Equação \ref{eq.1}. Na Equação \ref{eq.1} o identificador \texttt{U} representa o tamanho do binário de usuário, \texttt{UA} o tamanho da \uarea, \texttt{SYSB} o tamanho da tabela de gerenciamento das chamadas de sistema, \texttt{PGDIR} o tamanho da tabela de diretórios de páginas, \texttt{PGTAB} o tamanho da tabela de página, \texttt{KSIDS} o tamanho da lista de gerenciamento de páginas de \kernel, \texttt{KSPHYS} a soma do tamanho das páginas de \kernel em uso, \texttt{FBMP} o tamanho do \bitmap de gerenciamento dos \frames e \texttt{FPHYS} a soma do tamanho dos \frames usados pela alocação dinâmica de páginas de memória.
+Todos os testes foram realizados no processador \mppa. Realizamos múltiplas replicações para garantir maior confiança estatística. Foram feitas 100 replicações para o primeiro experimento e 20 replicações para os demais. A medição de tempo no segundo e terceiro experimento foi feita utilizando a abstração de comunicação \sync.
+
+Como as estruturas utilizadas por cada experimento variam, a quantidade de dados enviada também varia. Contudo, podemos generalizar a quantidade de \bytes enviada através da Equação \ref{eq.1}. Na Equação \ref{eq.1} o identificador \texttt{U} representa o tamanho do binário de usuário, \texttt{UA} o tamanho da \uarea, \texttt{SYSB} o tamanho da tabela de gerenciamento das chamadas de sistema, \texttt{PGDIR} o tamanho da tabela de diretórios de páginas, \texttt{PGTAB} o tamanho da tabela de página, \texttt{KSIDS} o tamanho da lista de gerenciamento de páginas de \kernel, \texttt{KSPHYS} a soma do tamanho das páginas de \kernel em uso, \texttt{FBMP} o tamanho do \bitmap de gerenciamento dos \frames e \texttt{FPHYS} a soma do tamanho dos \frames usados pela alocação dinâmica de páginas de memória. A soma de todas essas variáveis resulta na quantidade de dados manipulados (\texttt{DM}) em \bytes.
 
 \begin{equation}\label{eq.1}
-    U + UA + SYSB + PGDIR + PGTAB + KSIDS + KSPHYS + FBMP + FPHYS
+    DM = U + UA + SYSB + PGDIR + PGTAB + KSIDS + KSPHYS + FBMP + FPHYS
 \end{equation}
 
 Algumas dessas variáveis são constantes nos experimentos. Substituindo-as pelos seus respectivos valores em \bytes obtemos a Equação \ref{eq.2}.
 
 \begin{gather}
-    10608 + 2112 + 1920 + 4096 + 4096 + 160 + KSPHYS + 16 + FPHYS\\
-    23008 + KSPHYS + FPHYS\label{eq.2}
+    DM = 10608 + 2112 + 1920 + 4096 + 4096 + 160 + KSPHYS + 16 + FPHYS\\
+    DM = 23008 + KSPHYS + FPHYS\label{eq.2}
 \end{gather}
 
 Sendo assim, percebemos que a quantidade de dados enviada varia em função da quantidade de páginas de \kernel em uso e da quantidade de páginas alocadas dinamicamente. Tendo em vista que as variáveis do experimento são a quantidade de \threads e a quantidade de páginas alocadas dinamicamente, é importante entender como essas variáveis impactam em \texttt{KSPHYS} e \texttt{FPHYS}. Primeiro, o \texttt{KSPHYS} muda quando uma thread é criada. Nesta operação, duas páginas de \kernel são alocadas para esta nova \thread: uma para a pilha de execução em espaço de usuário; e outra para a pilha de execução em espaço de \kernel. Segundo, o \texttt{FPHYS} muda quando página de usuário é dinamicamente criada. Quando isso acontece, aumentamos o espaço do usuário em mais uma página \ie aumentamos o \texttt{FPHYS} em uma página (4096~B). Além disso, quando alocamos a primeira página de usuário, uma página de \kernel é utilizada como tabela de páginas para essa e as possíveis novas páginas a serem alocadas. Arranjando esses dados na Equação \ref{eq.2}, obtemos:
 
 \[
+    DM = 
 \begin{cases}
-    23008 + 4096(2*NTHREADS),& \text{se } NPAGES= 0\\
-    23008 + 4096(2*NTHREADS + NPAGES + 1),& \text{se } NPAGES > 0
+    23008 + 4096(2 \times NTHREADS),& \text{se } NPAGES= 0\\
+    23008 + 4096(2 \times NTHREADS + NPAGES + 1),& \text{se } NPAGES > 0
 \end{cases}
 \]
 ou simplesmente:
 \begin{equation}\label{eq.3}
-    23008 + 4096(2*NTHREADS + NPAGES + min(NPAGES, 1))
+    DM = 23008 + 4096(2 \times NTHREADS + NPAGES + min(NPAGES, 1))
 \end{equation}
 
 Onde \texttt{NTHREADS} é a quantidade de \threads criadas e \texttt{NPAGES} a quantidade de páginas criadas.
@@ -109,7 +112,7 @@ De maneira geral, o \downtime é aproximadamente descrito pela Função \ref{eq.
 
 \begin{equation}\label{eq.downtime}
     \begin{split}
-        f(p, t) = \frac{17}{32}*p+t+18
+        f(p, t) = \frac{17}{32} \times p+t+18
     \end{split}
 \end{equation}
 
@@ -118,22 +121,23 @@ A Função~\ref{eq.downtime} aproxima a progressão de tempo até 15 \threads. C
 
 \section{Análise do Impacto de Migrações Paralelas sobre o Sistema de Comunicação}
 
-Como ilustrado pela \autoref{fig.parallel}, o experimento que mensurava o \downtime da aplicação quando múltiplas migrações aconteciam simultaneamente, mostrou que a quantidade de migrações paralelas não impacta significativamente o tempo. É importante destacar que nesse experimento foram migradas aplicações que usavam o máximo de recursos de sistema. Mesmo assim, a quantidade de dados não foi suficiente para impactar no \downtime, o que significa que a topologia e a taxa de transferência da \noc do \mppa supre a demanda de transferência de dados. Considerando os cenários em que há 1, 2, 4 ou 8 migrações simultâneas, o \downtime médio foi em torno de 113~ms.
+Como ilustrado pela \autoref{fig.parallel}, o experimento que mensurava o \downtime da aplicação quando múltiplas migrações aconteciam simultaneamente, mostrou que a quantidade de migrações paralelas não impacta significativamente o tempo. Destaca-se que nesse experimento foram migradas aplicações que usavam o máximo de recursos de sistema. Mesmo assim, a quantidade de dados não foi suficiente para impactar no \downtime, o que significa que a topologia e a taxa de transferência da \noc do \mppa supre a demanda de transferência de dados. Considerando os cenários em que há 1, 2, 4 ou 8 migrações simultâneas, o \downtime médio foi em torno de 113~ms.
 
 
 \begin{figure}[ht!]
     \centering
     \caption{\Downtime da aplicação em função da quantidade de migrações paralelas}
-    \includegraphics[width=0.6\linewidth]{content/images/parallel.pdf}
+    \includegraphics[width=0.7\linewidth]{content/images/parallel.pdf}
     \label{fig.parallel}
     \fonte{Desenvolvido pelo autor.}
 \end{figure}
+
 \section{Análise da Capacidade do \daemon Realizar Múltiplas Migrações Utilizando um mesmo \cluster}
 
-O teste que visava a comprovação da corretude do \daemon executou completamente sem ocorrência de erros. Isso significa que:
+O teste que visava a comprovação da consistência e corretude do \daemon executou completamente sem ocorrência de erros. Isso significa que:
 \begin{inlinelist}
     \item o \daemon é capaz de ser reusado no mesmo \cluster diversas vezes independentemente do papel do \cluster na migração; e
     \item é possível um processo ser migrado diversas vezes para diferentes \clusters, até mesmo em movimento circular envolvendo todos os \clusters
 \end{inlinelist}.
 
-Esse comportamento é possível porque o \daemon é totalmente separado da aplicação e está associado ao \kernel. Isso permite que o \daemon conclua a migração como receptor e, logo em seguida, a partir da requisição da aplicação que acordou, volte a migrar.
+Esse comportamento é possível porque o \daemon é totalmente separado da aplicação e está associado ao \kernel. Isso porque está contido nas seções de \kernel do binário e sua execução é sustentada por \tasks, que são executadas por uma \thread de sistema, e não de usuário. Dessa forma, é possível que o \daemon conclua a migração como receptor e, logo em seguida, a partir da requisição da aplicação que acordou, volte a migrar.

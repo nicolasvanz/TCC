@@ -2,56 +2,46 @@
 \chapter{Proposta de Virtualização e Migração de Processos para \textit{Lightweight Manycores}}
 \label{chap.dev.virtualizacao}
 
-O \nanvix surgiu com a proposta de resolver os problemas de programabilidade e portabilidade em \lws. Apesar de ser uma abordagem promissora, o \so ainda possui características para se trabalhar. Em especial, destaca-se a falta de mobilidade dos processos no processador. Essa questão afeta o desempenho do sistema porque impede a redistribuição dos processos para organizações mais eficientes \eg remanejando processos com comunicação intensa entre si para \clusters fisicamente mais próximos. Neste contexto, este trabalho de conclusão ataca essa problemática. Ou seja, este trabalho propõe-se a aumentar a independência dos processos no processador através do projeto e desenvolvimento do suporte à virtualização e migração de processos em \lws.
+O \nanvix surgiu com a proposta de resolver os problemas de programabilidade e portabilidade em \lws. Apesar de ser uma abordagem promissora, o \so ainda possui características para se trabalhar. Em especial, destaca-se a dependência que um processo tem com o \cluster em que executa. 
 
-Ambientes \cloud, nos quais o sistema de memória é de alta capacidade, usufruem da utilização de \vms para isolar duplicatas inteiras de \oss com o auxílio da virtualização a nível de instrução~\cite{sharma2016containers}. Em oposição, \lws não dispõem de centenas de GBs de memória, mas sim pequenas memórias locais. Isso em conjunto com outras simplificações de \hardware faz com que algumas técnicas de virtualização sejam impraticáveis nesses ambientes computacionais.
+Essa falta de mobilidade dos processos afeta o desempenho do sistema porque impede a redistribuição dos processos para organizações mais eficientes \eg remanejando processos com comunicação intensa entre si para \clusters fisicamente mais próximos. 
+
+Neste contexto, este trabalho de conclusão ataca essa problemática. Ou seja, este trabalho propõe-se a aumentar a independência dos processos no processador através do projeto e desenvolvimento do suporte à virtualização e migração de processos em \lws.
+
+% Ambientes \cloud, nos quais o sistema de memória é de alta capacidade, usufruem da utilização de \vms para isolar duplicatas inteiras de \oss com o auxílio da virtualização a nível de instrução~\cite{sharma2016containers}. Em oposição, \lws não dispõem de centenas de GBs de memória, mas sim pequenas memórias locais. Isso em conjunto com outras simplificações de \hardware faz com que algumas técnicas de virtualização sejam impraticáveis nesses ambientes computacionais.
 
 
-Nesse contexto, visando atenuar o impacto da virtualização no sistema de memória, o presente trabalho explora um modelo de virtualização mais leve, baseado em contêineres adaptado para \lws. O \so executa os contêineres como aplicações virtuais. Sendo assim, não há a necessidade de um \os convidado, resultando em um menor impacto no sistema de memória e requisitando menor complexidade do \hardware~\cite{thalheim2018cntr, sharma2016containers}.
+% Nesse contexto, visando atenuar o impacto da virtualização no sistema de memória, o presente trabalho explora um modelo de virtualização mais leve, baseado em contêineres adaptado para \lws. O \so executa os contêineres como aplicações virtuais. Sendo assim, não há a necessidade de um \os convidado, resultando em um menor impacto no sistema de memória e requisitando menor complexidade do \hardware~\cite{thalheim2018cntr, sharma2016containers}.
 
 
 \section{Virtualização no \nanvix}
 % \mytodo{problemas dos lws, pq a virtualização é dificultada?, ideia geral do microkernel e outros sistemas que vao ser virtuzalizados}
 
-O foco deste trabalho é desacoplar a execução de um processo do \cluster em que ele é alocado, tornando possível a execução do processo em qualquer \cluster. Para isso, é necessário que seja introduzido o conceito de virtualização no \nanvix.
+Ambientes \cloud, nos quais o sistema de memória é de alta capacidade, usufruem da utilização de \vms para isolar duplicatas inteiras de \oss com o auxílio da virtualização a nível de instrução~\cite{sharma2016containers}. Em oposição, \lws não dispõem de centenas de GBs de memória, mas sim pequenas memórias locais. Isso em conjunto com outras simplificações de \hardware faz com que algumas técnicas de virtualização sejam impraticáveis nesses ambientes computacionais.
 
-É importante destacar que o \nanvix é um \so para \lws, os quais apresentam um sistema de memória restritivo, com memória local pequena. Isso torna difícil a virtualização, pois a criação de uma duplicata inteira do \so para cada processo é inviável. Sendo assim, a utilização de contêineres se torna atrativa. 
+Nesse contexto, visando atenuar o impacto da virtualização no sistema de memória, o presente trabalho explora um modelo de virtualização mais leve, baseado em contêineres adaptado para \lws e o \nanvix. O \so executa os contêineres como aplicações virtuais. Sendo assim, não há a necessidade de um \os convidado, resultando em um menor impacto no sistema de memória e requisitando menor complexidade do \hardware~\cite{thalheim2018cntr, sharma2016containers,zhang2018comparative}.
 
-Na abordagem original do \nanvix, o processo é dependente do \cluster em que é alocado, o que afeta o suporte a migração e diminui a eficiência computacional, como detalhado na \autoref{sec.nanvixos}. Nesse contexto, a virtualização torna-se útil por aumentar a mobilidade dos processos, o que possibilitaria o gerenciamento da distribuição dos processos no processador. Especificamente, este trabalho explora um modelo mais leve de virtualização para \lws baseada em contêineres. Contêineres são executados pelo \os como aplicações virtuais e não incluem um \os convidado, não sendo necessária a criação de duplicatas de \sos e resultando em um menor impacto no sistema de memória e requisitando menor complexidade do \hardware~\cite{thalheim2018cntr, sharma2016containers, zhang2018comparative}.
+% O foco deste trabalho é desacoplar a execução de um processo do \cluster em que ele é alocado, tornando possível a execução do processo em qualquer \cluster. Para isso, é necessário que seja introduzido o conceito de virtualização no \nanvix.
 
-\section{contexto de um processo no nanvix}
+% É importante destacar que o \nanvix é um \so para \lws, os quais apresentam um sistema de memória restritivo, com memória local pequena. Isso torna difícil a virtualização, pois a criação de uma duplicata inteira do \so para cada processo é inviável. Sendo assim, a utilização de contêineres se torna atrativa. 
+
+% Na abordagem original do \nanvix, o processo é dependente do \cluster em que é alocado, o que afeta o suporte a migração e diminui a eficiência computacional, como detalhado na \autoref{sec.nanvixos}. Nesse contexto, a virtualização torna-se útil por aumentar a mobilidade dos processos, o que possibilitaria o gerenciamento da distribuição dos processos no processador. Especificamente, este trabalho explora um modelo mais leve de virtualização para \lws baseada em contêineres. Contêineres são executados pelo \os como aplicações virtuais e não incluem um \os convidado, não sendo necessária a criação de duplicatas de \sos e resultando em um menor impacto no sistema de memória e requisitando menor complexidade do \hardware~\cite{thalheim2018cntr, sharma2016containers, zhang2018comparative}.
+
+\section{Contexto de um Processo no Nanvix}
 
 Para o desenvolvimento da virtualização no \nanvix, é necessário: isolar o que é \kernel do que é usuário; e diferenciar as partes internas do \kernel que são contexto do processo das que são contexto do \cluster. Para isso, é preciso entender o contexto de um processo no \nanvix e as relações que atrelam o processo ao \cluster e ao \so \ie as dependências que o processo tem com os recursos reais de um \cluster e com a estrutura interna do \so. 
 
 De maneira geral, os módulos do \nanvix que sustentam um processo são: \threads, \syscalls, sistema de memória e comunicação. Todos esses módulos de alguma forma têm dependências no \kernel ou \hardware do \cluster que executa o processo. Essas dependências são ilustradas conceitualmente na \autoref{fig.nanvix.without-uarea} e algumas delas estão listadas abaixo:
 
 \begin{enumerate}[label=(\roman*)]
-    \item As estruturas das \threads de usuário estão armazenadas em listas internas de \kernel, assim como variáveis de sincronização (para junção de \threads, por exemplo), estruturas de escalonamento, referências às pilhas de execução e outras variáveis/estrutura de controle. É importante destacar que na abordagem inicial do \nanvix não havia separação explicita nessas estruturas para identificar quais variáveis são relacinadas a \kernel ou usuário.
+    \item As estruturas das \threads de usuário estão armazenadas em listas internas de \kernel, assim como variáveis de sincronização (para junção de \threads, por exemplo), estruturas de escalonamento, referências às pilhas de execução e outras variáveis/estrutura de controle. É importante destacar que na abordagem inicial do \nanvix não havia separação explicita nessas estruturas para identificar quais variáveis são relacionadas a \kernel ou usuário.
     \item As estruturas responsáveis por armazenar as \syscalls, seus parâmetros e retornos requisitadas pelos \scores ao \mcore estão em espaço de \kernel.
     \item Todo o sistema de memória está armazenado no \kernel. Tabelas de diretórios, tabelas de página, \tlbs, etc.
-    \item O sistema de comunicação tem dependências tanto no \kernel quanto a recursos físicos do \cluster. Os identificadores das interfaces \noc \ie de comunicação entre \clusters estão armazenadas em espaço de \kernel e referenciam uma interface física dos \clusters envolvidos na comunicação (emissor e receptor) e não aos processos envolvidos diretamente.
+    \item O sistema de comunicação tem dependências tanto no \kernel quanto a recursos físicos do \cluster. Os identificadores das interfaces \noc, \ie de comunicação entre \clusters estão armazenadas em espaço de \kernel e referenciam uma interface física dos \clusters envolvidos na comunicação (emissor e receptor) e não aos processos envolvidos diretamente.
 \end{enumerate}
 
-Sendo assim, o desenvolvimento da virtualização nesse sistema implica no isolamento dessas dependências em um arranjo que guarde todas as informações necessárias para a execução de um processo, sejam elas manipuladas pelo usuário ou pelo \kernel. Chamamos esse arranjo de contêiner. A ideia principal é garantir que os dados incluidos no contêiner sejam suficientes para o processo executar. Isso inclui todos os dados de usuário, códigos de usuário e todas as dependências do processo com o \kernel e \cluster. Isso deve ser feito de uma maneira que permita com que o \kernel execute qualquer contêiner como uma aplicação virtual \ie deve ser possível que o contêiner se conecte ao \kernel de forma que consiga utilizar os recursos e serviços de \kernel sem que interfira em sua estrutura interna.
+Sendo assim, o desenvolvimento da virtualização nesse sistema implica no isolamento dessas dependências em um arranjo que guarde todas as informações necessárias para a execução de um processo, sejam elas manipuladas pelo usuário ou pelo \kernel. Chamamos esse arranjo de contêiner. A ideia principal é garantir que os dados incluídos no contêiner sejam suficientes para o processo executar. Isso inclui todos os dados de usuário, códigos de usuário e todas as dependências do processo com o \kernel e \cluster. Isso deve ser feito de uma maneira que permita com que o \kernel execute qualquer contêiner como uma aplicação virtual, \ie deve ser possível que o contêiner se conecte ao \kernel de forma que consiga utilizar os recursos e serviços de \kernel sem que interfira em sua estrutura interna.
 
-\begin{figure}[t]
-	\centering
-	
-    \caption{Diferença da estrutura do \nanvix com e sem a \textit{User Area}.}%
-	\subcaptionminipage[fig.nanvix.without-uarea]%
-                   {.4\textwidth}
-                   {\os sem isolamento.}
-                   {\includegraphics[width=\textwidth]{content/images/nanvix-without-uarea-uk.pdf}}
-	\qquad
-	\subcaptionminipage[fig.nanvix.with-uarea]
-                   {.4\textwidth}
-                   {\os com isolamento.}
-                   {\includegraphics[width=\textwidth]{content/images/nanvix-with-uarea-uk.pdf}}
-
-	\includegraphics[width=.33\linewidth]{content/images/legenda.pdf}
-    \fonte{Desenvolvido pelo autor.}
-	
-\end{figure}
 
 \section{Isolamento do contexto de um processo de usuário}
 \label{sec.dev.kernel-usuario}
@@ -88,11 +78,30 @@ Esta abordagem torna algumas das funcionalidades do \os onerosas porque ela difi
     
     Sendo assim, são geradas seções .text, .data, .rodata e .bss específicas para o \kernel e usuário. Portanto, todas as informações de \kernel, alocadas nos endereços mais baixos da memória, são isoladas das informações de aplicação, alocadas nos endereços mais altos da memória. Neste processo, são exportadas algumas constantes que apontam onde começam e terminam as partes do binário que são relacionadas ao \kernel e à aplicação \eg \textit{\_\_KERNEL\_TEXT\_START}, \textit{\_\_KERNEL\_TEXT\_END}, \textit{\_\_USER\_DATA\_START}, \textit{\_\_USER\_START}, etc. Essas constantes permitem a manipulação e gerenciamento mais precisos dos segmentos de memória do \kernel e da aplicação.
     
-    Essa estratégia, além de garantir o isolamento do binário de \kernel e usuário, faz com que todos os \clusters passam a ter a mesma organização interna de \kernel, haja vista que a ligação é estática. Como consequência disso, não precisamos mover códigos de \kernel, já que todos os \clusters possuem \kernels idênticos. Nesse cenário, a migração pode ser feita parcialmente através do salvamento dos dados e instruções da aplicação de um \cluster, os quais estão contidos no intervalo identificado pelas constantes, e restauração destes nas respectivas posições \ie no mesmo intervalo em outro \cluster. Com isso, evita-se manipulações mais complexas do processo como a busca em várias regiões de memória para montar o estado interno do processo.
+    Essa estratégia, além de garantir o isolamento do binário de \kernel e usuário, faz com que todos os \clusters passam a ter a mesma organização interna de \kernel, haja vista que a ligação é estática. Como consequência disso, não precisamos mover códigos de \kernel, já que todos os \clusters possuem \kernels idênticos. Nesse cenário, a migração pode ser feita parcialmente através do salvamento dos dados e instruções da aplicação de um \cluster, os quais estão contidos no intervalo identificado pelas constantes, e restauração destes nas respectivas posições, \ie no mesmo intervalo em outro \cluster. Com isso, evita-se manipulações mais complexas do processo como a busca em várias regiões de memória para montar o estado interno do processo.
 
     % \mytodo{colocar alguma parte do linker?}
     % \mytodo{Souto: ngm vai entender o código do linker mas seria legal colocar e discutir melhor sobre as constantes.}
+
+\begin{figure}[tb]
+    \centering
     
+    \caption{Diferença da estrutura do \nanvix com e sem a \textit{User Area}.}%
+    \subcaptionminipage[fig.nanvix.without-uarea]%
+                    {.4\textwidth}
+                    {\os sem isolamento.}
+                    {\includegraphics[width=\textwidth]{content/images/nanvix-without-uarea-uk.pdf}}
+    \qquad
+    \subcaptionminipage[fig.nanvix.with-uarea]
+                    {.4\textwidth}
+                    {\os com isolamento.}
+                    {\includegraphics[width=\textwidth]{content/images/nanvix-with-uarea-uk.pdf}}
+
+    \includegraphics[width=.33\linewidth]{content/images/legenda.pdf}
+    \fonte{Desenvolvido pelo autor.}
+    
+\end{figure}
+
 \subsection{\textit{User Area}}
 \label{sec.uarea}
 
@@ -126,15 +135,15 @@ Como consequência da uniformidade do \kernel entre os \clusters, eliminamos o e
 \subsection{Rotina de migração}
 \label{sec.rotina-migracao}
 
-Para a migração de um processo entre \clusters foi desenvolvida uma rotina de migração. A funcionalidade é similar ao \criu, ferramenta utilizada por \softwares de gerenciamento de contêineres como o Docker. Porém, a migração é executada por intermédio de \daemons do \os. Neste projeto, foi implementado o algoritmo \hotmigration, em que a aplicação é migrada enquanto é executada, como detalhado na \autoref{sec.hotmigration}, utilizando a técnica \precopy, vista na \autoref{sec.precopymigration}. De forma resumida, a aplicação é migrada durante sua execução, sendo restaurada no \cluster destinatário após a transferência completa dos dados do contêiner. A seguir é detalhado como funciona o \daemon e o fluxo de migração.
+Para a migração de um processo entre \clusters foi desenvolvida uma rotina de migração. A funcionalidade é similar ao \criu, ferramenta utilizada por \softwares de gerenciamento de contêineres como o Docker. Porém, a migração é executada por intermédio de \daemons do \os. Neste projeto, foi implementado o algoritmo \hotmigration, em que a aplicação é migrada enquanto é executada, como detalhado na Seção \ref{sec.hotmigration}, utilizando a técnica \precopy, vista na Seção \ref{sec.precopymigration}. Em outras palavras, a aplicação é migrada durante sua execução, sendo restaurada no \cluster destinatário após a transferência completa dos dados do contêiner. A seguir é detalhado como funciona o \daemon e o fluxo de migração.
 
 \subsubsection{\Daemon de Migração}
 
-O \daemon de migração é inicializado durante o \boot do sistema. Resumidamente, o \daemon é composto por um fluxo de \tasks~\cite{souto:thesis}, as quais são inicializadas e conectadas durante a inicialização do módulo de migração, que ocorre durante o \boot. Além disso, nesse período ainda é criada a porta de \mailbox por onde o \daemon recebe as requisições de migração e um \portal \default para recebimento dos dados durante a migração. Em contraste, o \portal de envio de dados e as \mailboxes para envio das mensagens de migração são criados sob demanda durante a migração e destruídos após o término dela. Isso é feito com o intuito de economizar os recursos de comunicação do sistema.
+O \daemon de migração é a entidade responsável por gerenciar as migrações. O \daemon é inicializado durante o \boot do sistema e é composto por um fluxo de \tasks~\cite{souto:thesis}, as quais são inicializadas e conectadas durante a inicialização do módulo de migração, que ocorre durante o \boot. Além disso, nesse período ainda é criada a porta de \mailbox por onde o \daemon recebe as requisições de migração e um \portal \default para recebimento dos dados durante a migração. Em contraste, o \portal de envio de dados e as \mailboxes para envio das mensagens de migração são criados sob demanda durante a migração e destruídos após o término dela. Isso é feito com o intuito de economizar os recursos de comunicação do sistema.
     
-O fluxo de migração se inicia com o recebimento de uma requisição de migração. Quando uma requisição é detectada \ie quando é lida uma mensagem de migração da porta específica do \daemon, a \task principal do \daemon (o \handler do \daemon de migração) é ativa. Esta função é responsável por interpretar a mensagem recebida. É neste momento em que os \clusters envolvidos são identificados \ie é reconhecido qual é o \cluster remetente e qual o \cluster destinatário. É importante destacar que tanto o \cluster remetente quanto o destinatário recebem a mesma mensagem, porém com códigos de operação diferentes. Enquanto um recebe uma mensagem com o código de envio dos dados (identificando o remetente), o outro recebe uma mensagem com o código de recebimento de dados (identificando o destinatário).
+O fluxo de migração se inicia com o recebimento de uma requisição de migração. Quando uma requisição é detectada, \ie quando é lida uma mensagem de migração da porta específica do \daemon, a \task principal do \daemon (o \handler do \daemon de migração) é ativada. Esta função é responsável por interpretar a mensagem recebida. É neste momento em que os \clusters envolvidos são identificados, \ie é reconhecido qual é o \cluster remetente e qual o \cluster destinatário. É importante destacar que tanto o \cluster remetente quanto o destinatário recebem a mesma mensagem, porém com códigos de operação diferentes. Enquanto um recebe uma mensagem com o código de envio dos dados (identificando o remetente), o outro recebe uma mensagem com o código de recebimento de dados (identificando o destinatário).
 
-Depois da identificação dos \clusters envolvidos e seus papéis durante o procedimento, são executadas as \tasks responsáveis pela migração de fato \ie pelo envio e recebimento de dados.
+Depois da identificação dos \clusters envolvidos e seus papéis durante o procedimento, são executadas as \tasks responsáveis pela migração de fato, \ie pelo envio e recebimento de dados.
 
 
 \subsubsection{Fluxo de Migração}\label{sec.fluxo-migracao}
@@ -148,7 +157,7 @@ Genericamente, podemos dizer que o fluxo de migração é composto por três pas
         \item perda de retornos de chamadas de sistemas;
         \item perda de sinais de sincronização;
         \item inconsistência de valores de variáveis de usuário;
-        \item inconsistência no alocamento de memória;
+        \item inconsistência na alocação de memória;
     \end{inlinelist} etc. 
     Para atingir esse estado consistente, foi criada a chamada de sistema \freeze, a qual é invocada no início do processo de migração. Esta é uma chamada de sistema que é tratada apenas pelo \mcore. Especificamente, esta chamada ativa uma variável interna do \so que impede o escalonamento de \threads de aplicação (\threads que não executam no \mcore) e envia um sinal de reescalonamento para todos os \scores, para que as \threads de usuário saiam de execução o mais rápido possível. Isso garante uma pausa na aplicação sem que o \so seja impedido de executar. Isso é importante pois as informações do processo precisam ser enviadas pelas interfaces \noc do \cluster remetente, o que exige que o \so atenda às requisições de envio de dados. Portanto, é imprescindível que o \so não seja pausado como a aplicação. Ou seja, é essencial que as \threads de sistema continuem a ser executadas apesar do congelamento das de usuário.
     Após o travamento no escalonamento de \threads de usuário, novas chamadas de sistema requisitadas pela aplicação não podem ocorrer. Sendo assim, após a migração, o \cluster destinatário atenderá às chamadas não atendidas e reconhecerá as atendidas, pois as estruturas de sincronização e variáveis de retorno são migradas também durante o processo. Após o congelamento do escalonamento e a retirada das \threads de usuário dos \scores, o processo é considerado consistente e seu contexto está apto para ser migrado.
@@ -164,7 +173,7 @@ Genericamente, podemos dizer que o fluxo de migração é composto por três pas
 
 \begin{figure}[b]
     \centering
-    \caption{Fluxo de tasks de migração}
+    \caption{Fluxo de \tasks de migração}
     \includegraphics[width=\linewidth]{content/images/migration-steps-tasks.pdf}
     \label{fig.migrationsteps}
     \fonte{Desenvolvido pelo autor.}
@@ -188,8 +197,8 @@ Abaixo estão descritos o funcionamento mais detalhado de cada \task de migraç�
 
 \begin{description}[leftmargin=*,labelwidth=!,labelindent=0pt]
     \item[1.] Esta é a \task responsável pela leitura assíncrona de uma mensagem de migração. Esta \task é ativa no momento de \boot durante a etapa de configuração do sistema de migração e é reativada no momento em que uma migração finaliza com ou sem êxito \ie assim que uma migração finaliza seja por ter completado todo seu processo ou por ocorrência de algum erro. Isso permite que o fluxo seja reusado, o que significa que o \cluster pode atender múltiplas requisições de migração  independentemente do papel do \cluster (remetente ou destinatário).
-    \item[2.] Esta \task é responsável por esperar o término da leitura assíncrona disparada pela \task 1. Portanto, esta é a \task indica ao \daemon quando uma mensagem é recebida e lida completamente.
-    \item[3.] Esta é a \task que interpreta a mensagem recebida. A mensagem é composta por um código de operação que identifica o papel do cluster na migração e por dois inteiros que identificam os \clusters envolvidos na migração. Caso o \cluster seja o destinatário, durante a execução desta \task é invocada a chamada de sistema \freeze para congelar a execução do processo de usuário (neste momento o \cluster remetente já deve ter congelado sua execução também). Caso o \cluster seja o remetente, durante a execução desta \task é criado um \portal para envio de dados, os quais serão recebidos pelo destinatário pelo \portal \default de recebimento de dados de migração (configurado no momento de \boot). Essa \task passa um parâmetro indicando o papel do \cluster na migração. Nas etapas posteriores esse parâmetro é decisivo na escolha dos subfluxos que o procedimento deve seguir \eg envio ou recebimento de dados.
+    \item[2.] Esta \task é responsável por esperar o término da leitura assíncrona disparada pela \task 1. Portanto, esta é a \task que indica ao \daemon quando uma mensagem é recebida e lida completamente.
+    \item[3.] Esta é a \task que interpreta a mensagem recebida. A mensagem é composta por um código de operação que identifica o papel do cluster na migração e por dois números inteiros que identificam os \clusters envolvidos na migração. Caso o \cluster seja o destinatário, durante a execução desta \task, é invocada a chamada de sistema \freeze para congelar a execução do processo de usuário (neste momento o \cluster remetente já deve ter congelado sua execução também). Caso o \cluster seja o remetente, durante a execução desta \task é criado um \portal para envio de dados, os quais serão recebidos pelo destinatário pelo \portal \default de recebimento de dados de migração (configurado no momento de \boot). Essa \task passa um parâmetro indicando o papel do \cluster na migração. Nas etapas posteriores esse parâmetro é decisivo na escolha dos subfluxos que o procedimento deve seguir \eg envio ou recebimento de dados.
     \item[4.] Esta \task é responsável pelo gerenciamento do estado atual do envio/recebimento de dados da migração. No total são 10 estados. Na \autoref{table.mstates} estão os estados e as estruturas que são manejadas em cada um deles.
     \begin{table}[tb]
         \centering
@@ -224,7 +233,7 @@ Abaixo estão descritos o funcionamento mais detalhado de cada \task de migraç�
     \item[6.] Esta \task é ativa desde que o \cluster exerça o papel de remetente na migração. A \task é responsável por verificar se a posição atual na estrutura atual precisa ser enviada. Essa checagem é feita através da função de condição configurada na \task 4. Esse comportamento é muito útil quando consideramos a lista de páginas de \kernel, por exemplo. Nesse cenário a verificação (através da função de condição) de quais páginas precisam ser enviadas evita o envio de dados não essenciais ou redundantes. Caso o elemento do \buffer configurado exija a transferência de dados, a \task 7 é ativada para tal. Caso contrário, a \task 5 é ativada para atualizar o índice para o próximo elemento do \buffer.
     \item[7.] Esta \task é responsável pelo envio assíncrono dos dados do \buffer no índice configurado. Todos os parâmetros para o envio dos dados, tais como o ponteiro para o dado, a quantidade de \bytes a serem enviadas e o identificador do portal a ser usado, são passados como parâmetro pela \task 6.
     \item[8.] Esta \task é responsável por sinalizar o fim do envio dos dados, ativando a \task 5 novamente para atualizar o índice do \buffer.
-    \item[9.] Esta \task é ativa desde que o \cluster exerça o papel de destinatario na migração. A \task é responsável por verificar se a posição atual na estrutura atual precisa ser recebida. Em caso positivo, a \task 10 é ativada para o recebimento dos dados. Caso contrário, a \task 5 é ativada para atualizar o índice para o próximo elemento do \buffer. Essa chegagem é feita de forma semelhante à \task 6 \ie através da função de condição configurada na \task 4.
+    \item[9.] Esta \task é ativa desde que o \cluster exerça o papel de destinatário na migração. A \task é responsável por verificar se a posição atual na estrutura atual precisa ser recebida. Em caso positivo, a \task 10 é ativada para o recebimento dos dados. Caso contrário, a \task 5 é ativada para atualizar o índice para o próximo elemento do \buffer. Essa checagem é feita de forma semelhante à \task 6 \ie através da função de condição configurada na \task 4.
     \item[10.] Esta \task é responsável pela concessão de permissão para o recebimento de dados. Sem essa permissão os dados não poderiam ser lidos.
     \item[11.] Esta \task é responsável pelo recebimento assíncrono dos dados do \buffer no índice configurado. Todos os parâmetros para o recebimento dos dados, tais como o ponteiro para o dado, a quantidade de \bytes a serem recebidos e o identificador do portal a ser usado, são passados como parâmetro pela \task 9.
     \item[12.] Esta \task é responsável por sinalizar o fim do recebimento dos dados, ativando a \task 5 novamente para atualizar o índice do \buffer.
@@ -234,8 +243,15 @@ Abaixo estão descritos o funcionamento mais detalhado de cada \task de migraç�
 
 \subsubsection{Interface com o \Daemon}
 
-A funcionalidade de migração que o \daemon de migração provê é acessível através de uma função de sistema chamada \kmigrateto. Essa função recebe como parâmetro apenas o identificador do \cluster para o qual o processo deve ser migrado.
+A funcionalidade de migração que o \daemon de migração provê é acessível através de uma função de sistema chamada \kmigrateto, a qual é chamada ativamente pela aplicação que requisita a migração. Essa função recebe como parâmetro apenas o identificador do \cluster para o qual o processo deve ser migrado.
 
-O procedimento da função \kmigrateto é detalhado a seguir. Primeiramente, uma \task é criada para a construção das mensagens de migração e para o envio dessas mensagens às portas \mailbox dos \daemons de migração dos \clusters envolvidos. Essa \task envia uma mensagem de migração para o próprio \cluster que invocou a função \kmigrateto (o remetente) e para o \cluster identificado pelo parâmetro (o destinatário). É interressante destacar que o \daemon foi projetado possibilitando expansão das suas funcionalidades sem maiores complicações.
+O procedimento da função \kmigrateto é detalhado a seguir. Primeiramente, uma \task é criada para o envio da requisição de migração. Depois disso, o \cluster requisitante é congelado através da chamada de sistema \freeze. É importante lembrar que esta \task recém-criada não é impedida de executar, já que as \tasks são executadas por uma \thread de sistema. No momento em que a \task é escalonada, são construídas e enviadas duas mensagens de migração: uma o para o próprio \cluster que invocou a função \kmigrateto (o remetente) e uma para o \cluster identificado pelo parâmetro (o destinatário). Essas mensagens são enviadas para as portas \mailbox dos \daemons dos \clusters envolvidos. No momento em que as mensagens são lidas, o processo de migração inicia.
 
-% Como exemplos de trabalhos futuros temos: implementação de uma funcionalidade em que um terceiro \cluster peça a migração de um processo entre outros \clusters distintos; Desenvolvimento de um serviço de escalonamento de processos que considere a melhor distribuíção dos processos entre os \clusters do processador; implementação de um sistema de \checkpointing de processos, visando o salvamento do estado de um processo em disco. Todos essas funcionalidades podem utilizar o \daemon de migração como suporte para suas responsabilidades específicas.
+É interessante destacar que o \daemon foi projetado possibilitando expansão das suas funcionalidades sem maiores complicações. Por exemplo:
+\begin{inlinelist}
+    \item Novas interfaces podem ser desenvolvidas, já que o funcionamento do \daemon é independente;
+    \item A estrutura do sistema de migração é de fácil manipulação, permitindo a adição de novas funcionalidades e
+    \item A adição/remoção de uma estrutura na migração implica na adição/remoção de um estado em uma estrutura condicional do tipo \textit{switch}.
+\end{inlinelist}
+
+% Como exemplos de trabalhos futuros temos: implementação de uma funcionalidade em que um terceiro \cluster peça a migração de um processo entre outros \clusters distintos; Desenvolvimento de um serviço de escalonamento de processos que considere a melhor distribuição dos processos entre os \clusters do processador; implementação de um sistema de \checkpointing de processos, visando o salvamento do estado de um processo em disco. Todos essas funcionalidades podem utilizar o \daemon de migração como suporte para suas responsabilidades específicas.

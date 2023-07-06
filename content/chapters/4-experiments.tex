@@ -12,9 +12,9 @@ Neste capítulo, será apresentado como a solução foi avaliada. Particularment
 
 Para responder a pergunta \ref{item.q1}, foi desenvolvido um experimento sobre a manipulação de \threads no \nanvix, que é o principal subsistema afetado pela \uarea. O experimento mensura os impactos na criação e junção de \threads através de diferentes perspectivas. Este experimento estressa o subsistema de threads através da criação e junção do máximo de \threads que o sistema suporta \ie 18 \threads. Especificamente, coletamos o tempo de execução, desvios e faltas ocorridas na \cache de dados e de instrução.
 
-Para responder a pergunta \ref{item.q2}, foi desenvolvido outro experimento. O experimento mensura o tempo de transferência de um processo entre \clusters de acordo com os recursos utilizados \ie \threads e quantidade de páginas de memória alocadas dinamicamente. Neste teste, variamos a quantidade de páginas de memória alocadas dinamicamente entre 0 e 32; e \threads usadas pela aplicação entre 1 e 17. Dessa forma, nós avaliamos como ocorre a progressão do tempo de transferência de um processo desde a alocação mínima de recursos até a alocação máxima \ie 1 \thread e 0 páginas de memória a 17 \threads e 32 páginas de memória respectivamente.
+Para responder a pergunta \ref{item.q2}, foi desenvolvido outro experimento. O experimento mensura o tempo de transferência de um processo entre \clusters de acordo com os recursos utilizados \ie \threads e quantidade de páginas de memória alocadas dinamicamente. Neste teste, variamos a quantidade de páginas de memória alocadas dinamicamente entre 0 e 32; e \threads usadas pela aplicação entre 1 e 17. Dessa forma, nós avaliamos como ocorre a progressão do tempo de transferência de um processo desde a alocação mínima de recursos até a alocação máxima \ie desde 1 \thread e 0 páginas de memória até 17 \threads e 32 páginas de memória, em que cada página ocupa 4~KB.
 
-Para responder a pergunta \ref{item.q3}, nós desenvolvemos um experimento que mensura o \downtime da aplicação quando variamos a quantidade de processos migrados paralelamente. Neste experimento são considerados quatro cenários de migração paralela em que cada processo é migrado um vez entre um par de \clusters. Os cenários se diferenciam pela quantidade de processos e \clusters: 1, 2, 4 e 8 processos, o que abrange, respectivamente, 2, 4, 8 e 16 \cclusters. Um \iocluster é utilizado em todos os cenários com o intuito de registrar o tempo obtido.
+Para responder a pergunta \ref{item.q3}, nós desenvolvemos um experimento que mensura o \downtime da aplicação quando variamos a quantidade de processos migrados paralelamente. Neste experimento são considerados quatro cenários de migração paralela em que cada processo é migrado uma vez entre um par de \clusters. Os cenários se diferenciam pela quantidade de processos e \clusters: 1, 2, 4 e 8 processos, o que abrange, respectivamente, 2, 4, 8 e 16 \cclusters. Um \iocluster é utilizado em todos os cenários com o intuito de registrar o tempo obtido.
 
 Para responder a pergunta \ref{item.q4}, desenvolvemos um experimento que avalia a corretude do \daemon quando realizamos mais de uma migração envolvendo o mesmo \cluster e variando o papel deste na migração. Neste experimento, um processo é migrado de \cluster em \cluster até que percorra todos os \cclusters do processador \ie o processo é migrado realizando um movimento circular, passando do \cluster 0 para o 1, do 1 para o 2, e assim sucessivamente até retornar ao \cluster 0. O movimento circular garante que todos os \clusters façam duas migrações: uma como remetente e outra como destinatário, totalizando 16 migrações.
 
@@ -31,7 +31,7 @@ Algumas dessas variáveis são constantes nos experimentos. Substituindo-as pelo
     23008 + KSPHYS + FPHYS\label{eq.2}
 \end{gather}
 
-Sendo assim, percebemos que a quantidade de dados enviada varia em função da quantidade de páginas de \kernel em uso e da quantidade de páginas alocadas dinâmicamente. Tendo em vista que as variáveis do experimento são a quantidade de \threads e a quantidade de páginas alocadas dinamicamente, é importante entender como essas variáveis impactam em \texttt{KSPHYS} e \texttt{FPHYS}. Primeiro, o \texttt{KSPHYS} muda quando uma thread é criada. Nesta operação, duas páginas de \kernel são alocadas para esta nova \thread: uma para a pilha de execução em espaço de usuário; e outra para a pilha de execução em espaço de \kernel. Segundo, o \texttt{FPHYS} muda quando página de usuário é dinamicamente criada. Quando isso acontece, aumentamos o espaço do usuário em mais uma página \ie aumentamos o \texttt{FPHYS} em uma página (4096~B). Além disso, quando alocamos a primeira página de usuário, uma página de \kernel é utilizada como tabela de páginas para essa e as possíveis novas páginas a serem alocadas. Arranjando esses dados na Equação \ref{eq.2}, obtemos:
+Sendo assim, percebemos que a quantidade de dados enviada varia em função da quantidade de páginas de \kernel em uso e da quantidade de páginas alocadas dinamicamente. Tendo em vista que as variáveis do experimento são a quantidade de \threads e a quantidade de páginas alocadas dinamicamente, é importante entender como essas variáveis impactam em \texttt{KSPHYS} e \texttt{FPHYS}. Primeiro, o \texttt{KSPHYS} muda quando uma thread é criada. Nesta operação, duas páginas de \kernel são alocadas para esta nova \thread: uma para a pilha de execução em espaço de usuário; e outra para a pilha de execução em espaço de \kernel. Segundo, o \texttt{FPHYS} muda quando página de usuário é dinamicamente criada. Quando isso acontece, aumentamos o espaço do usuário em mais uma página \ie aumentamos o \texttt{FPHYS} em uma página (4096~B). Além disso, quando alocamos a primeira página de usuário, uma página de \kernel é utilizada como tabela de páginas para essa e as possíveis novas páginas a serem alocadas. Arranjando esses dados na Equação \ref{eq.2}, obtemos:
 
 \[
 \begin{cases}
@@ -55,7 +55,7 @@ Quanto ao funcionamento dos experimentos, no início do teste todos os \clusters
 \label{chap.results}
 
 Neste capítulo, serão apresentados os resultados obtidos através dos experimentos desenvolvidos.
-% A solução foi avaliada em etapas anteriores ao desenvolvimento atual do trabalho e os resultados seguintes englobam apenas o susbsistema de \threads do \nanvix. 
+% A solução foi avaliada em etapas anteriores ao desenvolvimento atual do trabalho e os resultados seguintes englobam apenas o subsistema de \threads do \nanvix. 
 % \todo{Seria bom colocar um capítulo de metodologia com perguntas que gostariamos de responder e detalhamento dos experimentos}
 % %
 % Para avaliar o impacto das mudanças feitas para a virtualização, foram desenvolvidos experimentos sobre a manipulação de \threads e suporte à migração de processos no \nanvix. Todos os experimentos foram executados no processador \mppa e os resultados mostrados são valores médios de 100 replicações de cada experimento para garantir 95\% de confiança estatística, resultando em um desvio padrão inferior a 1\%.
@@ -115,12 +115,19 @@ De maneira geral, o \downtime é aproximadamente descrito pela Função \ref{eq.
 
 A Função~\ref{eq.downtime} aproxima a progressão de tempo até 15 \threads. Contudo, como podemos observar nas Figuras \ref{fig.mtpages} e \ref{fig.mtthreads}, ocorre uma disparidade com 16 \threads, afetando a natureza linear observada até 15 \threads. Isso acontece porque o \mppa possui 16 núcleos em um \cluster e, como o \nanvix apresenta um \microkernel assimétrico, um núcleo é reservado exclusivamente para a execução de \threads e tarefas do sistema. Desta forma, ao criar 16 \threads, nós extrapolamos a quantidade de núcleos disponíveis ao usuário. A competição de recursos entre duas \threads introduz, em média, 230~\% de sobrecarga ao \downtime, variando entre 198~\% e 246~\%. Ou seja, o salto numérico observado nas Figuras \ref{fig.mtpages} e \ref{fig.mtthreads} é resultado do tempo extra utilizado no experimento para o gerenciamento das \threads, já que temos mais \threads do que núcleos em que estas podem executar.
 
+
 \section{Análise do Impacto de Migrações Paralelas sobre o Sistema de Comunicação}
 
-O experimento que mensurava o \downtime da aplicação quando múltiplas migrações aconteciam simultaneamente, mostrou que a quantidade de migrações paralelas não impacta significativamente o tempo. É importante destacar que nesse experimento foram migradas aplicações que usavam o máximo de recursos de sistema. Mesmo assim, a quantidade de dados não foi suficiente para impactar no \downtime, o que significa que a topologia e a taxa de transferência da \noc do \mppa supre a demanda de transferência de dados.
+Como ilustrado pela \autoref{fig.parallel}, o experimento que mensurava o \downtime da aplicação quando múltiplas migrações aconteciam simultaneamente, mostrou que a quantidade de migrações paralelas não impacta significativamente o tempo. É importante destacar que nesse experimento foram migradas aplicações que usavam o máximo de recursos de sistema. Mesmo assim, a quantidade de dados não foi suficiente para impactar no \downtime, o que significa que a topologia e a taxa de transferência da \noc do \mppa supre a demanda de transferência de dados. Considerando os cenários em que há 1, 2, 4 ou 8 migrações simultâneas, o \downtime médio foi em torno de 113~ms.
 
-Considerando os cenários em que há 1, 2, 4 ou 8 migrações simultâneas, o \downtime médio foi de 101~ms. Esse foi o mesmo valor obervado nas Figuras \ref{fig.mtpages} e \ref{fig.mtthreads} considerando o máximo de recursos: 16 \threads e 32 páginas.
 
+\begin{figure}[ht!]
+    \centering
+    \caption{\Downtime da aplicação em função da quantidade de migrações paralelas}
+    \includegraphics[width=0.6\linewidth]{content/images/parallel.pdf}
+    \label{fig.parallel}
+    \fonte{Desenvolvido pelo autor.}
+\end{figure}
 \section{Análise da Capacidade do \daemon Realizar Múltiplas Migrações Utilizando um mesmo \cluster}
 
 O teste que visava a comprovação da corretude do \daemon executou completamente sem ocorrência de erros. Isso significa que:

@@ -2,7 +2,7 @@
 \chapter{Proposta de Virtualização e Migração de Processos para \textit{Lightweight Manycores}}
 \label{chap.dev.virtualizacao}
 
-O \nanvix surgiu com a proposta de resolver os problemas de programabilidade e portabilidade em \lws. Apesar de ser uma abordagem promissora, o \so ainda possui características para se trabalhar. Em especial, destaca-se a dependência que um processo tem com o \cluster em que executa. 
+O \nanvix surgiu com a proposta de resolver os problemas de programabilidade e portabilidade em \lws. Apesar de ser uma abordagem promissora, o \so ainda possui características para se trabalhar. Em especial, destaca-se a dependência que um processo tem com o \cluster em que executa. Em outras palavras, apenas um processo executa por \cluster e os serviços envolvendo o processo têm dependências em recursos físicos do \cluster.
 
 Essa falta de mobilidade dos processos afeta o desempenho do sistema porque impede a redistribuição dos processos para organizações mais eficientes \eg remanejando processos com comunicação intensa entre si para \clusters fisicamente mais próximos. 
 

@@ -323,6 +323,20 @@ Tal como ilustrado pela \autoref{fig.postcopy}, no modelo \postcopymigration o r
 \subsubsection{Migração Híbrida}\label{sec.hybridmigration}
 Como podemos observar na \autoref{fig.hybridmigration}, no modelo de migração híbrida são utilizadas as técnicas de \precopy e \postcopy em conjunto. Inicialmente, uma pré-imagem da \vm (ou contêiner) é feita de forma similar ao modelo \precopymigration. Esta pré-imagem é enviada ao destinatário, enquanto o sistema executa normalmente. Em contraste com o método \precopy, nesta etapa não são reenviadas as páginas modificadas/atualizadas. Depois, o estado completo do sistema é enviado e as páginas modificadas/atualizadas são requisitadas ao remetente tal como na \postcopymigration. Quando todas as páginas são transferidas ao destinatário, a \vm (ou contêiner) é apagada do remetente~\cite{singh2022predictive, imran2022live}.
 
+\section{\textit{Checkpoint/Restore In Userspace}}
+
+O \criu é uma ferramenta de auxílio para a migração de processos entre nós de um sistema computacional. Através do \criu é possível tirar uma \snapshot do estado atual de um contêiner, salvar o estado em disco e restaurá-lo novamente~\cite{venkatesh2019fast}. Mais detalhadamente a migração funciona da seguinte forma:
+\begin{enumerate}[label=(\roman*)]
+    \item A aplicação ou grupo de processos é congelada. O \criu congela toda a árvore de processos a partir do \pid do processo pai da aplicação;
+    \item O estado da aplicação é salva em um conjunto de arquivos. O \criu captura as diversas informações do processo. Estão incluídos nessas informações os descritores de arquivos, \pipes e mapeamento de memória. Nesta etapa, a injeção de um código parasita na aplicação auxilia durante a copia do sistema de memória;
+    \item Os dados extraídos são copiados para o nó destinatário;
+    \item A aplicação ou grupo de processos é reconstruída. Nesta etapa, o \criu se transforma no processo pai da aplicação. A partir dele, toda a árvore de processos é recriada através de \forks. Neste momento, os processos, \namespaces, \cgroups, mapeamento de memória, \timers e \threads são restaurados e são limpos os vestígios do \criu no processo pai~\cite{dash2022understanding}.
+\end{enumerate}
+
+Todo esse procedimento garante que a migração de um contêiner seja transparente a este e sem perda de contexto. Ou seja, do ponto de vista da aplicação, não é perceptível que ocorreu um congelamento ou migração.
+
+
+
 \section{Técnicas Utilizadas no Trabalho}
 
 O desenvolvimento deste trabalho foi inspirado por duas técnicas citadas acima: a virtualização a nível de \so e a \precopymigration. Ambas as técnicas foram adaptadas ao contexto dos \lws e ao \nanvix.
@@ -330,7 +344,6 @@ O desenvolvimento deste trabalho foi inspirado por duas técnicas citadas acima:
 A virtualização a nível de \so é atrativa para o desenvolvimento deste trabalho pois neste tipo de virtualização não é necessária a presença de um \so convidado, em contraste com a virtualização total e a para-virtualização. Por esse motivo, este modelo não demanda tanto uso de memória. Essa característica atende as exigências dos \lws, nos quais a memória é limitada.
 
 O principal motivo da utilização da \precopymigration neste trabalho é a redução de complexidade do sistema de migração. Os \lws têm pouca memória a sua disposição. Isso significa que as aplicações de usuário não podem ocupar muita memória. Logo, durante a migração de uma aplicação, o tempo dedicado à transferência de memória é menor. Ou seja, considera-se que a transferência de páginas não é tão expressiva no \downtime a ponto de exigir um sistema mais complexo de migração.
-
 
 
 % \mytodo{adicinar seção detalhando o sistema de tasks no background?}

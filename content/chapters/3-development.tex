@@ -19,7 +19,7 @@ Neste contexto, este trabalho de conclusão ataca essa problemática. Ou seja, e
 
 Ambientes \cloud, nos quais o sistema de memória é de alta capacidade, usufruem da utilização de \vms para isolar duplicatas inteiras de \oss com o auxílio da virtualização a nível de instrução~\cite{sharma2016containers}. Em oposição, \lws não dispõem de centenas de GBs de memória, mas sim pequenas memórias locais. Isso em conjunto com outras simplificações de \hardware faz com que algumas técnicas de virtualização sejam impraticáveis nesses ambientes computacionais.
 
-Nesse contexto, visando atenuar o impacto da virtualização no sistema de memória, o presente trabalho explora um modelo de virtualização mais leve, baseado em contêineres adaptado para \lws e o \nanvix. O \so executa os contêineres como aplicações virtuais. Sendo assim, não há a necessidade de um \os convidado, resultando em um menor impacto no sistema de memória e requisitando menor complexidade do \hardware~\cite{thalheim2018cntr, sharma2016containers,zhang2018comparative}.
+Nesse contexto, visando atenuar o impacto da virtualização na memória, o presente trabalho explora um modelo de virtualização mais leve, baseado em contêineres adaptado para \lws e o \nanvix. O \so executa os contêineres como aplicações virtuais. Sendo assim, não há a necessidade de um \os convidado, resultando em um menor impacto no sistema de memória e requisitando menor complexidade do \hardware~\cite{thalheim2018cntr, sharma2016containers,zhang2018comparative}.
 
 % O foco deste trabalho é desacoplar a execução de um processo do \cluster em que ele é alocado, tornando possível a execução do processo em qualquer \cluster. Para isso, é necessário que seja introduzido o conceito de virtualização no \nanvix.
 
@@ -58,12 +58,12 @@ Esta abordagem torna algumas das funcionalidades do \os onerosas porque ela difi
 	
     \caption{Visão simplificada da estrutura do binário gerado na compilação.}%
 	\subcaptionminipage[fig.binary-original]%
-                   {.2\textwidth}
+                   {.25\textwidth}
                    {Sem isolamento entre usuário e \kernel.}
                    {\vspace{31mm}\includegraphics[width=\textwidth]{content/images/binary-structure-original.pdf}}
 	\qquad
 	\subcaptionminipage[fig.binary-modified]
-                   {.2\textwidth}
+                   {.25\textwidth}
                    {Com isolamento entre usuário e \kernel.}
                    {\includegraphics[width=\textwidth]{content/images/binary-structure-modified.pdf}}
 
@@ -105,9 +105,7 @@ Esta abordagem torna algumas das funcionalidades do \os onerosas porque ela difi
 \subsection{\textit{User Area}}
 \label{sec.uarea}
 
-    Além da separação de dados e instruções entre \kernel e aplicação, é necessário a identificação e separação das estruturas internas do \so que são manipuladas pelo usuário e constituem o estado interno do processo. Nesse contexto, é introduzido o conceito de conteinerização para isolar as dependências que o usuário possui dentro do \cluster. Ou seja, nós isolamos os dados que são gerenciados pelo \kernel mas pertencem ao contexto do processo de usuário. Neste contexto, nós isolamos tais dados em uma região de memória bem definida, denominada de \uarea. 
-
-    Detalhadamente, a \uarea mantém informações sobre:
+    Além da separação de dados e instruções entre \kernel e aplicação, é necessário a identificação e separação das estruturas internas do \so que são manipuladas pelo usuário e constituem o estado interno do processo. Nesse contexto, é introduzido o conceito de conteinerização para isolar as dependências que o usuário possui dentro do \cluster. Ou seja, nós isolamos os dados que são gerenciados pelo \kernel mas pertencem ao contexto do processo de usuário. Neste contexto, nós isolamos tais dados em uma região de memória bem definida, denominada de \uarea, a qual mantém informações sobre:
     \begin{enumerate}[label=(\roman*)]
         \item \Threads ativas, incluindo identificadores, pilhas de execução e contextos;
         \item Filas de escalonamento de \threads;
@@ -148,7 +146,14 @@ Depois da identificação dos \clusters envolvidos e seus papéis durante o proc
 
 \subsubsection{Fluxo de Migração}\label{sec.fluxo-migracao}
 
-Genericamente, podemos dizer que o fluxo de migração é composto por três passos principais, os quais estão descritos abaixo:
+Genericamente, podemos dizer que o fluxo de migração é composto por três passos principais: 
+\begin{inlinelist}
+    \item Congelamento da execução do processo em um estado consistente;
+    \item Transferência do contexto do processo entre \clusters; e
+    \item Restauração da execução do processo no \cluster destino.
+\end{inlinelist}
+Os detalhes de cada etapa estão descritos abaixo.
+
 \begin{description}
 	\item[1. Congelamento da execução do processo em um estado consistente.] \hfill
 	
@@ -160,7 +165,7 @@ Genericamente, podemos dizer que o fluxo de migração é composto por três pas
         \item inconsistência na alocação de memória;
     \end{inlinelist} etc. 
     Para atingir esse estado consistente, foi criada a chamada de sistema \freeze, a qual é invocada no início do processo de migração. Esta é uma chamada de sistema que é tratada apenas pelo \mcore. Especificamente, esta chamada ativa uma variável interna do \so que impede o escalonamento de \threads de aplicação (\threads que não executam no \mcore) e envia um sinal de reescalonamento para todos os \scores, para que as \threads de usuário saiam de execução o mais rápido possível. Isso garante uma pausa na aplicação sem que o \so seja impedido de executar. Isso é importante pois as informações do processo precisam ser enviadas pelas interfaces \noc do \cluster remetente, o que exige que o \so atenda às requisições de envio de dados. Portanto, é imprescindível que o \so não seja pausado como a aplicação. Ou seja, é essencial que as \threads de sistema continuem a ser executadas apesar do congelamento das de usuário.
-    Após o travamento no escalonamento de \threads de usuário, novas chamadas de sistema requisitadas pela aplicação não podem ocorrer. Sendo assim, após a migração, o \cluster destinatário atenderá às chamadas não atendidas e reconhecerá as atendidas, pois as estruturas de sincronização e variáveis de retorno são migradas também durante o processo. Após o congelamento do escalonamento e a retirada das \threads de usuário dos \scores, o processo é considerado consistente e seu contexto está apto para ser migrado.
+    Após o travamento no escalonamento de \threads de usuário, novas chamadas de sistema requisitadas pela aplicação não podem ocorrer. Sendo assim, após a migração, o \cluster destinatário atenderá às chamadas não atendidas e reconhecerá as atendidas, pois as estruturas de sincronização e variáveis de retorno são migradas também durante o processo. Após o congelamento, o processo é considerado consistente e seu contexto está apto para ser migrado.
     
 	\item[2. Transferência do contexto do processo entre \clusters.] \hfill
     
@@ -229,7 +234,7 @@ Abaixo estão descritos o funcionamento mais detalhado de cada \task de migraç�
         \label{table.mstates}
     \end{table}
     De acordo com o estado atual, são configurados os \buffers para o envio/recebimento de dados (o que ocorre respectivamente nas \tasks 6 e 7), os limites inferior e superior do \myloop que percorre o \buffer (na \task 5) e uma função de condição que verifica se elemento em dado índice do \buffer atual precisa ser enviado.
-    \item[5.] Esta \task é responsável por atualizar o índice atual do \buffer configurado na \task 4 e indicar se a estrutura foi completamente percorrida ou não. Caso o limite superior, também configurado pela \task 4, foi atingido, a \task 4 é liberada, atualizando o estado atual. Caso contrário, um novo índice é considerado para o envio/recebimento de dados.
+    \item[5.] Esta \task é responsável por atualizar o índice atual do \buffer configurado na \task 4 e indicar se a estrutura foi completamente percorrida. Caso o limite superior, também configurado pela \task 4, foi atingido, a \task 4 é liberada, atualizando o estado atual. Caso contrário, um novo índice é considerado para o envio/recebimento de dados.
     \item[6.] Esta \task é ativa desde que o \cluster exerça o papel de remetente na migração. A \task é responsável por verificar se a posição atual na estrutura atual precisa ser enviada. Essa checagem é feita através da função de condição configurada na \task 4. Esse comportamento é muito útil quando consideramos a lista de páginas de \kernel, por exemplo. Nesse cenário a verificação (através da função de condição) de quais páginas precisam ser enviadas evita o envio de dados não essenciais ou redundantes. Caso o elemento do \buffer configurado exija a transferência de dados, a \task 7 é ativada para tal. Caso contrário, a \task 5 é ativada para atualizar o índice para o próximo elemento do \buffer.
     \item[7.] Esta \task é responsável pelo envio assíncrono dos dados do \buffer no índice configurado. Todos os parâmetros para o envio dos dados, tais como o ponteiro para o dado, a quantidade de \bytes a serem enviadas e o identificador do portal a ser usado, são passados como parâmetro pela \task 6.
     \item[8.] Esta \task é responsável por sinalizar o fim do envio dos dados, ativando a \task 5 novamente para atualizar o índice do \buffer.

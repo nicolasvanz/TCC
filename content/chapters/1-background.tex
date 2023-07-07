@@ -286,7 +286,7 @@ Este geralmente não é considerado um método eficiente e não é muito utiliza
 \subsection{\Hotmigration}\label{sec.hotmigration}
 Em contraste com a \coldmigration, na \hotmigration, também conhecida como \livemigration, a \vm (ou contêiner) a ser migrada não precisa ser desligada antes do procedimento começar. Os principais objetivos desse processo são: maximizar a performance do sistema durante a migração; melhorar o uso da rede; e reduzir o \downtime do sistema~\cite{imran2022live}.
 
-Neste modelo, a migração poder ser classificada de acordo com a técnica utilizada para a transferência dos dados \ie \precopymigration, \postcopymigration e migração híbrida.
+Neste modelo, a migração é classificada de acordo com a técnica utilizada para a transferência dos dados \ie \precopymigration, \postcopymigration e migração híbrida.
 
 \subsubsection{\Precopymigration}\label{sec.precopymigration}
 A \autoref{fig.precopy} ilustra o fluxo de execução da \precopymigration. Neste modelo, ao receber a requisição de migração, o remetente cria uma pré-imagem do estado atual da \vm (ou contêiner) e a envia ao destinatário enquanto continua executando normalmente. Nesta estrutura está contido o esquema de paginação atual e, por vezes, alguns dados de execução. Conforme o esquema de paginação é modificado no remetente, essa estrutura é atualizada e enviada ao destinatário. Depois disso, é salvo o estado atual completo da \vm (ou contêiner), que, então, é enviada ao destino, onde é restaurada. 
@@ -325,7 +325,7 @@ Como podemos observar na \autoref{fig.hybridmigration}, no modelo de migração 
 
 \section{\textit{Checkpoint/Restore In Userspace}}
 
-O \criu é uma ferramenta de auxílio para a migração de processos entre nós de um sistema computacional. Através do \criu é possível tirar uma \snapshot do estado atual de um contêiner, salvar o estado em disco e restaurá-lo novamente~\cite{venkatesh2019fast}. Mais detalhadamente a migração funciona da seguinte forma:
+O \criu é uma ferramenta de auxílio para a migração de processos entre nós de um sistema computacional. Através do \criu é possível salvar o estado atual de um contêiner em disco e restaurá-lo novamente~\cite{venkatesh2019fast}. Mais detalhadamente a migração funciona da seguinte forma:
 \begin{enumerate}[label=(\roman*)]
     \item A aplicação ou grupo de processos é congelada. O \criu congela toda a árvore de processos a partir do \pid do processo pai da aplicação;
     \item O estado da aplicação é salva em um conjunto de arquivos. O \criu captura as diversas informações do processo. Estão incluídos nessas informações os descritores de arquivos, \pipes e mapeamento de memória. Nesta etapa, a injeção de um código parasita na aplicação auxilia durante a copia do sistema de memória;

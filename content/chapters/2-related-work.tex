@@ -15,7 +15,7 @@ Grande parte das pesquisas relacionadas à migração estão inseridas em ambien
 
 Apesar da maioria das pesquisas estarem voltadas à exploração desses benefícios e diminuição do tempo de migração e \downtime em ambientes \cloud, há alguns autores preocupados com o desenvolvimento de soluções envolvendo virtualização e migração em ambientes de recursos restritos, como sistemas de tempo real e sistemas críticos, nos quais há restrições de tempo também. Dessa forma, como a temática de limitação de recursos, especialmente de memória, é muito presente neste trabalho, serão abordados nas próximas seções algumas pesquisas desses autores, \ie pesquisas voltadas à busca pelo uso da virtualização/migração de forma mais leve e cujo impacto no \hardware seja reduzido, adaptando-se a esses sistemas de recursos limitados.
 
-\section{\textit{''Virtualization on TrustZone-enabled Microcontrollers?\\ Voilà!''}}
+\section{\textit{''Virtualization on TrustZone-enabled Microcontrollers?\\ Voilà!''}}\label{sec.rw-1}
 
 O artigo \textit{''Virtualization on TrustZone-enabled Microcontrollers? Voilà!''}~\cite{pinto2019virtualization} aborda a possibilidade de implementação da virtualização em microcontroladores que utilizam \trustzone. \trustzone é uma tecnologia de \hardware voltada à segurança, em que a execução de um sistema pode ser dividida entre normal e segura. Os autores afirmam que essa tecnologia pode ser explorada além das suas propriedades de segurança. Isso porque o \trustzone também provê certo nível de isolamento dos recursos, o que o torna viável de ser usado para virtualização, afinal o isolamento cria um ambiente seguro e propício para a execução simultânea e isolada de múltiplas \vms.
 
@@ -23,7 +23,7 @@ O artigo \textit{''Virtualization on TrustZone-enabled Microcontrollers? Voilà!
 
 Os testes foram feitos num microcontrolador \textit{Cortex-M4} e a solução proposta garante o suporte à execução múltipla de \vms em microcontroladores.
 
-\section{\textit{''Checkpointing and migration of IoT edge functions''}}
+\section{\textit{''Checkpointing and migration of IoT edge functions''}}\label{sec.rw-2}
 
 
 O artigo \textit{''Checkpointing and migration of IoT edge functions''}~\cite{karhula2019checkpointing} propõe um artifício envolvendo migração de contêineres entre dispositivos \iot de borda como solução para a diminuição do uso de recursos em dispositivos \iot.
@@ -34,7 +34,7 @@ Dessa forma, \citeonline{karhula2019checkpointing} propõem um esquema de \check
 
 Os testes foram feitos em uma \textit{Raspberry Pi 2 Model B}, a qual rodava diversos contêineres com aplicações em \textit{Node JS} de longa duração e que simulavam o comportamento bloqueante. Os resultados apontam que houve economia no uso de recursos, em especial da memória, e que a migração de contêineres entre dispositivos \iot de borda é possível.
 
-\section{ \textit{''Lightweight virtualization as enabling technology for future smart cars''}}
+\section{ \textit{''Lightweight virtualization as enabling technology for future smart cars''}}\label{sec.rw-3}
 
 O artigo \textit{''Lightweight virtualization as enabling technology for future smart cars''} \cite{smartcarslwvirtualization} discorre sobre a possibilidade de usar a virtualização no desenvolvimento de aplicações para carros inteligentes. Os sistemas presentes nos carros inteligentes também têm certa limitação de recursos que dificultam a aplicação direta de \hypervisors tradicionais, muito comuns em ambientes \cloud.
 
@@ -44,7 +44,7 @@ Além disso, o sistema engloba um escalonador de contêineres, que é responsáv
 
 A proposta foi testada em uma \textit{Raspberry Pi 3} e os resultados foram considerados positivos. Os contêineres garantiram a execução do sistema de maneira a considerar a limitação de \hardware e suportaram a execução paralela de múltiplas aplicações. O escalonador de contêineres foi capaz de gerenciar os recursos de maneira eficiente, priorizando as tarefas de maior prioridade.
 
-\section{\textit{''Container-based real-time scheduling in the linux kernel''}}
+\section{\textit{''Container-based real-time scheduling in the linux kernel''}}\label{sec.rw-4}
 
 O artigo \textit{''Container-based real-time scheduling in the linux kernel''} \cite{abeni2019container} aborda o tema de virtualização com contêineres em sistemas de tempo real. Os autores exploram a implementação de um escalonador de tarefas em sistemas de tempo real utilizando \lxc (\ie com o auxílio de \cgroups e \namespaces). 
 
@@ -57,16 +57,9 @@ Os experimentos mostraram que o escalonador proposto fez com que os \cores fosse
 
 \section{Comparação do Presente Trabalho com os Trabalhos Relacionados}
 
-O presente trabalho se assemelha com os trabalhos relacionados apresentados no sentido de aplicar a virtualização e migração em um sistema com recursos restritos. Contudo, em contraste com os trabalhos apresentados, a principal vantagem explorada com a virtualização é o aumento da mobilidade dos processos, possibilitando a migração de processos. A utilização eficiente dos recursos promovida pela virtualização, mesmo que necessária nos \lws pela limitação de recursos computacionais (em especial a memória) se torna uma vantagem indireta da virtualização. Isso porque o uso eficiente de \hardware é provido mais pela migração (através da melhor disposição dos processos entre os \clusters) do que pela virtualização em si.
+O presente trabalho se assemelha com os trabalhos relacionados apresentados no sentido de aplicar a virtualização e migração em um sistema com recursos restritos. De maneira similar aos trabalhos detalhados nas Seções \ref{sec.rw-2}, \ref{sec.rw-3} e \ref{sec.rw-4} e em contraste com o trabalho detalhado na Seção \ref{sec.rw-1}, neste trabalho foi explorado um modelo de virtualização baseado na utilização de contêineres. Isso foi feito com o intuito de evitar a sobrecarga que a virtualização total tem sobre o ambiente, em especial na memória, que nos \lws é escassa.
 
-Além disso, este trabalho explora a virtualização e migração usando contêineres, tal qual o segundo e terceiro trabalho, porém em um ambiente diferente e com outra abordagem. Neste trabalho, o foco é o desenvolvimento de um sistema de virtualização baseado em contêineres adaptado ao \so e sem o uso de ferramentas externas, como o \docker. Além disso, a migração das aplicações são entre \clusters de um mesmo processador, e não entre nós de computação de borda ou servidores \cloud.
+Neste trabalho, não foi utilizada qualquer ferramenta de auxílio na manipulação de contêineres, em contraste com os trabalhos apresentados, que usufruem de mecanismos de gerenciamento de contêineres, como o Docker~\cite{smartcarslwvirtualization,karhula2019checkpointing} ou o \lxc~\cite{abeni2019container}. Isso porque o trabalho é feito sobre um ambiente não usual, os \lws, utilizando um \so ainda incomum para a prática dessas técnicas, o \nanvix. Dessa forma, a criação de um contêiner e a forma como este é manipulado foram desenvolvidas desde o início e especificamente para o \nanvix. Isso traz à implementação algumas características peculiares. Por exemplo, os contêineres executam sobre uma estrutura de \kernel idêntica, se diferenciando pelo contexto do processo, o que é uma característica comumente vista na virtualização a nível de \so. Contudo, o \kernel não é compartilhado entre os contêineres, já que em um \cluster temos exatamente um contêiner e os \clusters são independentes entre si. Logo, um contêiner tem acesso completo aos recursos do \cluster em que executa e o \cluster tem visão apenas do contêiner que hospeda. Então, o gerenciamento desses contêineres precisa ser feito em um nível de abstração maior, em que se tem uma visão do processador como um todo, e não somente de um \cluster.
 
+Além disso, em contraste com os trabalhos apresentados, a principal vantagem explorada com a virtualização é o aumento da mobilidade dos processos, possibilitando a migração de processos. A utilização eficiente dos recursos promovida pela virtualização, mesmo que necessária nos \lws pela limitação de recursos computacionais (em especial a memória) se torna uma vantagem indireta da virtualização. Isso porque o uso eficiente de \hardware é provido mais pela migração (através da melhor disposição dos processos entre os \clusters) do que pela virtualização em si.
 
-
-% Os autores costumam aliar uma ou mais das características citadas acima para desenvolverem suas pesquisas. Por exemplo:
-
-%     Para evitar que muitos usuários tenham que fazer requisições à aplicações hospedadas em servidores distantes ou com muito tráfego, pode-se utilizar a transparência de localidade de execução de aplicações com a manutenção destas sem sua suspensão. Assim, é possível explorar algorítimos ou modelos para melhor posicionar as aplicações na rede com o objetivo de atender a maior quantidade de usuários, de maneira mais eficiente e sem que o sistema precise ser desligado~\cite{live-migration-sdn}. Ademais, esses modelos podem ser especializados para tipos específicos de aplicações, como \iot~\cite{ada-things}.
-
-%     Além disso, pesquisas são feitas com o intuito de tornar a migração de \vms entre servidores tolerante a falhas~\cite{fernando2019live}. A migração de \vms por algum motivo pode falhar (devido a problemas de rede, por exemplo). Nesse contexto, alguns autores sugerem o uso de \checkpoints, os quais são estados consistentes da \vm em dado momento. Se a migração falhar, a \vm pode ser restaurada para um \checkpoint. Isso evita que a \vm seja perdida.
-
-% Em contraste com os trabalhos apresentados, nossa proposta não está inserida em ambientes \cloud. Seu foco está na migração de processos entre \clusters em um mesmo \chip, em um sistema computacional restritivo que restringe as técnicas possíveis a serem utilizadas. Além disso, nosso trabalho se difere dos demais trabalhos por explorar a virtualização e migração de processos inserida no contexto dos \lws e não apenas buscando otimizar algoritmos específicos, \eg \livemigration.

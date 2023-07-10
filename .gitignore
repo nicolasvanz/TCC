@@ -41,4 +41,5 @@ _minted-*
 !main.pdf
 !content/images/*.pdf
 !content/appendix/*.pdf
+!content/pre-textual/*.pdf
 svg-inkscape
